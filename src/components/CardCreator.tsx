@@ -184,7 +184,7 @@ const CardPreview: React.FC = () => {
             <div className="grid grid-cols-2 gap-x-4 gap-y-1">
               {(currentCard.statBlock || []).slice(0, 6).map((stat, i) => (
                 <div key={stat.id || i} className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 flex items-center gap-1"><span>{stat.icon}</span><span className="uppercase tracking-wider">{stat.label.slice(0, 8)}</span></span>
+                  <span className="text-xs text-slate-400 flex items-center gap-1"><span>{stat.icon}</span><span className="uppercase tracking-wider">{stat.label}</span></span>
                   <span className="text-sm font-bold" style={{ color: stat.value >= 80 ? '#22c55e' : stat.value >= 60 ? '#eab308' : stat.value >= 40 ? '#f97316' : '#ef4444' }}>{stat.value}</span>
                 </div>
               ))}
