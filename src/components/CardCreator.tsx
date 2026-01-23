@@ -1,4 +1,5 @@
 'use client';
+import { createPortal } from 'react-dom';
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from 'react-image-crop';
@@ -155,32 +156,32 @@ const ModeToggle: React.FC = () => {
 const TraitSelector: React.FC = () => {
   const { currentCard, addTrait, removeTrait } = useCardCreator();
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const selectedTraits = (currentCard.traits || []).map((id) => TRAIT_PRESETS.find((t) => t.id === id)).filter(Boolean);
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium text-slate-300">Traits & Badges</label>
+      <label className="text-sm font-medium text-slate-300">Traits \& Badges</label>
       <div className="flex flex-wrap gap-2">
-        {selectedTraits.map((trait) => trait && <motion.div key={trait.id} initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className={cn('flex items-center gap-2 px-3 py-1.5 rounded-full text-sm border', trait.type === 'positive' && 'bg-green-500/10 border-green-500/30 text-green-400', trait.type === 'negative' && 'bg-red-500/10 border-red-500/30 text-red-400', trait.type === 'neutral' && 'bg-slate-500/10 border-slate-500/30 text-slate-400', trait.type === 'chaotic' && 'bg-purple-500/10 border-purple-500/30 text-purple-400')}><span>{trait.icon}</span><span>{trait.name}</span><button onClick={() => removeTrait(trait.id)} className="ml-1 hover:text-white transition-colors"><X className="w-3 h-3" /></button></motion.div>)}
+        {selectedTraits.map((trait) => trait && <motion.div key={trait.id} initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full text-sm border", trait.type === "positive" && "bg-green-500/10 border-green-500/30 text-green-400", trait.type === "negative" && "bg-red-500/10 border-red-500/30 text-red-400", trait.type === "neutral" && "bg-slate-500/10 border-slate-500/30 text-slate-400", trait.type === "chaotic" && "bg-purple-500/10 border-purple-500/30 text-purple-400")}><span>{trait.icon}</span><span>{trait.name}</span><button onClick={() => removeTrait(trait.id)} className="ml-1 hover:text-white transition-colors"><X className="w-3 h-3" /></button></motion.div>)}
         <button onClick={() => setIsOpen(true)} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm border border-dashed border-slate-600 text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-colors"><Plus className="w-3 h-3" />Add Trait</button>
       </div>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950 flex items-center justify-center z-[9999] p-4" onClick={() => setIsOpen(false)}>
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-lg max-h-[70vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6 pb-4 border-b border-slate-700"><h3 className="text-xl font-bold text-white">Select Traits</h3></div><div className="flex-1 overflow-y-auto p-6 pb-2">
-              {(['positive', 'negative', 'neutral', 'chaotic'] as const).map((type) => (
-                <div key={type} className="mb-4">
-                  <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-2">{type}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {TRAIT_PRESETS.filter((t) => t.type === type).map((trait) => { const isSelected = currentCard.traits?.includes(trait.id); return <button key={trait.id} onClick={() => { if (isSelected) { removeTrait(trait.id); } else { addTrait(trait.id); } }} className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition-all', isSelected ? 'bg-white/10 border-white/30 text-white' : 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-600')}><span>{trait.icon}</span><span>{trait.name}</span></button>; })}
-                  </div>
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, background: "#0f172a", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99999, padding: "1rem" }} onClick={() => setIsOpen(false)}>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-lg max-h-[70vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                <div className="p-6 pb-4 border-b border-slate-700"><h3 className="text-xl font-bold text-white">Select Traits</h3></div>
+                <div className="flex-1 overflow-y-auto p-6 pb-2">
+                  {(["positive", "negative", "neutral", "chaotic"] as const).map((type) => (<div key={type} className="mb-4"><h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-2">{type}</h4><div className="flex flex-wrap gap-2">{TRAIT_PRESETS.filter((t) => t.type === type).map((trait) => { const isSelected = currentCard.traits?.includes(trait.id); return <button key={trait.id} onClick={() => { if (isSelected) { removeTrait(trait.id); } else { addTrait(trait.id); } }} className={cn("flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition-all", isSelected ? "bg-white/10 border-white/30 text-white" : "bg-slate-800/50 border-slate-700 text-slate-300 hover:border-slate-600")}><span>{trait.icon}</span><span>{trait.name}</span></button>; })}</div></div>))}
                 </div>
-              ))}
-              </div><div className="p-6 pt-4 border-t border-slate-700"><button onClick={() => setIsOpen(false)} className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">Done</button></div>
+                <div className="p-6 pt-4 border-t border-slate-700"><button onClick={() => setIsOpen(false)} className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">Done</button></div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 };
