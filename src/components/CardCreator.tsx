@@ -3,17 +3,26 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import { Upload, Shuffle, Sparkles, Zap, Save, RotateCcw, ChevronDown, Plus, X, Image as ImageIcon, User, Trophy, Flame, Star, Dices, Crop as CropIcon, Check } from 'lucide-react';
+import { Upload, Shuffle, Sparkles, Zap, Save, RotateCcw, ChevronDown, Plus, X, Image as ImageIcon, User, Trophy, Flame, Star, Dices, Crop as CropIcon, Check, Snowflake, Crown, Wand2 } from 'lucide-react';
 import { useCardCreator, useCardCollection } from '@/store/store';
 import { STAT_PRESETS, TRAIT_PRESETS, POSITION_PRESETS } from '@/data/presets';
 import { Rarity, ImageFilter, Stat, RARITY_STYLES } from '@/types/schema';
 import { nanoid } from 'nanoid';
+import CardVisuals from './CardVisuals';
 
 function cn(...classes: (string | boolean | undefined)[]) { return classes.filter(Boolean).join(' '); }
 
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
   return centerCrop(makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight), mediaWidth, mediaHeight);
 }
+
+const VFX_OPTIONS = [
+  { id: 'god', name: 'God Mode', icon: Crown, color: 'from-yellow-400 to-amber-500', description: 'Golden aura & sparkles' },
+  { id: 'fire', name: 'Inferno', icon: Flame, color: 'from-orange-500 to-red-600', description: 'Flames & embers' },
+  { id: 'lightning', name: 'Thunder', icon: Zap, color: 'from-yellow-300 to-yellow-500', description: 'Lightning strikes' },
+  { id: 'glitch', name: 'Glitch', icon: Zap, color: 'from-cyan-400 to-purple-500', description: 'Cyberpunk distortion' },
+  { id: 'frozen', name: 'Frozen', icon: Snowflake, color: 'from-blue-300 to-cyan-400', description: 'Ice & frost' },
+];
 
 const ImageCropper: React.FC<{ imageSrc: string; onCropComplete: (croppedImage: string) => void; onCancel: () => void }> = ({ imageSrc, onCropComplete, onCancel }) => {
   const [crop, setCrop] = useState<Crop>();
@@ -66,12 +75,13 @@ const CardPreview: React.FC = () => {
       <div className="absolute inset-0 rounded-2xl blur-xl opacity-60" style={{ background: rarityStyle.gradient, transform: 'scale(1.1)', zIndex: -1 }} />
       <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ background: rarityStyle.gradient, boxShadow: rarityStyle.glow }}>
         <div className="absolute inset-[3px] rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+          <CardVisuals activeEffects={currentCard.activeEffects || []} />
           <div className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4 z-20">
             <div className="flex flex-col items-center">
-              <span className="text-4xl font-black" style={{ color: rarityStyle.border, textShadow: `0 0 20px ${rarityStyle.border}` }}>{overallRating || '??'}</span>
+              <span className="text-4xl font-black" style={{ color: rarityStyle.border, textShadow: '0 0 20px ' + rarityStyle.border }}>{overallRating || '??'}</span>
               <span className="text-[10px] uppercase tracking-widest text-slate-400">OVR</span>
             </div>
-            {currentCard.position && <div className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider" style={{ background: `${rarityStyle.border}20`, color: rarityStyle.border, border: `1px solid ${rarityStyle.border}40` }}>{currentCard.position}</div>}
+            {currentCard.position && <div className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider" style={{ background: rarityStyle.border + '20', color: rarityStyle.border, border: '1px solid ' + rarityStyle.border + '40' }}>{currentCard.position}</div>}
             <div className="flex items-center gap-1">
               {currentCard.rarity === 'legendary' && <Flame className="w-4 h-4 text-orange-500" />}
               {currentCard.rarity === 'holo' && <Sparkles className="w-4 h-4 text-pink-500" />}
@@ -79,14 +89,14 @@ const CardPreview: React.FC = () => {
             </div>
           </div>
           <div className="absolute top-14 left-0 right-0 h-48 overflow-hidden">
-            {currentCard.image ? <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${currentCard.image})`, filter: getFilterStyle(currentCard.imageFilter || 'normal') }} /> : <div className="w-full h-full flex items-center justify-center bg-slate-800/50"><User className="w-20 h-20 text-slate-600" /></div>}
+            {currentCard.image ? <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: 'url(' + currentCard.image + ')', filter: getFilterStyle(currentCard.imageFilter || 'normal') }} /> : <div className="w-full h-full flex items-center justify-center bg-slate-800/50"><User className="w-20 h-20 text-slate-600" /></div>}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
           </div>
-          <div className="absolute top-56 left-0 right-0 text-center px-4">
-            <h2 className="text-2xl font-black uppercase tracking-tight truncate" style={{ color: rarityStyle.border, textShadow: `0 0 10px ${rarityStyle.border}50` }}>{currentCard.name || 'PLAYER NAME'}</h2>
+          <div className="absolute top-56 left-0 right-0 text-center px-4 z-20">
+            <h2 className="text-2xl font-black uppercase tracking-tight truncate" style={{ color: rarityStyle.border, textShadow: '0 0 10px ' + rarityStyle.border + '50' }}>{currentCard.name || 'PLAYER NAME'}</h2>
             {currentCard.nickname && <p className="text-sm text-slate-400 italic">&ldquo;{currentCard.nickname}&rdquo;</p>}
           </div>
-          <div className="absolute top-[280px] left-4 right-4">
+          <div className="absolute top-[280px] left-4 right-4 z-20">
             <div className="grid grid-cols-2 gap-x-3 gap-y-2">
               {(currentCard.statBlock || []).slice(0, 6).map((stat, i) => (
                 <div key={stat.id || i} className="flex items-start justify-between gap-1">
@@ -100,11 +110,11 @@ const CardPreview: React.FC = () => {
             </div>
           </div>
           {(currentCard.traits || []).length > 0 && (
-            <div className="absolute bottom-16 left-4 right-4 flex gap-2 justify-center flex-wrap">
+            <div className="absolute bottom-16 left-4 right-4 flex gap-2 justify-center flex-wrap z-20">
               {(currentCard.traits || []).slice(0, 4).map((traitId) => { const trait = TRAIT_PRESETS.find((t) => t.id === traitId); if (!trait) return null; return <div key={traitId} className="w-8 h-8 rounded-full bg-slate-700/80 flex items-center justify-center text-lg" title={trait.name}>{trait.icon}</div>; })}
             </div>
           )}
-          {currentCard.bio && <div className="absolute bottom-4 left-4 right-4"><p className="text-[10px] text-slate-400 italic text-center" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', wordWrap: 'break-word' }}>&ldquo;{currentCard.bio}&rdquo;</p></div>}
+          {currentCard.bio && <div className="absolute bottom-4 left-4 right-4 z-20"><p className="text-[10px] text-slate-400 italic text-center" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', wordWrap: 'break-word' }}>&ldquo;{currentCard.bio}&rdquo;</p></div>}
           {(currentCard.rarity === 'holo' || currentCard.rarity === 'glitch') && <motion.div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)', backgroundSize: '200% 200%' }} animate={{ backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />}
           {currentCard.rarity === 'glitch' && <motion.div className="absolute inset-0 pointer-events-none mix-blend-screen" style={{ background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.03) 2px, rgba(0,255,255,0.03) 4px)' }} animate={{ y: [0, -4, 0] }} transition={{ duration: 0.1, repeat: Infinity }} />}
         </div>
@@ -135,7 +145,7 @@ const StatSlider: React.FC<{ stat: Stat; index: number; onUpdate: (index: number
         </div>
       </div>
       <div className="relative h-2 bg-slate-700 rounded-full overflow-hidden">
-        <motion.div className={cn('h-full rounded-full', getValueColor(stat.value))} initial={{ width: 0 }} animate={{ width: `${stat.value}%` }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+        <motion.div className={cn('h-full rounded-full', getValueColor(stat.value))} initial={{ width: 0 }} animate={{ width: stat.value + '%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
         <input type="range" min="0" max="99" value={stat.value} onChange={(e) => onUpdate(index, { value: parseInt(e.target.value) })} className="absolute inset-0 w-full opacity-0 cursor-pointer" />
       </div>
     </div>
@@ -185,6 +195,63 @@ const TraitSelector: React.FC = () => {
   );
 };
 
+const VFXLab: React.FC = () => {
+  const { currentCard, toggleEffect, clearEffects } = useCardCreator();
+  const activeEffects = currentCard.activeEffects || [];
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium text-slate-300">Visual Effects</label>
+        {activeEffects.length > 0 && (
+          <button onClick={clearEffects} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Clear all</button>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {VFX_OPTIONS.map((vfx) => {
+          const isActive = activeEffects.includes(vfx.id);
+          const Icon = vfx.icon;
+          return (
+            <button
+              key={vfx.id}
+              onClick={() => toggleEffect(vfx.id)}
+              className={cn(
+                'relative p-3 rounded-xl border transition-all text-left overflow-hidden',
+                isActive
+                  ? 'border-white/30 bg-white/10'
+                  : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
+              )}
+            >
+              {isActive && (
+                <div className={cn('absolute inset-0 opacity-20 bg-gradient-to-br', vfx.color)} />
+              )}
+              <div className="relative flex items-center gap-2">
+                <div className={cn(
+                  'w-8 h-8 rounded-lg flex items-center justify-center',
+                  isActive ? 'bg-gradient-to-br ' + vfx.color : 'bg-slate-700'
+                )}>
+                  <Icon className={cn('w-4 h-4', isActive ? 'text-white' : 'text-slate-400')} />
+                </div>
+                <div>
+                  <div className={cn('text-sm font-medium', isActive ? 'text-white' : 'text-slate-300')}>{vfx.name}</div>
+                  <div className="text-[10px] text-slate-500">{vfx.description}</div>
+                </div>
+              </div>
+              {isActive && (
+                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+      {activeEffects.length > 0 && (
+        <div className="text-xs text-slate-500 text-center">
+          {activeEffects.length} effect{activeEffects.length > 1 ? 's' : ''} active - effects can be stacked!
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function CardCreator() {
   const { mode, currentCard, setName, setNickname, setImage, setImageFilter, setRarity, setPosition, setBio, updateStat, addStat, removeStat, resetCard, randomizeQuote, loadPresetStats, finalizeCard } = useCardCreator();
   const { addCard } = useCardCollection();
@@ -201,7 +268,7 @@ export default function CardCreator() {
   const handleSave = () => { const card = finalizeCard(); addCard(card); setSaveSuccess(true); setTimeout(() => { setSaveSuccess(false); resetCard(); }, 1500); };
   const handleAddStat = () => { const randomPreset = availableStats[Math.floor(Math.random() * availableStats.length)]; addStat({ id: nanoid(), label: randomPreset.label, value: randomPreset.defaultValue || 50, icon: randomPreset.icon, category: randomPreset.category }); };
   const rarityOptions: Rarity[] = mode === 'serious' ? ['bronze', 'silver', 'gold', 'legendary'] : ['silver', 'gold', 'holo', 'glitch', 'legendary'];
-  const filterOptions: { value: ImageFilter; label: string }[] = mode === 'serious' ? [{ value: 'normal', label: 'Normal' }, { value: 'bw', label: 'Black & White' }] : [{ value: 'normal', label: 'Normal' }, { value: 'deepfried', label: '🔥 Deep Fried' }, { value: 'security', label: '📹 Security Cam' }, { value: 'vhs', label: '📼 VHS' }, { value: 'glitch', label: '⚡ Glitch' }];
+  const filterOptions: { value: ImageFilter; label: string }[] = mode === 'serious' ? [{ value: 'normal', label: 'Normal' }, { value: 'bw', label: 'Black & White' }] : [{ value: 'normal', label: 'Normal' }, { value: 'deepfried', label: 'Deep Fried' }, { value: 'security', label: 'Security Cam' }, { value: 'vhs', label: 'VHS' }, { value: 'glitch', label: 'Glitch' }];
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="fixed inset-0 overflow-hidden pointer-events-none"><div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-cyan-500/5 to-transparent rounded-full blur-3xl" /><div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-purple-500/5 to-transparent rounded-full blur-3xl" /></div>
@@ -234,6 +301,10 @@ export default function CardCreator() {
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Star className="w-5 h-5 text-cyan-400" />Rarity</h3>
               <div className="flex flex-wrap gap-2">{rarityOptions.map((rarity) => <button key={rarity} onClick={() => setRarity(rarity)} className={cn('px-4 py-2 rounded-lg text-sm font-semibold border transition-all capitalize', currentCard.rarity === rarity ? 'text-white' : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-600')} style={currentCard.rarity === rarity ? { background: RARITY_STYLES[rarity].gradient, borderColor: RARITY_STYLES[rarity].border, boxShadow: RARITY_STYLES[rarity].glow } : {}}>{rarity}</button>)}</div>
             </motion.div>
+            <motion.div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}>
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Wand2 className="w-5 h-5 text-purple-400" />VFX Lab</h3>
+              <VFXLab />
+            </motion.div>
             <motion.div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
               <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-bold text-white flex items-center gap-2"><Sparkles className="w-5 h-5 text-cyan-400" />Stats</h3><div className="flex gap-2"><button onClick={() => loadPresetStats(mode === 'serious' ? 'sports' : 'roast')} className="p-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors" title="Randomize stats"><Shuffle className="w-4 h-4" /></button>{(currentCard.statBlock || []).length < 8 && <button onClick={handleAddStat} className="p-2 bg-cyan-500/20 hover:bg-cyan-500/30 rounded-lg text-cyan-400 transition-colors" title="Add stat"><Plus className="w-4 h-4" /></button>}</div></div>
               <div className="space-y-3">{(currentCard.statBlock || []).map((stat, index) => <StatSlider key={stat.id} stat={stat} index={index} onUpdate={updateStat} onRemove={removeStat} availableStats={availableStats} />)}</div>
@@ -255,6 +326,7 @@ export default function CardCreator() {
               <div className="mt-6 flex items-center gap-6 text-sm">
                 <div className="text-center"><div className="text-2xl font-bold text-cyan-400">{(currentCard.statBlock || []).length}</div><div className="text-slate-500">Stats</div></div>
                 <div className="text-center"><div className="text-2xl font-bold text-purple-400">{(currentCard.traits || []).length}</div><div className="text-slate-500">Traits</div></div>
+                <div className="text-center"><div className="text-2xl font-bold text-pink-400">{(currentCard.activeEffects || []).length}</div><div className="text-slate-500">VFX</div></div>
                 <div className="text-center"><div className="text-2xl font-bold capitalize" style={{ color: RARITY_STYLES[currentCard.rarity || 'gold'].border }}>{currentCard.rarity || 'Gold'}</div><div className="text-slate-500">Rarity</div></div>
               </div>
             </motion.div>
