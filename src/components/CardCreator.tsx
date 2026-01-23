@@ -165,7 +165,7 @@ const TraitSelector: React.FC = () => {
       </div>
       <AnimatePresence>
         {isOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4" onClick={() => setIsOpen(false)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-950 flex items-center justify-center z-[100] p-4" onClick={() => setIsOpen(false)}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-lg max-h-[70vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 pb-4 border-b border-slate-700"><h3 className="text-xl font-bold text-white">Select Traits</h3></div><div className="flex-1 overflow-y-auto p-6 pb-2">
               {(['positive', 'negative', 'neutral', 'chaotic'] as const).map((type) => (
