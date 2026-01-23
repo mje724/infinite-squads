@@ -78,6 +78,7 @@ export interface Card {
   // Flavor
   bio: string;
   quote?: string;
+  activeEffects?: string[];
   
   // Metadata
   position?: string; // "Striker", "Project Manager", "The Enabler"

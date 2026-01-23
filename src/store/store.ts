@@ -114,6 +114,9 @@ interface CardCreatorState {
   addTrait: (traitId: string) => void;
   removeTrait: (traitId: string) => void;
   setTraits: (traitIds: string[]) => void;
+  toggleEffect: (effectId: string) => void;
+  setEffects: (effectIds: string[]) => void;
+  clearEffects: () => void;
   
   // Computed
   calculateOverallRating: () => number;
@@ -140,6 +143,7 @@ const createDefaultCard = (mode: CardMode = 'serious'): Partial<Card> => ({
   overallRating: 0,
   statBlock: [],
   traits: [],
+  activeEffects: [],
   bio: '',
   quote: '',
   position: '',
@@ -243,6 +247,20 @@ export const useCardCreator = create<CardCreatorState>()((set, get) => ({
   
   setTraits: (traitIds) => set((state) => ({
     currentCard: { ...state.currentCard, traits: traitIds }
+  })),
+
+  toggleEffect: (effectId) => set((state) => {
+    const currentEffects = state.currentCard.activeEffects || [];
+    const hasEffect = currentEffects.includes(effectId);
+    return { currentCard: { ...state.currentCard, activeEffects: hasEffect ? currentEffects.filter((id) => id !== effectId) : [...currentEffects, effectId] } };
+  }),
+
+  setEffects: (effectIds) => set((state) => ({
+    currentCard: { ...state.currentCard, activeEffects: effectIds }
+  })),
+
+  clearEffects: () => set((state) => ({
+    currentCard: { ...state.currentCard, activeEffects: [] }
   })),
   
   calculateOverallRating: () => {
