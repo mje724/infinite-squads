@@ -3,11 +3,25 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCardCollection } from '@/store/store';
 import { TRAIT_PRESETS } from '@/data/presets';
-import { RARITY_STYLES, ImageFilter } from '@/types/schema';
-import { Trash2, Users, Plus, Sparkles, Flame, Zap, User, ArrowLeft } from 'lucide-react';
+import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
+import { Trash2, Users, Plus, Sparkles, Flame,
+git add .
+git commit -m "Fix Card type import"
+git push
+git add .
+git commit -m "Fix Card type import"
+git push
+cat > src/app/my-cards/page.tsx << 'EOF'
+'use client';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useCardCollection } from '@/store/store';
+import { TRAIT_PRESETS } from '@/data/presets';
+import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
+import { Trash2, Users, Plus, Sparkles, Flame, Zap, User } from 'lucide-react';
 import Link from 'next/link';
 
-const MiniCard: React.FC<{ card: ReturnType<typeof useCardCollection>['cards'][0]; onDelete: () => void }> = ({ card, onDelete }) => {
+const MiniCard: React.FC<{ card: Card; onDelete: () => void }> = ({ card, onDelete }) => {
   const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
   const [showActions, setShowActions] = useState(false);
   const getFilterStyle = (filter: ImageFilter): string => {
