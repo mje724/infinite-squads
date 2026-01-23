@@ -1,15 +1,18 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCardCollection, useCardCreator } from '@/store/store';
 import { TRAIT_PRESETS } from '@/data/presets';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
-import { Trash2, Users, Plus, Sparkles, Flame, Zap, User, X, Edit } from 'lucide-react';
+import { Trash2, Users, Plus, Sparkles, Flame, Zap, User, X, Edit, Share2, Download, Copy, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import CardVisuals from '@/components/CardVisuals';
+import html2canvas from 'html2canvas';
 
 const FullCardView: React.FC<{ card: Card; onClose: () => void; onEdit: () => void; onDelete: () => void }> = ({ card, onClose, onEdit, onDelete }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isSharing, setIsSharing] = useState(false);
   const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
   const getFilterStyle = (filter: ImageFilter): string => {
     switch (filter) { case 'bw': return 'grayscale(100%)'; case 'deepfried': return 'contrast(150%) saturate(200%) brightness(110%)'; case 'security': return 'grayscale(80%) contrast(120%) brightness(90%)'; case 'vhs': return 'sepia(30%) contrast(110%) saturate(130%)'; case 'glitch': return 'hue-rotate(90deg) contrast(120%)'; default: return 'none'; }
@@ -18,7 +21,7 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onEdit: () => vo
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
       <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="relative" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute -top-12 right-0 p-2 text-slate-400 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
-        <div className="relative w-[320px] h-[460px]" style={{ perspective: '1000px' }}>
+        <div ref={cardRef} className="relative w-[320px] h-[460px]" style={{ perspective: '1000px' }}>
           <div className="absolute inset-0 rounded-2xl blur-xl opacity-60" style={{ background: rarityStyle.gradient, transform: 'scale(1.1)', zIndex: -1 }} />
           <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ background: rarityStyle.gradient, boxShadow: rarityStyle.glow }}>
             <div className="absolute inset-[3px] rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
@@ -61,7 +64,7 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onEdit: () => vo
           </div>
         </div>
         <div className="flex gap-3 mt-4">
-          <button onClick={onEdit} className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity"><Edit className="w-4 h-4" />Edit Card</button>
+          <button onClick={onEdit} className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity"><Edit className="w-4 h-4" />Edit</button><button onClick={async () => { if (!cardRef.current) return; setIsSharing(true); try { const canvas = await html2canvas(cardRef.current, { backgroundColor: "#0f172a", scale: 2, useCORS: true }); const link = document.createElement("a"); link.download = `${card.name}-card.png`; link.href = canvas.toDataURL("image/png"); link.click(); } catch (e) { console.error(e); } setIsSharing(false); }} disabled={isSharing} className="px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">{isSharing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}</button>
           <button onClick={onDelete} className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 transition-colors"><Trash2 className="w-5 h-5" /></button>
         </div>
       </motion.div>
