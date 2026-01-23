@@ -261,9 +261,6 @@ export const useCardCreator = create<CardCreatorState>()((set, get) => ({
   clearEffects: () => set((state) => ({
     currentCard: { ...state.currentCard, activeEffects: [] }
   })),
-  PLACEHOLDER_setTraits: (traitIds) => set((state) => ({
-    currentCard: { ...state.currentCard, traits: traitIds }
-  })),
   
   toggleEffect: (effectId) => set((state) => {
     const currentEffects = state.currentCard.activeEffects || [];
