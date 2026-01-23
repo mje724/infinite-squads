@@ -78,10 +78,6 @@ export interface Card {
   // Flavor
   bio: string;
   quote?: string;
-  activeEffects?: string[];
-  
-  // Visual Effects
-  activeEffects?: string[]; // Array of effect IDs: 'god', 'fire', 'lightning', 'glitch', 'frozen'
   
   // Metadata
   position?: string; // "Striker", "Project Manager", "The Enabler"
