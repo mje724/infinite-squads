@@ -1,29 +1,140 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCardCollection, useCardCreator } from '@/store/store';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
-import { Users, Plus, X, User, Flame, Sparkles, Zap, ArrowLeft, Trophy, Save, Trash2 } from 'lucide-react';
+import { TRAIT_PRESETS } from '@/data/presets';
+import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import CardVisuals from '@/components/CardVisuals';
 
-const LINEUP_TYPES = [
-  { id: 'starting5', name: 'Starting 5', description: 'Basketball lineup', slots: 5, layout: 'basketball' },
-  { id: '7on7', name: '7 on 7', description: 'Football lineup', slots: 7, layout: 'football7' },
-  { id: '11v11', name: '11 v 11', description: 'Soccer lineup', slots: 11, layout: 'soccer' },
+// Scenario Definitions
+const SCENARIOS = [
+  {
+    id: 'road-trip',
+    name: 'The Road Trip',
+    description: '4 friends, one car',
+    slots: 4,
+    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+    backgroundImage: '🚗',
+    roles: ['The Driver', 'The DJ', 'The Sleeper', 'The Backseat Driver'],
+    positions: [
+      { x: 25, y: 30 },  // Driver
+      { x: 75, y: 30 },  // DJ (passenger)
+      { x: 25, y: 70 },  // Back left
+      { x: 75, y: 70 },  // Back right
+    ]
+  },
+  {
+    id: 'dinner-bill',
+    name: 'The Dinner Bill',
+    description: '5 people, one check',
+    slots: 5,
+    background: 'linear-gradient(135deg, #2d132c 0%, #801336 50%, #c72c41 100%)',
+    backgroundImage: '🍽️',
+    roles: ['The Payer', 'The Moocher', 'The Math Whiz', 'The Splitter', 'The Ghost'],
+    positions: [
+      { x: 50, y: 20 },  // Head of table
+      { x: 20, y: 45 },
+      { x: 80, y: 45 },
+      { x: 30, y: 75 },
+      { x: 70, y: 75 },
+    ]
+  },
+  {
+    id: 'movie-night',
+    name: 'Movie Night',
+    description: '6 on the couch',
+    slots: 6,
+    background: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #2d2d44 100%)',
+    backgroundImage: '🎬',
+    roles: ['The Picker', 'The Critic', 'The Sleeper', 'The Talker', 'The Snacker', 'The Quoter'],
+    positions: [
+      { x: 15, y: 50 },
+      { x: 32, y: 50 },
+      { x: 50, y: 50 },
+      { x: 68, y: 50 },
+      { x: 85, y: 50 },
+      { x: 50, y: 85 },  // Floor seat
+    ]
+  },
+  {
+    id: 'group-project',
+    name: 'Group Project',
+    description: '4 students, 1 grade',
+    slots: 4,
+    background: 'linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%)',
+    backgroundImage: '📚',
+    roles: ['The Carrier', 'The Ghost', 'The Editor', 'The Presenter'],
+    positions: [
+      { x: 50, y: 25 },
+      { x: 20, y: 55 },
+      { x: 80, y: 55 },
+      { x: 50, y: 80 },
+    ]
+  },
+  {
+    id: 'wedding',
+    name: 'Wedding Party',
+    description: '8 in the bridal party',
+    slots: 8,
+    background: 'linear-gradient(135deg, #fdf6f0 0%, #f5e6d3 50%, #e8d4c4 100%)',
+    backgroundImage: '💒',
+    roles: ['The Bride', 'The Groom', 'Best Man', 'Maid of Honor', 'Bridesmaid', 'Bridesmaid', 'Groomsman', 'Groomsman'],
+    positions: [
+      { x: 40, y: 20 },  // Bride
+      { x: 60, y: 20 },  // Groom
+      { x: 75, y: 45 },  // Best Man
+      { x: 25, y: 45 },  // Maid of Honor
+      { x: 15, y: 70 },
+      { x: 35, y: 70 },
+      { x: 65, y: 70 },
+      { x: 85, y: 70 },
+    ]
+  },
+  {
+    id: 'zombie',
+    name: 'Zombie Apocalypse',
+    description: '5 survivors',
+    slots: 5,
+    background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%)',
+    backgroundImage: '🧟',
+    roles: ['The Leader', 'The Medic', 'The Muscle', 'The Brains', 'First to Die'],
+    positions: [
+      { x: 50, y: 25 },
+      { x: 25, y: 50 },
+      { x: 75, y: 50 },
+      { x: 35, y: 78 },
+      { x: 65, y: 78 },
+    ]
+  },
 ];
 
-const MiniCardSlot: React.FC<{ card: Card | null; onClick: () => void; onRemove?: () => void; label?: string }> = ({ card, onClick, onRemove, label }) => {
+type Connection = {
+  from: number;
+  to: number;
+  type: 'good' | 'bad';
+};
+
+const MiniCardSlot: React.FC<{ 
+  card: Card | null; 
+  onClick: () => void; 
+  onRemove?: () => void; 
+  label?: string;
+  isConnecting?: boolean;
+  isSelected?: boolean;
+}> = ({ card, onClick, onRemove, label, isConnecting, isSelected }) => {
   if (!card) {
     return (
       <motion.div 
         whileHover={{ scale: 1.05 }} 
         onClick={onClick}
-        className="w-20 h-28 md:w-24 md:h-32 border-2 border-dashed border-slate-600 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-cyan-500 hover:bg-cyan-500/10 transition-all"
+        className={`w-20 h-28 md:w-24 md:h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all ${
+          isConnecting ? 'border-cyan-500 bg-cyan-500/20' : 'border-slate-600 hover:border-cyan-500 hover:bg-cyan-500/10'
+        }`}
       >
         <Plus className="w-6 h-6 text-slate-500" />
-        {label && <span className="text-[10px] text-slate-500 mt-1">{label}</span>}
+        {label && <span className="text-[10px] text-slate-400 mt-1 text-center px-1">{label}</span>}
       </motion.div>
     );
   }
@@ -34,7 +145,11 @@ const MiniCardSlot: React.FC<{ card: Card | null; onClick: () => void; onRemove?
   };
 
   return (
-    <motion.div whileHover={{ scale: 1.05 }} className="relative w-20 h-28 md:w-24 md:h-32 cursor-pointer group" onClick={onClick}>
+    <motion.div 
+      whileHover={{ scale: 1.05 }} 
+      className={`relative w-20 h-28 md:w-24 md:h-32 cursor-pointer group ${isSelected ? 'ring-2 ring-cyan-400 ring-offset-2 ring-offset-slate-900' : ''}`} 
+      onClick={onClick}
+    >
       <div className="absolute inset-0 rounded-xl blur-md opacity-50" style={{ background: rarityStyle.gradient }} />
       <div className="relative w-full h-full rounded-xl overflow-hidden" style={{ background: rarityStyle.gradient }}>
         <div className="absolute inset-[2px] rounded-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
@@ -47,16 +162,15 @@ const MiniCardSlot: React.FC<{ card: Card | null; onClick: () => void; onRemove?
           </div>
           <div className="absolute bottom-1 left-0 right-0 text-center px-1">
             <h3 className="text-[9px] font-bold uppercase truncate" style={{ color: rarityStyle.border }}>{card.name}</h3>
-            {card.position && <p className="text-[8px] text-slate-400">{card.position}</p>}
           </div>
         </div>
       </div>
-      {onRemove && (
-        <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+      {onRemove && !isConnecting && (
+        <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
           <X className="w-3 h-3 text-white" />
         </button>
       )}
-      {label && <div className="absolute -bottom-5 left-0 right-0 text-center"><span className="text-[10px] text-slate-400">{label}</span></div>}
+      {label && <div className="absolute -bottom-6 left-0 right-0 text-center"><span className="text-[10px] text-slate-300 font-medium">{label}</span></div>}
     </motion.div>
   );
 };
@@ -109,62 +223,102 @@ const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onCl
   );
 };
 
-const BasketballLayout: React.FC<{ lineup: (Card | null)[]; onSlotClick: (index: number) => void; onRemove: (index: number) => void }> = ({ lineup, onSlotClick, onRemove }) => {
-  const positions = ['PG', 'SG', 'SF', 'PF', 'C'];
-  return (
-    <div className="relative w-full max-w-md mx-auto aspect-[3/4] bg-gradient-to-b from-orange-900/20 to-orange-800/10 rounded-2xl border border-orange-500/20 p-4">
-      <div className="absolute inset-4 border-2 border-orange-500/30 rounded-xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border-2 border-orange-500/30 rounded-full" />
-      <div className="relative h-full flex flex-col justify-between py-4">
-        <div className="flex justify-center"><MiniCardSlot card={lineup[4]} onClick={() => onSlotClick(4)} onRemove={lineup[4] ? () => onRemove(4) : undefined} label={positions[4]} /></div>
-        <div className="flex justify-around px-4"><MiniCardSlot card={lineup[2]} onClick={() => onSlotClick(2)} onRemove={lineup[2] ? () => onRemove(2) : undefined} label={positions[2]} /><MiniCardSlot card={lineup[3]} onClick={() => onSlotClick(3)} onRemove={lineup[3] ? () => onRemove(3) : undefined} label={positions[3]} /></div>
-        <div className="flex justify-around px-8"><MiniCardSlot card={lineup[0]} onClick={() => onSlotClick(0)} onRemove={lineup[0] ? () => onRemove(0) : undefined} label={positions[0]} /><MiniCardSlot card={lineup[1]} onClick={() => onSlotClick(1)} onRemove={lineup[1] ? () => onRemove(1) : undefined} label={positions[1]} /></div>
-      </div>
-    </div>
-  );
-};
+// SVG Connection Lines Component
+const ConnectionLines: React.FC<{
+  connections: Connection[];
+  positions: { x: number; y: number }[];
+  containerRef: React.RefObject<HTMLDivElement>;
+  onConnectionClick: (index: number) => void;
+}> = ({ connections, positions, containerRef, onConnectionClick }) => {
+  const [dims, setDims] = useState({ width: 0, height: 0 });
 
-const Football7Layout: React.FC<{ lineup: (Card | null)[]; onSlotClick: (index: number) => void; onRemove: (index: number) => void }> = ({ lineup, onSlotClick, onRemove }) => {
-  const positions = ['QB', 'RB', 'WR', 'WR', 'WR', 'TE', 'C'];
-  return (
-    <div className="relative w-full max-w-lg mx-auto aspect-[4/3] bg-gradient-to-b from-green-900/20 to-green-800/10 rounded-2xl border border-green-500/20 p-4">
-      <div className="absolute inset-x-4 top-1/2 h-0.5 bg-white/20" />
-      <div className="relative h-full flex flex-col justify-between py-2">
-        <div className="flex justify-around"><MiniCardSlot card={lineup[2]} onClick={() => onSlotClick(2)} onRemove={lineup[2] ? () => onRemove(2) : undefined} label={positions[2]} /><MiniCardSlot card={lineup[3]} onClick={() => onSlotClick(3)} onRemove={lineup[3] ? () => onRemove(3) : undefined} label={positions[3]} /><MiniCardSlot card={lineup[4]} onClick={() => onSlotClick(4)} onRemove={lineup[4] ? () => onRemove(4) : undefined} label={positions[4]} /></div>
-        <div className="flex justify-around px-8"><MiniCardSlot card={lineup[5]} onClick={() => onSlotClick(5)} onRemove={lineup[5] ? () => onRemove(5) : undefined} label={positions[5]} /><MiniCardSlot card={lineup[1]} onClick={() => onSlotClick(1)} onRemove={lineup[1] ? () => onRemove(1) : undefined} label={positions[1]} /></div>
-        <div className="flex justify-center gap-8"><MiniCardSlot card={lineup[0]} onClick={() => onSlotClick(0)} onRemove={lineup[0] ? () => onRemove(0) : undefined} label={positions[0]} /><MiniCardSlot card={lineup[6]} onClick={() => onSlotClick(6)} onRemove={lineup[6] ? () => onRemove(6) : undefined} label={positions[6]} /></div>
-      </div>
-    </div>
-  );
-};
+  useEffect(() => {
+    if (containerRef.current) {
+      const updateDims = () => {
+        setDims({
+          width: containerRef.current?.offsetWidth || 0,
+          height: containerRef.current?.offsetHeight || 0
+        });
+      };
+      updateDims();
+      window.addEventListener('resize', updateDims);
+      return () => window.removeEventListener('resize', updateDims);
+    }
+  }, [containerRef]);
 
-const SoccerLayout: React.FC<{ lineup: (Card | null)[]; onSlotClick: (index: number) => void; onRemove: (index: number) => void }> = ({ lineup, onSlotClick, onRemove }) => {
-  const positions = ['GK', 'LB', 'CB', 'CB', 'RB', 'LM', 'CM', 'CM', 'RM', 'ST', 'ST'];
+  if (dims.width === 0) return null;
+
   return (
-    <div className="relative w-full max-w-lg mx-auto aspect-[3/4] bg-gradient-to-b from-green-900/20 to-green-800/10 rounded-2xl border border-green-500/20 p-2">
-      <div className="absolute inset-x-2 top-1/2 h-0.5 bg-white/20" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-2 border-white/20 rounded-full" />
-      <div className="relative h-full flex flex-col justify-between py-2">
-        <div className="flex justify-center gap-4"><MiniCardSlot card={lineup[9]} onClick={() => onSlotClick(9)} onRemove={lineup[9] ? () => onRemove(9) : undefined} label={positions[9]} /><MiniCardSlot card={lineup[10]} onClick={() => onSlotClick(10)} onRemove={lineup[10] ? () => onRemove(10) : undefined} label={positions[10]} /></div>
-        <div className="flex justify-around"><MiniCardSlot card={lineup[5]} onClick={() => onSlotClick(5)} onRemove={lineup[5] ? () => onRemove(5) : undefined} label={positions[5]} /><MiniCardSlot card={lineup[6]} onClick={() => onSlotClick(6)} onRemove={lineup[6] ? () => onRemove(6) : undefined} label={positions[6]} /><MiniCardSlot card={lineup[7]} onClick={() => onSlotClick(7)} onRemove={lineup[7] ? () => onRemove(7) : undefined} label={positions[7]} /><MiniCardSlot card={lineup[8]} onClick={() => onSlotClick(8)} onRemove={lineup[8] ? () => onRemove(8) : undefined} label={positions[8]} /></div>
-        <div className="flex justify-around px-4"><MiniCardSlot card={lineup[1]} onClick={() => onSlotClick(1)} onRemove={lineup[1] ? () => onRemove(1) : undefined} label={positions[1]} /><MiniCardSlot card={lineup[2]} onClick={() => onSlotClick(2)} onRemove={lineup[2] ? () => onRemove(2) : undefined} label={positions[2]} /><MiniCardSlot card={lineup[3]} onClick={() => onSlotClick(3)} onRemove={lineup[3] ? () => onRemove(3) : undefined} label={positions[3]} /><MiniCardSlot card={lineup[4]} onClick={() => onSlotClick(4)} onRemove={lineup[4] ? () => onRemove(4) : undefined} label={positions[4]} /></div>
-        <div className="flex justify-center"><MiniCardSlot card={lineup[0]} onClick={() => onSlotClick(0)} onRemove={lineup[0] ? () => onRemove(0) : undefined} label={positions[0]} /></div>
-      </div>
-    </div>
+    <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }}>
+      {connections.map((conn, idx) => {
+        const fromPos = positions[conn.from];
+        const toPos = positions[conn.to];
+        if (!fromPos || !toPos) return null;
+        
+        const x1 = (fromPos.x / 100) * dims.width;
+        const y1 = (fromPos.y / 100) * dims.height;
+        const x2 = (toPos.x / 100) * dims.width;
+        const y2 = (toPos.y / 100) * dims.height;
+
+        return (
+          <g key={idx} style={{ pointerEvents: 'auto' }} onClick={() => onConnectionClick(idx)}>
+            <line
+              x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke={conn.type === 'good' ? '#22c55e' : '#ef4444'}
+              strokeWidth={4}
+              strokeLinecap="round"
+              className="cursor-pointer hover:opacity-70 transition-opacity"
+            />
+            <line
+              x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke="transparent"
+              strokeWidth={20}
+              className="cursor-pointer"
+            />
+          </g>
+        );
+      })}
+    </svg>
   );
 };
 
 export default function SquadPage() {
   const { cards } = useCardCollection();
   const router = useRouter();
-  const [selectedType, setSelectedType] = useState(LINEUP_TYPES[0]);
-  const [lineup, setLineup] = useState<(Card | null)[]>(Array(11).fill(null));
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const [selectedScenario, setSelectedScenario] = useState(SCENARIOS[0]);
+  const [lineup, setLineup] = useState<(Card | null)[]>(Array(8).fill(null));
   const [showPicker, setShowPicker] = useState(false);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
+  
+  // Connection state
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [isConnectMode, setIsConnectMode] = useState(false);
+  const [connectingFrom, setConnectingFrom] = useState<number | null>(null);
 
   const handleSlotClick = (index: number) => {
-    setActiveSlot(index);
-    setShowPicker(true);
+    if (isConnectMode) {
+      // Connection mode logic
+      if (lineup[index]) {
+        if (connectingFrom === null) {
+          setConnectingFrom(index);
+        } else if (connectingFrom !== index) {
+          // Create connection
+          const existingIdx = connections.findIndex(
+            c => (c.from === connectingFrom && c.to === index) || (c.from === index && c.to === connectingFrom)
+          );
+          if (existingIdx === -1) {
+            setConnections([...connections, { from: connectingFrom, to: index, type: 'good' }]);
+          }
+          setConnectingFrom(null);
+        }
+      }
+    } else {
+      // Normal mode - open picker
+      setActiveSlot(index);
+      setShowPicker(true);
+    }
   };
 
   const handleSelectCard = (card: Card) => {
@@ -181,6 +335,41 @@ export default function SquadPage() {
     const newLineup = [...lineup];
     newLineup[index] = null;
     setLineup(newLineup);
+    // Remove connections involving this card
+    setConnections(connections.filter(c => c.from !== index && c.to !== index));
+  };
+
+  const handleConnectionClick = (index: number) => {
+    const newConnections = [...connections];
+    newConnections[index] = {
+      ...newConnections[index],
+      type: newConnections[index].type === 'good' ? 'bad' : 'good'
+    };
+    setConnections(newConnections);
+  };
+
+  const handleAutoConnect = () => {
+    const newConnections: Connection[] = [];
+    const filledSlots = lineup.map((card, idx) => card ? idx : -1).filter(idx => idx !== -1);
+    
+    for (let i = 0; i < filledSlots.length; i++) {
+      for (let j = i + 1; j < filledSlots.length; j++) {
+        const cardA = lineup[filledSlots[i]];
+        const cardB = lineup[filledSlots[j]];
+        if (!cardA || !cardB) continue;
+
+        // Check for shared traits
+        const traitsA = cardA.traits || [];
+        const traitsB = cardB.traits || [];
+        const sharedTraits = traitsA.filter(t => traitsB.includes(t));
+        
+        if (sharedTraits.length > 0) {
+          newConnections.push({ from: filledSlots[i], to: filledSlots[j], type: 'good' });
+        }
+      }
+    }
+    
+    setConnections(newConnections);
   };
 
   const handleCreateNew = () => {
@@ -189,29 +378,38 @@ export default function SquadPage() {
   };
 
   const handleClearLineup = () => {
-    setLineup(Array(11).fill(null));
+    setLineup(Array(8).fill(null));
+    setConnections([]);
   };
 
-  const filledSlots = lineup.slice(0, selectedType.slots).filter(Boolean).length;
-  const totalRating = lineup.slice(0, selectedType.slots).filter(Boolean).reduce((sum, card) => sum + (card?.overallRating || 0), 0);
-  const avgRating = filledSlots > 0 ? Math.round(totalRating / filledSlots) : 0;
+  const handleScenarioChange = (scenario: typeof SCENARIOS[0]) => {
+    setSelectedScenario(scenario);
+    setLineup(Array(8).fill(null));
+    setConnections([]);
+    setIsConnectMode(false);
+    setConnectingFrom(null);
+  };
+
+  const filledSlots = lineup.slice(0, selectedScenario.slots).filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-green-500/5 to-transparent rounded-full blur-3xl" />
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-cyan-500/5 to-transparent rounded-full blur-3xl" />
+    <div className="min-h-screen" style={{ background: selectedScenario.background }}>
+      {/* Background Emoji */}
+      <div className="fixed inset-0 flex items-center justify-center pointer-events-none opacity-10 text-[300px]">
+        {selectedScenario.backgroundImage}
       </div>
+
       <div className="relative max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-green-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Squad Builder</h1>
-            <p className="text-slate-400 text-sm">Build your ultimate lineup</p>
+            <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Scenario Builder</h1>
+            <p className="text-slate-400 text-sm">Build your squad for any situation</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             {filledSlots > 0 && (
-              <button onClick={handleClearLineup} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-colors">
-                <Trash2 className="w-4 h-4" />
+              <button onClick={handleClearLineup} className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 transition-colors">
+                <Trash2 className="w-5 h-5" />
               </button>
             )}
             <Link href="/my-cards" className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 text-sm font-medium transition-colors">
@@ -220,48 +418,126 @@ export default function SquadPage() {
           </div>
         </div>
 
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-          {LINEUP_TYPES.map((type) => (
+        {/* Scenario Selector */}
+        <div className="mb-6">
+          <label className="text-sm text-slate-400 mb-2 block">Choose Scenario</label>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {SCENARIOS.map((scenario) => (
+              <button
+                key={scenario.id}
+                onClick={() => handleScenarioChange(scenario)}
+                className={`px-4 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all flex-shrink-0 ${
+                  selectedScenario.id === scenario.id
+                    ? 'bg-white/20 text-white border-2 border-white/50'
+                    : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{scenario.backgroundImage}</span>
+                  <div className="text-left">
+                    <div>{scenario.name}</div>
+                    <div className="text-[10px] opacity-70">{scenario.description}</div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Connection Controls */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => { setIsConnectMode(!isConnectMode); setConnectingFrom(null); }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              isConnectMode
+                ? 'bg-cyan-500 text-white'
+                : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white'
+            }`}
+          >
+            {isConnectMode ? <Unlink className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+            {isConnectMode ? 'Done Connecting' : 'Draw Connections'}
+          </button>
+          <button
+            onClick={handleAutoConnect}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-400 hover:text-white text-sm font-medium transition-colors"
+          >
+            <Sparkles className="w-4 h-4" />
+            Auto-Connect
+          </button>
+          {connections.length > 0 && (
             <button
-              key={type.id}
-              onClick={() => { setSelectedType(type); setLineup(Array(11).fill(null)); }}
-              className={`px-4 py-3 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
-                selectedType.id === type.id
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
-                  : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:text-white'
-              }`}
+              onClick={() => setConnections([])}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-400 hover:text-white text-sm font-medium transition-colors"
             >
-              <div>{type.name}</div>
-              <div className="text-[10px] opacity-70">{type.description}</div>
+              Clear Lines
             </button>
+          )}
+        </div>
+
+        {isConnectMode && (
+          <div className="mb-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-300 text-sm">
+            {connectingFrom !== null 
+              ? `Click another card to connect, or click same card to cancel`
+              : `Click a card to start a connection. Click existing lines to toggle Good (green) / Bad (red)`
+            }
+          </div>
+        )}
+
+        {/* Scenario Board */}
+        <div 
+          ref={containerRef}
+          className="relative bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 mb-6"
+          style={{ height: '500px' }}
+        >
+          <ConnectionLines 
+            connections={connections}
+            positions={selectedScenario.positions}
+            containerRef={containerRef}
+            onConnectionClick={handleConnectionClick}
+          />
+          
+          {selectedScenario.positions.slice(0, selectedScenario.slots).map((pos, index) => (
+            <div
+              key={index}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+            >
+              <MiniCardSlot
+                card={lineup[index]}
+                onClick={() => handleSlotClick(index)}
+                onRemove={lineup[index] ? () => handleRemoveCard(index) : undefined}
+                label={selectedScenario.roles[index]}
+                isConnecting={isConnectMode}
+                isSelected={connectingFrom === index}
+              />
+            </div>
           ))}
         </div>
 
-        <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 mb-6">
-          {selectedType.layout === 'basketball' && <BasketballLayout lineup={lineup} onSlotClick={handleSlotClick} onRemove={handleRemoveCard} />}
-          {selectedType.layout === 'football7' && <Football7Layout lineup={lineup} onSlotClick={handleSlotClick} onRemove={handleRemoveCard} />}
-          {selectedType.layout === 'soccer' && <SoccerLayout lineup={lineup} onSlotClick={handleSlotClick} onRemove={handleRemoveCard} />}
-        </div>
-
+        {/* Stats Bar */}
         <div className="flex items-center justify-between bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-4">
           <div className="flex gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-cyan-400">{filledSlots}/{selectedType.slots}</div>
-              <div className="text-xs text-slate-500">Players</div>
+              <div className="text-2xl font-bold text-cyan-400">{filledSlots}/{selectedScenario.slots}</div>
+              <div className="text-xs text-slate-500">Filled</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">{avgRating}</div>
-              <div className="text-xs text-slate-500">Avg Rating</div>
+              <div className="text-2xl font-bold text-green-400">{connections.filter(c => c.type === 'good').length}</div>
+              <div className="text-xs text-slate-500">Good Links</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">{totalRating}</div>
-              <div className="text-xs text-slate-500">Total</div>
+              <div className="text-2xl font-bold text-red-400">{connections.filter(c => c.type === 'bad').length}</div>
+              <div className="text-xs text-slate-500">Bad Links</div>
             </div>
           </div>
-          <button disabled={filledSlots < selectedType.slots} className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${filledSlots === selectedType.slots ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:opacity-90' : 'bg-slate-700 text-slate-500 cursor-not-allowed'}`}>
+          <div className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold ${
+            filledSlots === selectedScenario.slots 
+              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+              : 'bg-slate-700 text-slate-500'
+          }`}>
             <Trophy className="w-5 h-5" />
-            {filledSlots === selectedType.slots ? 'Squad Complete!' : `Need ${selectedType.slots - filledSlots} more`}
-          </button>
+            {filledSlots === selectedScenario.slots ? 'Squad Complete!' : `Need ${selectedScenario.slots - filledSlots} more`}
+          </div>
         </div>
       </div>
 
