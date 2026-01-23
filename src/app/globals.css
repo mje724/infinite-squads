@@ -463,3 +463,53 @@ input[type='range']::-moz-range-thumb {
 
 @keyframes ice-shimmer { 0% { background-position: -200% -200%; } 100% { background-position: 200% 200%; } }
 .animate-ice-shimmer { background: linear-gradient(135deg, transparent 0%, rgba(200, 230, 255, 0.3) 25%, transparent 50%, rgba(180, 220, 255, 0.2) 75%, transparent 100%); background-size: 200% 200%; animation: ice-shimmer 4s linear infinite; }
+
+/* Enhanced VFX animations */
+@keyframes lightning-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+  25%, 75% { opacity: 0.9; }
+}
+
+@keyframes heat-wave {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-5px) scaleY(1.02); }
+}
+
+@keyframes god-rays {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes snowflake-1 {
+  0%, 100% { opacity: 0.4; transform: translateY(0) rotate(0deg); }
+  50% { opacity: 0.8; transform: translateY(10px) rotate(180deg); }
+}
+@keyframes snowflake-2 {
+  0%, 100% { opacity: 0.5; transform: translateY(0) rotate(0deg); }
+  50% { opacity: 0.9; transform: translateY(15px) rotate(-180deg); }
+}
+@keyframes snowflake-3 {
+  0%, 100% { opacity: 0.3; transform: translateY(0) rotate(0deg); }
+  50% { opacity: 0.7; transform: translateY(8px) rotate(180deg); }
+}
+
+@keyframes noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(5%, 5%); }
+  30% { transform: translate(-5%, 5%); }
+  40% { transform: translate(5%, -5%); }
+  50% { transform: translate(-5%, 0); }
+  60% { transform: translate(5%, 0); }
+  70% { transform: translate(0, 5%); }
+  80% { transform: translate(0, -5%); }
+  90% { transform: translate(5%, 5%); }
+}
+
+.animate-heat-wave { animation: heat-wave 2s ease-in-out infinite; }
+.animate-god-rays { animation: god-rays 20s linear infinite; }
+.animate-snowflake-1 { animation: snowflake-1 3s ease-in-out infinite; color: rgba(200, 230, 255, 0.7); }
+.animate-snowflake-2 { animation: snowflake-2 4s ease-in-out infinite 0.5s; color: rgba(180, 220, 255, 0.6); }
+.animate-snowflake-3 { animation: snowflake-3 3.5s ease-in-out infinite 1s; color: rgba(150, 200, 255, 0.5); }
+.animate-noise { animation: noise 0.5s steps(10) infinite; }
