@@ -176,8 +176,8 @@ const TraitSelector: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setIsOpen(false)}>
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-bold text-white mb-4">Select Traits</h3>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 pb-4 border-b border-slate-700"><h3 className="text-xl font-bold text-white">Select Traits</h3></div><div className="flex-1 overflow-y-auto p-6">
               {(['positive', 'negative', 'neutral', 'chaotic'] as const).map((type) => (
                 <div key={type} className="mb-4">
                   <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-2">{type}</h4>
@@ -186,7 +186,7 @@ const TraitSelector: React.FC = () => {
                   </div>
                 </div>
               ))}
-              <button onClick={() => setIsOpen(false)} className="w-full mt-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">Done</button>
+              </div><div className="p-6 pt-4 border-t border-slate-700"><button onClick={() => setIsOpen(false)} className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity">Done</button></div>
             </motion.div>
           </motion.div>
         )}
@@ -259,7 +259,7 @@ export default function CardCreator() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
-  const availableStats = mode === 'serious' ? STAT_PRESETS.filter((s) => s.category === 'sports' || s.category === 'office') : STAT_PRESETS.filter((s) => s.category === 'roast' || s.category === 'party');
+  const availableStats = STAT_PRESETS;
   const positions = [...(POSITION_PRESETS.sports || []), ...(POSITION_PRESETS.office || []), ...(POSITION_PRESETS.party || []), ...(POSITION_PRESETS.roast || [])];
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (event) => { setImageToCrop(event.target?.result as string); setShowCropper(true); }; reader.readAsDataURL(file); } }, []);
   const handleCropComplete = useCallback((croppedImage: string) => { setImage(croppedImage); setShowCropper(false); setImageToCrop(null); }, [setImage]);
