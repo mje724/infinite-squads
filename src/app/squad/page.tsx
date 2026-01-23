@@ -11,6 +11,62 @@ import { useRouter } from 'next/navigation';
 // Scenario Definitions
 const SCENARIOS = [
   {
+    id: 'starting5',
+    name: 'Starting 5',
+    description: 'Basketball lineup',
+    slots: 5,
+    background: 'linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #ea580c 100%)',
+    backgroundImage: '🏀',
+    roles: ['Point Guard', 'Shooting Guard', 'Small Forward', 'Power Forward', 'Center'],
+    positions: [
+      { x: 50, y: 85 },
+      { x: 20, y: 65 },
+      { x: 80, y: 65 },
+      { x: 30, y: 35 },
+      { x: 70, y: 35 },
+    ]
+  },
+  {
+    id: 'soccer11',
+    name: '11v11 Soccer',
+    description: '4-3-3 Formation',
+    slots: 11,
+    background: 'linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%)',
+    backgroundImage: '⚽',
+    roles: ['GK', 'LB', 'CB', 'CB', 'RB', 'CDM', 'CM', 'CM', 'LW', 'ST', 'RW'],
+    positions: [
+      { x: 50, y: 90 },
+      { x: 15, y: 70 },
+      { x: 38, y: 75 },
+      { x: 62, y: 75 },
+      { x: 85, y: 70 },
+      { x: 50, y: 55 },
+      { x: 30, y: 45 },
+      { x: 70, y: 45 },
+      { x: 15, y: 25 },
+      { x: 50, y: 15 },
+      { x: 85, y: 25 },
+    ]
+  },
+  {
+    id: 'football7',
+    name: '7on7 Football',
+    description: 'Offense lineup',
+    slots: 7,
+    background: 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #3b82f6 100%)',
+    backgroundImage: '🏈',
+    roles: ['QB', 'RB', 'WR', 'WR', 'WR', 'TE', 'Center'],
+    positions: [
+      { x: 50, y: 70 },
+      { x: 50, y: 85 },
+      { x: 10, y: 30 },
+      { x: 50, y: 30 },
+      { x: 90, y: 30 },
+      { x: 75, y: 55 },
+      { x: 25, y: 55 },
+    ]
+  },
+  {
     id: 'road-trip',
     name: 'The Road Trip',
     description: '4 friends, one car',
