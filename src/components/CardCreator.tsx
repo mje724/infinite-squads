@@ -201,7 +201,7 @@ const CardPreview: React.FC = () => {
           {/* Traits Row */}
           {(currentCard.traits || []).length > 0 && (
             <div className="absolute bottom-16 left-4 right-4 flex gap-2 justify-center">
-              {currentCard.traits.slice(0, 4).map((traitId) => {
+              {(currentCard.traits || []).slice(0, 4).map((traitId) => {
                 const trait = TRAIT_PRESETS.find((t) => t.id === traitId);
                 if (!trait) return null;
                 return (
