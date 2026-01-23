@@ -3,26 +3,17 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import { Upload, Shuffle, Sparkles, Zap, Save, RotateCcw, ChevronDown, Plus, X, Image as ImageIcon, User, Trophy, Flame, Star, Dices, Crop as CropIcon, Check, Snowflake, Crown, Wand2 } from 'lucide-react';
+import { Upload, Shuffle, Sparkles, Zap, Save, RotateCcw, ChevronDown, Plus, X, Image as ImageIcon, User, Trophy, Flame, Star, Dices, Crop as CropIcon, Check } from 'lucide-react';
 import { useCardCreator, useCardCollection } from '@/store/store';
 import { STAT_PRESETS, TRAIT_PRESETS, POSITION_PRESETS } from '@/data/presets';
 import { Rarity, ImageFilter, Stat, RARITY_STYLES } from '@/types/schema';
 import { nanoid } from 'nanoid';
-import CardVisuals from './CardVisuals';
 
 function cn(...classes: (string | boolean | undefined)[]) { return classes.filter(Boolean).join(' '); }
 
 function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
   return centerCrop(makeAspectCrop({ unit: '%', width: 90 }, aspect, mediaWidth, mediaHeight), mediaWidth, mediaHeight);
 }
-
-const VFX_OPTIONS = [
-  { id: 'god', name: 'God Mode', icon: Crown, color: 'from-yellow-400 to-amber-500', description: 'Golden aura & sparkles' },
-  { id: 'fire', name: 'Inferno', icon: Flame, color: 'from-orange-500 to-red-600', description: 'Flames & embers' },
-  { id: 'lightning', name: 'Thunder', icon: Zap, color: 'from-yellow-300 to-yellow-500', description: 'Lightning strikes' },
-  { id: 'glitch', name: 'Glitch', icon: Zap, color: 'from-cyan-400 to-purple-500', description: 'Cyberpunk distortion' },
-  { id: 'frozen', name: 'Frozen', icon: Snowflake, color: 'from-blue-300 to-cyan-400', description: 'Ice & frost' },
-];
 
 const ImageCropper: React.FC<{ imageSrc: string; onCropComplete: (croppedImage: string) => void; onCancel: () => void }> = ({ imageSrc, onCropComplete, onCancel }) => {
   const [crop, setCrop] = useState<Crop>();
@@ -75,7 +66,6 @@ const CardPreview: React.FC = () => {
       <div className="absolute inset-0 rounded-2xl blur-xl opacity-60" style={{ background: rarityStyle.gradient, transform: 'scale(1.1)', zIndex: -1 }} />
       <div className="relative w-full h-full rounded-2xl overflow-hidden" style={{ background: rarityStyle.gradient, boxShadow: rarityStyle.glow }}>
         <div className="absolute inset-[3px] rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
-          <CardVisuals activeEffects={currentCard.activeEffects || []} />
           <div className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-4 z-20">
             <div className="flex flex-col items-center">
               <span className="text-4xl font-black" style={{ color: rarityStyle.border, textShadow: '0 0 20px ' + rarityStyle.border }}>{overallRating || '??'}</span>
@@ -133,7 +123,7 @@ const StatSlider: React.FC<{ stat: Stat; index: number; onUpdate: (index: number
           <button onClick={() => setIsSelectOpen(!isSelectOpen)} className="flex items-center gap-2 text-sm font-medium text-slate-200 hover:text-white transition-colors"><span className="text-lg">{stat.icon}</span><span>{stat.label}</span><ChevronDown className="w-3 h-3 text-slate-400" /></button>
           <AnimatePresence>
             {isSelectOpen && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-full left-0 mt-1 w-56 max-h-48 overflow-y-auto bg-slate-900 rounded-lg border border-slate-700 shadow-xl z-50">
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute top-full left-0 mt-1 w-56 max-h-32 overflow-y-auto bg-slate-900 rounded-lg border border-slate-700 shadow-xl z-50">
                 {availableStats.map((preset) => <button key={preset.id} onClick={() => { onUpdate(index, { label: preset.label, icon: preset.icon, category: preset.category }); setIsSelectOpen(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left"><span>{preset.icon}</span><span>{preset.label}</span><span className="ml-auto text-xs text-slate-500">{preset.category}</span></button>)}
               </motion.div>
             )}
@@ -195,62 +185,6 @@ const TraitSelector: React.FC = () => {
   );
 };
 
-const VFXLab: React.FC = () => {
-  const { currentCard, toggleEffect, clearEffects } = useCardCreator();
-  const activeEffects = currentCard.activeEffects || [];
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-300">Visual Effects</label>
-        {activeEffects.length > 0 && (
-          <button onClick={clearEffects} className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Clear all</button>
-        )}
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {VFX_OPTIONS.map((vfx) => {
-          const isActive = activeEffects.includes(vfx.id);
-          const Icon = vfx.icon;
-          return (
-            <button
-              key={vfx.id}
-              onClick={() => toggleEffect(vfx.id)}
-              className={cn(
-                'relative p-3 rounded-xl border transition-all text-left overflow-hidden',
-                isActive
-                  ? 'border-white/30 bg-white/10'
-                  : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
-              )}
-            >
-              {isActive && (
-                <div className={cn('absolute inset-0 opacity-20 bg-gradient-to-br', vfx.color)} />
-              )}
-              <div className="relative flex items-center gap-2">
-                <div className={cn(
-                  'w-8 h-8 rounded-lg flex items-center justify-center',
-                  isActive ? 'bg-gradient-to-br ' + vfx.color : 'bg-slate-700'
-                )}>
-                  <Icon className={cn('w-4 h-4', isActive ? 'text-white' : 'text-slate-400')} />
-                </div>
-                <div>
-                  <div className={cn('text-sm font-medium', isActive ? 'text-white' : 'text-slate-300')}>{vfx.name}</div>
-                  <div className="text-[10px] text-slate-500">{vfx.description}</div>
-                </div>
-              </div>
-              {isActive && (
-                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-      {activeEffects.length > 0 && (
-        <div className="text-xs text-slate-500 text-center">
-          {activeEffects.length} effect{activeEffects.length > 1 ? 's' : ''} active - effects can be stacked!
-        </div>
-      )}
-    </div>
-  );
-};
 
 export default function CardCreator() {
   const { mode, currentCard, setName, setNickname, setImage, setImageFilter, setRarity, setPosition, setBio, updateStat, addStat, removeStat, resetCard, randomizeQuote, loadPresetStats, finalizeCard } = useCardCreator();
@@ -300,10 +234,6 @@ export default function CardCreator() {
             <motion.div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 isolate" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Star className="w-5 h-5 text-cyan-400" />Rarity</h3>
               <div className="flex flex-wrap gap-2">{rarityOptions.map((rarity) => <button key={rarity} onClick={() => setRarity(rarity)} className={cn('px-4 py-2 rounded-lg text-sm font-semibold border transition-all capitalize', currentCard.rarity === rarity ? 'text-white' : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-600')} style={currentCard.rarity === rarity ? { background: RARITY_STYLES[rarity].gradient, borderColor: RARITY_STYLES[rarity].border, boxShadow: RARITY_STYLES[rarity].glow } : {}}>{rarity}</button>)}</div>
-            </motion.div>
-            <motion.div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 isolate" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}>
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Wand2 className="w-5 h-5 text-purple-400" />VFX Lab</h3>
-              <VFXLab />
             </motion.div>
             <motion.div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 isolate" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
               <div className="flex items-center justify-between mb-4"><h3 className="text-lg font-bold text-white flex items-center gap-2"><Sparkles className="w-5 h-5 text-cyan-400" />Stats</h3><div className="flex gap-2"><button onClick={() => loadPresetStats(mode === 'serious' ? 'sports' : 'roast')} className="p-2 bg-slate-700/50 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors" title="Randomize stats"><Shuffle className="w-4 h-4" /></button>{(currentCard.statBlock || []).length < 8 && <button onClick={handleAddStat} className="p-2 bg-cyan-500/20 hover:bg-cyan-500/30 rounded-lg text-cyan-400 transition-colors" title="Add stat"><Plus className="w-4 h-4" /></button>}</div></div>
