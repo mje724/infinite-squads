@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useCardCollection } from '@/store/store';
-import { Layers, Users, Plus } from 'lucide-react';
+import { Layers, Users, Plus, Trophy } from 'lucide-react';
 
 export default function NavHeader() {
   const { cards } = useCardCollection();
@@ -13,12 +13,15 @@ export default function NavHeader() {
           <span className="font-bold text-white text-lg hidden sm:block">Infinite Squads</span>
         </Link>
         <div className="flex items-center gap-2">
+          <Link href="/squad" className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-colors">
+            <Trophy className="w-4 h-4" /><span className="hidden sm:inline">Squad</span>
+          </Link>
           <Link href="/my-cards" className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-colors">
-            <Users className="w-4 h-4" /><span>My Cards</span>
+            <Users className="w-4 h-4" /><span className="hidden sm:inline">My Cards</span>
             {cards.length > 0 && <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-xs rounded-full">{cards.length}</span>}
           </Link>
           <Link href="/" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity">
-            <Plus className="w-4 h-4" /><span className="hidden sm:block">Create</span>
+            <Plus className="w-4 h-4" /><span className="hidden sm:inline">Create</span>
           </Link>
         </div>
       </div>

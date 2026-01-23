@@ -260,7 +260,7 @@ export default function CardCreator() {
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
   const availableStats = mode === 'serious' ? STAT_PRESETS.filter((s) => s.category === 'sports' || s.category === 'office') : STAT_PRESETS.filter((s) => s.category === 'roast' || s.category === 'party');
-  const positions = mode === 'serious' ? [...(POSITION_PRESETS.sports || []), ...(POSITION_PRESETS.office || [])] : [...(POSITION_PRESETS.party || []), ...(POSITION_PRESETS.roast || [])];
+  const positions = [...(POSITION_PRESETS.sports || []), ...(POSITION_PRESETS.office || []), ...(POSITION_PRESETS.party || []), ...(POSITION_PRESETS.roast || [])];
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (event) => { setImageToCrop(event.target?.result as string); setShowCropper(true); }; reader.readAsDataURL(file); } }, []);
   const handleCropComplete = useCallback((croppedImage: string) => { setImage(croppedImage); setShowCropper(false); setImageToCrop(null); }, [setImage]);
   const handleCropCancel = useCallback(() => { setShowCropper(false); setImageToCrop(null); if (fileInputRef.current) { fileInputRef.current.value = ''; } }, []);
