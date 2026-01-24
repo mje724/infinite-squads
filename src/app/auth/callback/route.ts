@@ -1,5 +1,4 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -7,26 +6,35 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code');
   const origin = requestUrl.origin;
 
+  // Create response early so we can set cookies on it
+  const response = NextResponse.redirect(`${origin}/`);
+
   if (code) {
-    const cookieStore = cookies();
-    
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           getAll() {
-            return cookieStore.getAll();
+            // Parse cookies from request
+            const cookieHeader = request.headers.get('cookie') || '';
+            const cookies: { name: string; value: string }[] = [];
+            cookieHeader.split(';').forEach(cookie => {
+              const [name, ...rest] = cookie.trim().split('=');
+              if (name) {
+                cookies.push({ name, value: rest.join('=') });
+              }
+            });
+            return cookies;
           },
           setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing sessions.
-            }
+            cookiesToSet.forEach(({ name, value, options }) => {
+              response.cookies.set({
+                name,
+                value,
+                ...options,
+              });
+            });
           },
         },
       }
@@ -35,6 +43,5 @@ export async function GET(request: Request) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // Redirect to home page after successful auth
-  return NextResponse.redirect(`${origin}/`);
+  return response;
 }
