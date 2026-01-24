@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Space_Grotesk, Outfit } from 'next/font/google';
 import './globals.css';
 import NavHeader from '@/components/NavHeader';
-import { AuthProvider } from '@/contexts/AuthContext';
 
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-heading', display: 'swap' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
@@ -16,10 +15,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className="dark">
       <body className={`${spaceGrotesk.variable} ${outfit.variable} font-sans antialiased bg-slate-950 text-white`}>
-        <AuthProvider>
-          <NavHeader />
-          <div className="pt-16">{children}</div>
-        </AuthProvider>
+        <NavHeader />
+        <div className="pt-16">{children}</div>
       </body>
     </html>
   );
