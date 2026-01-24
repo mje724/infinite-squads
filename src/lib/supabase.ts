@@ -1,10 +1,17 @@
 import { createBrowserClient } from '@supabase/ssr';
 
 export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Return a dummy client during build if env vars are missing
+  if (!supabaseUrl || !supabaseKey) {
+    // This will only happen during static generation
+    // Return null and handle it in components
+    return null as any;
+  }
+
+  return createBrowserClient(supabaseUrl, supabaseKey);
 }
 
 // Types for our database

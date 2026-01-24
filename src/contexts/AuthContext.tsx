@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, SupabaseClient } from '@supabase/supabase-js';
 import { createClient, Profile } from '@/lib/supabase';
 
 interface AuthContextType {
@@ -24,34 +24,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  
-  const supabase = createClient();
-
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    
-    if (error) {
-      console.error('Error fetching profile:', error);
-      return null;
-    }
-    return data as Profile;
-  };
-
-  const refreshProfile = async () => {
-    if (user) {
-      const newProfile = await fetchProfile(user.id);
-      if (newProfile) setProfile(newProfile);
-    }
-  };
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
 
   useEffect(() => {
+    // Initialize Supabase client on mount (client-side only)
+    const client = createClient();
+    setSupabase(client);
+
+    if (!client) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchProfile = async (userId: string) => {
+      const { data, error } = await client
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+      return data as Profile;
+    };
+
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await client.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getInitialSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    const { data: { subscription } } = client.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
@@ -86,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!supabase) return;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -96,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithEmail = async (email: string, password: string) => {
+    if (!supabase) return { error: { message: 'Not initialized' } };
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -104,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
+    if (!supabase) return { error: { message: 'Not initialized' } };
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -115,14 +119,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
     setSession(null);
   };
 
+  const refreshProfile = async () => {
+    if (!supabase || !user) return;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    
+    if (!error && data) {
+      setProfile(data as Profile);
+    }
+  };
+
   const updateCoins = async (newAmount: number) => {
-    if (!user) return;
+    if (!supabase || !user) return;
     
     const { error } = await supabase
       .from('profiles')
