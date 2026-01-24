@@ -392,25 +392,33 @@ export default function PacksPage() {
 
   const handleAddToCollection = (cards: PresetCard[]) => {
     cards.forEach(card => {
+      const now = new Date();
+      const stats = card.stats.map((s, i) => ({
+        id: `stat-${i}`,
+        label: s.label,
+        value: s.value,
+        icon: '📊',
+        category: 'custom',
+      }));
+      const overallRating = Math.round(stats.reduce((sum, s) => sum + s.value, 0) / stats.length);
+      
       addCard({
         id: nanoid(),
         name: card.name,
         nickname: card.nickname,
         position: '',
-        image: '',
+        image: null,
         imageFilter: 'normal',
         rarity: card.rarity,
-        statBlock: card.stats.map((s, i) => ({
-          id: `stat-${i}`,
-          label: s.label,
-          value: s.value,
-          icon: '📊',
-          category: 'custom',
-        })),
+        theme: 'custom',
+        mode: 'unserious',
+        overallRating,
+        statBlock: stats,
         traits: [],
         bio: `"${card.nickname}"`,
         activeEffects: [],
-        createdAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
       });
     });
   };
