@@ -1,8 +1,9 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session, SupabaseClient } from '@supabase/supabase-js';
-import { createClient, Profile } from '@/lib/supabase';
+import { User, Session } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
+import { Profile } from '@/lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -19,56 +20,89 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Create browser client once
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createBrowserClient(url, key);
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
+  const [supabase] = useState(() => getSupabaseClient());
+
+  const fetchProfile = async (userId: string) => {
+    if (!supabase) return null;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return null;
+    }
+    return data as Profile;
+  };
 
   useEffect(() => {
-    // Initialize Supabase client on mount (client-side only)
-    const client = createClient();
-    setSupabase(client);
-
-    if (!client) {
+    if (!supabase) {
       setLoading(false);
       return;
     }
 
-    const fetchProfile = async (userId: string) => {
-      const { data, error } = await client
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+    // Check for auth code in URL (for OAuth callback)
+    const handleAuthCallback = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const queryParams = new URLSearchParams(window.location.search);
       
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return null;
+      // Check for access token in hash (implicit flow) or code in query (PKCE)
+      const accessToken = hashParams.get('access_token');
+      const code = queryParams.get('code');
+      
+      if (accessToken || code) {
+        // Let Supabase handle the token exchange
+        const { data, error } = await supabase.auth.getSession();
+        if (data.session) {
+          setSession(data.session);
+          setUser(data.session.user);
+          const profile = await fetchProfile(data.session.user.id);
+          setProfile(profile);
+        }
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
-      return data as Profile;
     };
 
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await client.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const profile = await fetchProfile(session.user.id);
-        setProfile(profile);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          const profile = await fetchProfile(session.user.id);
+          setProfile(profile);
+        }
+      } catch (error) {
+        console.error('Error getting session:', error);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
-    getInitialSession();
+    handleAuthCallback().then(getInitialSession);
 
     // Listen for auth changes
-    const { data: { subscription } } = client.auth.onAuthStateChange(
-      async (event: any, session: any) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -84,14 +118,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase]);
 
   const signInWithGoogle = async () => {
     if (!supabase) return;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/`,
       },
     });
     if (error) console.error('Google sign in error:', error);
@@ -112,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/`,
       },
     });
     return { error };
@@ -128,15 +162,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshProfile = async () => {
     if (!supabase || !user) return;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-    
-    if (!error && data) {
-      setProfile(data as Profile);
-    }
+    const newProfile = await fetchProfile(user.id);
+    if (newProfile) setProfile(newProfile);
   };
 
   const updateCoins = async (newAmount: number) => {
