@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useCardCollection } from '@/store/store';
-import { Layers, Users, Plus, Trophy } from 'lucide-react';
+import { Layers, Users, Plus, Trophy, Package } from 'lucide-react';
 
 export default function NavHeader() {
   const { cards } = useCardCollection();
@@ -13,6 +13,9 @@ export default function NavHeader() {
           <span className="font-bold text-white text-lg hidden sm:block">Infinite Squads</span>
         </Link>
         <div className="flex items-center gap-2">
+          <Link href="/packs" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 border border-purple-400 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-colors">
+            <Package className="w-4 h-4" /><span className="hidden sm:inline">Packs</span>
+          </Link>
           <Link href="/squad" className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-colors">
             <Trophy className="w-4 h-4" /><span className="hidden sm:inline">Squad</span>
           </Link>
