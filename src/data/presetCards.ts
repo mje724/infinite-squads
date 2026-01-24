@@ -1,196 +1,1021 @@
-// Preset card data for pack opening
-// Each card has name, nickname, and 3 stats
+// ============================================
+// INFINITE SQUADS - PRESET CARDS DATABASE
+// Tone: Daniel Tosh / Dry Roast Comedy
+// Every card has 6 stats with emojis
+// ============================================
 
 export interface PresetCard {
-  id: string;
   name: string;
   nickname: string;
-  stats: { label: string; value: number }[];
+  stats: { label: string; value: number; emoji: string }[];
   rarity: 'bronze' | 'silver' | 'gold' | 'legendary' | 'holo' | 'glitch';
+  image: string;
 }
 
-// Helper to assign rarity based on "fame" or humor level
-const assignRarity = (index: number): PresetCard['rarity'] => {
-  // Distribute rarities: ~40% bronze, ~30% silver, ~20% gold, ~8% legendary, ~2% holo/glitch
-  if (index % 50 === 0) return 'glitch';
-  if (index % 25 === 0) return 'holo';
-  if (index % 5 === 0) return 'legendary';
-  if (index % 3 === 0) return 'gold';
-  if (index % 2 === 0) return 'silver';
-  return 'bronze';
-};
+// Calculate OVR from stats (average, capped at 99)
+export function calculateOVR(stats: { value: number }[]): number {
+  const validStats = stats.filter(s => typeof s.value === 'number' && !isNaN(s.value));
+  if (validStats.length === 0) return 50;
+  const sum = validStats.reduce((acc, s) => acc + Math.max(0, Math.min(100, s.value)), 0);
+  return Math.min(99, Math.round(sum / validStats.length));
+}
 
 export const PRESET_CARDS: PresetCard[] = [
-  // Ancient History & Mythology
-  { id: 'julius-caesar', name: 'Julius Caesar', nickname: 'The Stabbed', stats: [{ label: 'Backstabbability', value: 99 }, { label: 'Salad Invention', value: 0 }, { label: 'Trust Issues', value: 100 }], rarity: 'legendary' },
-  { id: 'cleopatra', name: 'Cleopatra', nickname: 'The Drama Queen', stats: [{ label: 'Rizz', value: 100 }, { label: 'Snake Handling', value: 10 }, { label: 'Carpet Entry', value: 99 }], rarity: 'legendary' },
-  { id: 'diogenes', name: 'Diogenes', nickname: 'The Hobo Philosopher', stats: [{ label: 'Hygiene', value: 0 }, { label: 'Sass', value: 99 }, { label: 'Rent Paid', value: 0 }], rarity: 'gold' },
-  { id: 'alexander-great', name: 'Alexander the Great', nickname: 'The Conqueror', stats: [{ label: 'Ego', value: 98 }, { label: 'Map Reading', value: 100 }, { label: 'Peak at 20s', value: 99 }], rarity: 'legendary' },
-  { id: 'achilles', name: 'Achilles', nickname: 'The Heel Guy', stats: [{ label: 'Invincibility', value: 99 }, { label: 'Ankle Strength', value: 1 }, { label: 'Rage Quit', value: 95 }], rarity: 'gold' },
-  { id: 'socrates', name: 'Socrates', nickname: 'The Annoying Questioner', stats: [{ label: '"Why?"', value: 99 }, { label: 'Popularity', value: 20 }, { label: 'Hemlock Tolerance', value: 0 }], rarity: 'gold' },
-  { id: 'nero', name: 'Nero', nickname: 'The Fiddler', stats: [{ label: 'Fire Safety', value: 0 }, { label: 'Musical Talent', value: 15 }, { label: 'Mother Issues', value: 99 }], rarity: 'silver' },
-  { id: 'ea-nasir', name: 'Ea-Nasir', nickname: 'The Copper Merchant', stats: [{ label: 'Customer Service', value: 0 }, { label: 'Copper Quality', value: 1 }, { label: 'Complaint Letters', value: 100 }], rarity: 'glitch' },
-  { id: 'gilgamesh', name: 'Gilgamesh', nickname: 'The Original Chad', stats: [{ label: 'Bromance', value: 100 }, { label: 'Immortality', value: 0 }, { label: 'Flexing', value: 95 }], rarity: 'legendary' },
-  { id: 'king-tut', name: 'King Tut', nickname: 'The Boy King', stats: [{ label: 'Cursed', value: 99 }, { label: 'Walking Ability', value: 10 }, { label: 'Bling', value: 98 }], rarity: 'gold' },
-  { id: 'leonidas', name: 'Leonidas', nickname: 'The Kicker', stats: [{ label: 'Volume Control', value: 0 }, { label: 'Abs', value: 99 }, { label: 'Diplomatic Skills', value: 5 }], rarity: 'legendary' },
-  { id: 'sun-tzu', name: 'Sun Tzu', nickname: 'The Art of War', stats: [{ label: 'Patience', value: 99 }, { label: 'Quoteability', value: 100 }, { label: 'Actual Fighting', value: 50 }], rarity: 'gold' },
-  { id: 'hannibal-barca', name: 'Hannibal Barca', nickname: 'Elephant Rider', stats: [{ label: 'Mountain Climbing', value: 99 }, { label: 'Elephant Care', value: 40 }, { label: 'Rome Hating', value: 100 }], rarity: 'gold' },
-  { id: 'medusa', name: 'Medusa', nickname: 'Stone Cold', stats: [{ label: 'Hair Care', value: 0 }, { label: 'Eye Contact', value: 100 }, { label: 'Dating Life', value: 5 }], rarity: 'holo' },
-  { id: 'confucius', name: 'Confucius', nickname: 'The Wise', stats: [{ label: 'Fortune Cookie Royalties', value: 0 }, { label: 'Wisdom', value: 99 }, { label: 'Beard Length', value: 85 }], rarity: 'gold' },
-  { id: 'genghis-khan', name: 'Genghis Khan', nickname: 'The Spreader', stats: [{ label: 'Child Support Owed', value: 99 }, { label: 'Carbon Footprint', value: 5 }, { label: 'Horse Miles', value: 100 }], rarity: 'legendary' },
-  
-  // Medieval & Renaissance
-  { id: 'henry-viii', name: 'Henry VIII', nickname: 'The Wife Guy', stats: [{ label: 'Commitment', value: 10 }, { label: 'Divorce Lawyer Fees', value: 0 }, { label: 'Head Chopping', value: 95 }], rarity: 'gold' },
-  { id: 'leonardo-davinci', name: 'Leonardo da Vinci', nickname: 'The Procrastinator', stats: [{ label: 'Projects Finished', value: 3 }, { label: 'Sketchbook Doodles', value: 99 }, { label: 'Mirror Writing', value: 99 }], rarity: 'legendary' },
-  { id: 'michelangelo', name: 'Michelangelo', nickname: 'The Ceiling Painter', stats: [{ label: 'Back Pain', value: 99 }, { label: 'Marble Dust In Lungs', value: 80 }, { label: 'Ninja Turtle Fame', value: 100 }], rarity: 'legendary' },
-  { id: 'jeanne-darc', name: 'Jeanne d\'Arc', nickname: 'The Visionary', stats: [{ label: 'Fire Resistance', value: 0 }, { label: 'Conviction', value: 100 }, { label: 'Haircut', value: 90 }], rarity: 'legendary' },
-  { id: 'vlad-impaler', name: 'Vlad the Impaler', nickname: 'The Stake Holder', stats: [{ label: 'Hospitality', value: 10 }, { label: 'Vampire Rumors', value: 95 }, { label: 'Kebab Skills', value: 99 }], rarity: 'gold' },
-  { id: 'shakespeare', name: 'William Shakespeare', nickname: 'The Word Smith', stats: [{ label: 'Vocabulary', value: 99 }, { label: 'Plagiarism', value: 40 }, { label: 'Dramatic Death Scenes', value: 100 }], rarity: 'legendary' },
-  { id: 'columbus', name: 'Christopher Columbus', nickname: 'The Lost Tourist', stats: [{ label: 'Navigation', value: 0 }, { label: 'Confidence', value: 100 }, { label: '"India" Finding', value: 0 }], rarity: 'silver' },
-  { id: 'dante', name: 'Dante Alighieri', nickname: 'The Inferno Guy', stats: [{ label: 'Simping (for Beatrice)', value: 100 }, { label: 'Heat Tolerance', value: 90 }, { label: 'Self-Insert Fanfic', value: 99 }], rarity: 'gold' },
-  { id: 'copernicus', name: 'Copernicus', nickname: 'The Center of Attention', stats: [{ label: 'Solar System Knowledge', value: 95 }, { label: 'Church Approval', value: 5 }, { label: 'Dizziness', value: 50 }], rarity: 'silver' },
-  { id: 'machiavelli', name: 'Machiavelli', nickname: 'The Manipulator', stats: [{ label: 'Trustworthiness', value: 0 }, { label: 'Edge Lord', value: 95 }, { label: 'Ends Justify Means', value: 100 }], rarity: 'gold' },
-  
-  // Legends & Folklore
-  { id: 'robin-hood', name: 'Robin Hood', nickname: 'The Communist Archer', stats: [{ label: 'Accuracy', value: 99 }, { label: 'Net Worth', value: 0 }, { label: 'Tights Wearing', value: 90 }], rarity: 'gold' },
-  { id: 'king-arthur', name: 'King Arthur', nickname: 'Sword Puller', stats: [{ label: 'Sword Grip', value: 99 }, { label: 'Wife Watch', value: 0 }, { label: 'Round Table Geometry', value: 100 }], rarity: 'legendary' },
-  { id: 'merlin', name: 'Merlin', nickname: 'The Old Wizard', stats: [{ label: 'Beard Magic', value: 90 }, { label: 'Coherence', value: 20 }, { label: 'Aging Backwards', value: 99 }], rarity: 'holo' },
-  { id: 'nostradamus', name: 'Nostradamus', nickname: 'The Vague Tweeter', stats: [{ label: 'Accuracy', value: 15 }, { label: 'Hindsight', value: 100 }, { label: 'Rhyming', value: 80 }], rarity: 'silver' },
-  
-  // Revolutionary Era
-  { id: 'napoleon', name: 'Napoleon Bonaparte', nickname: 'The Average Height King', stats: [{ label: 'Height Insecurity', value: 99 }, { label: 'Island Vacation', value: 100 }, { label: 'Hand-in-Coat', value: 95 }], rarity: 'legendary' },
-  { id: 'blackbeard', name: 'Blackbeard', nickname: 'The Pyromaniac Pirate', stats: [{ label: 'Beard Smoke', value: 99 }, { label: 'Intimidation', value: 95 }, { label: 'Retirement Plan', value: 0 }], rarity: 'gold' },
-  { id: 'washington', name: 'George Washington', nickname: 'The Wooden Tooth', stats: [{ label: 'Cherry Tree Chopping', value: 99 }, { label: 'Lies Told', value: 0 }, { label: 'River Crossing', value: 85 }], rarity: 'legendary' },
-  { id: 'marie-antoinette', name: 'Marie Antoinette', nickname: 'The Cake Lover', stats: [{ label: 'Budgeting', value: 0 }, { label: 'Cake Appreciation', value: 100 }, { label: 'Neck Strength', value: 10 }], rarity: 'gold' },
-  { id: 'ben-franklin', name: 'Benjamin Franklin', nickname: 'The Kite Flyer', stats: [{ label: 'Electricity Bill', value: 0 }, { label: 'French Girlfriends', value: 99 }, { label: 'Bifocals', value: 100 }], rarity: 'legendary' },
-  { id: 'paul-revere', name: 'Paul Revere', nickname: 'The Alarm Clock', stats: [{ label: 'Horse Riding', value: 80 }, { label: 'Shouting', value: 99 }, { label: 'British Detection', value: 90 }], rarity: 'silver' },
-  { id: 'guy-fawkes', name: 'Guy Fawkes', nickname: 'The Fireworks Guy', stats: [{ label: 'Subtlety', value: 0 }, { label: 'Mask Sales', value: 100 }, { label: 'Barrel Management', value: 95 }], rarity: 'gold' },
-  { id: 'simon-bolivar', name: 'Simón Bolívar', nickname: 'The Liberator', stats: [{ label: 'Countries Named After Him', value: 2 }, { label: 'Revolutions Per Minute', value: 99 }, { label: 'Horse Stamina', value: 90 }], rarity: 'gold' },
-  { id: 'lewis-clark', name: 'Lewis & Clark', nickname: 'The Lost Duo', stats: [{ label: 'Direction Sense', value: 50 }, { label: 'Reliance on Sacagawea', value: 100 }, { label: 'Canoe Skills', value: 80 }], rarity: 'silver' },
-  { id: 'pocahontas', name: 'Pocahontas', nickname: 'The Peacemaker', stats: [{ label: 'Disney Accuracy', value: 5 }, { label: 'Diplomacy', value: 99 }, { label: 'John Smith Tolerance', value: 20 }], rarity: 'gold' },
-  { id: 'lincoln', name: 'Abraham Lincoln', nickname: 'The Hat Guy', stats: [{ label: 'Hat Height', value: 99 }, { label: 'Theater Luck', value: 0 }, { label: 'Wrestling Skill', value: 95 }], rarity: 'legendary' },
-  
-  // Modern Era Innovators
-  { id: 'tesla', name: 'Nikola Tesla', nickname: 'The Pigeon Lover', stats: [{ label: 'Pigeon Romance', value: 100 }, { label: 'AC Current', value: 99 }, { label: 'Business Sense', value: 5 }], rarity: 'legendary' },
-  { id: 'edison', name: 'Thomas Edison', nickname: 'The Idea "Borrower"', stats: [{ label: 'Patent Trolling', value: 99 }, { label: 'Originality', value: 20 }, { label: 'Lightbulb Moments', value: 80 }], rarity: 'gold' },
-  { id: 'freud', name: 'Sigmund Freud', nickname: 'The Mother Lover', stats: [{ label: 'Dream Analysis', value: 90 }, { label: 'Cocaine Use', value: 99 }, { label: 'Awkward Conversations', value: 100 }], rarity: 'gold' },
-  { id: 'rasputin', name: 'Rasputin', nickname: 'The Unkillable', stats: [{ label: 'Poison Immunity', value: 99 }, { label: 'Beard Hygiene', value: 10 }, { label: 'Dance Moves', value: 100 }], rarity: 'legendary' },
-  { id: 'amelia-earhart', name: 'Amelia Earhart', nickname: 'Hide & Seek Champion', stats: [{ label: 'Plane Handling', value: 90 }, { label: 'Navigation', value: 50 }, { label: 'Mystery Level', value: 100 }], rarity: 'gold' },
-  { id: 'einstein', name: 'Albert Einstein', nickname: 'The Tongue Guy', stats: [{ label: 'Hair Comb', value: 0 }, { label: 'Relativity', value: 99 }, { label: 'Quote Misattribution', value: 100 }], rarity: 'legendary' },
-  { id: 'titanic-captain', name: 'Titanic Captain', nickname: 'The Iceberg Spotter', stats: [{ label: 'Vision', value: 10 }, { label: 'Confidence', value: 100 }, { label: 'Sinking Feeling', value: 99 }], rarity: 'silver' },
-  { id: 'chaplin', name: 'Charlie Chaplin', nickname: 'The Silent Star', stats: [{ label: 'Words Spoken', value: 0 }, { label: 'Cane Twirl', value: 95 }, { label: 'Mustache Regret', value: 90 }], rarity: 'gold' },
-  { id: 'houdini', name: 'Harry Houdini', nickname: 'The Escape Artist', stats: [{ label: 'Knot Untying', value: 99 }, { label: 'Punch Resistance', value: 0 }, { label: 'Breath Holding', value: 90 }], rarity: 'gold' },
-  { id: 'al-capone', name: 'Al Capone', nickname: 'The Tax Evader', stats: [{ label: 'Street Smarts', value: 90 }, { label: 'Tax Compliance', value: 0 }, { label: 'Milk Expiration Dates', value: 99 }], rarity: 'gold' },
-  { id: 'bonnie-clyde', name: 'Bonnie & Clyde', nickname: 'The Toxic Couple', stats: [{ label: 'Driving Speed', value: 90 }, { label: 'Bullet Holes', value: 100 }, { label: 'Conflict Resolution', value: 0 }], rarity: 'gold' },
-  { id: 'karl-marx', name: 'Karl Marx', nickname: 'The Sharer', stats: [{ label: 'Beard Volume', value: 95 }, { label: 'Money', value: 0 }, { label: 'Manifesto Writing', value: 99 }], rarity: 'gold' },
-  { id: 'queen-victoria', name: 'Queen Victoria', nickname: 'The Mourner', stats: [{ label: 'Wearing Black', value: 100 }, { label: 'Smiling', value: 5 }, { label: 'Descendants', value: 99 }], rarity: 'gold' },
-  { id: 'van-gogh', name: 'Vincent Van Gogh', nickname: 'The Earless', stats: [{ label: 'Ear Count', value: 1 }, { label: 'Yellow Paint Usage', value: 99 }, { label: 'Mental Stability', value: 10 }], rarity: 'legendary' },
-  
-  // Pop Culture Icons
-  { id: 'elvis', name: 'Elvis Presley', nickname: 'The King', stats: [{ label: 'Hip Shaking', value: 99 }, { label: 'Sandwich Calories', value: 99 }, { label: 'Alive Theories', value: 80 }], rarity: 'legendary' },
-  { id: 'marilyn', name: 'Marilyn Monroe', nickname: 'The Icon', stats: [{ label: 'Vent Standing', value: 99 }, { label: 'Happy Birthday Singing', value: 95 }, { label: 'Photogenicity', value: 100 }], rarity: 'legendary' },
-  { id: 'neil-armstrong', name: 'Neil Armstrong', nickname: 'The Moon Walker', stats: [{ label: 'Frequent Flyer Miles', value: 99 }, { label: 'Acting (conspiracies)', value: 0 }, { label: 'Step Size', value: 1 }], rarity: 'legendary' },
-  { id: 'pablo-escobar', name: 'Pablo Escobar', nickname: 'The Hippo Keeper', stats: [{ label: 'Cash Rubber Bands', value: 99 }, { label: 'Hippo Management', value: 0 }, { label: 'Mustache', value: 90 }], rarity: 'gold' },
-  { id: 'bob-ross', name: 'Bob Ross', nickname: 'The Tree Whisperer', stats: [{ label: 'Mistakes', value: 0 }, { label: 'Happy Accidents', value: 100 }, { label: 'Afro Puff', value: 95 }], rarity: 'legendary' },
-  { id: 'steve-jobs', name: 'Steve Jobs', nickname: 'The Turtleneck', stats: [{ label: 'Turtleneck Count', value: 100 }, { label: 'Medical Advice', value: 10 }, { label: 'Font Obsession', value: 99 }], rarity: 'legendary' },
-  { id: 'gordon-ramsay', name: 'Gordon Ramsay', nickname: 'The Lamb Sauce Locator', stats: [{ label: 'Rage', value: 99 }, { label: 'Panini Pressing', value: 95 }, { label: 'Finding Lamb Sauce', value: 0 }], rarity: 'gold' },
-  { id: 'florida-man', name: 'Florida Man', nickname: 'The Chaotic Neutral', stats: [{ label: 'Gator Wrestling', value: 99 }, { label: 'Headlines Generated', value: 100 }, { label: 'IQ', value: 50 }], rarity: 'glitch' },
-  { id: 'banksy', name: 'Banksy', nickname: 'The Anonymous', stats: [{ label: 'Visibility', value: 0 }, { label: 'Shredding Skills', value: 99 }, { label: 'Graffiti', value: 95 }], rarity: 'holo' },
-  { id: 'bigfoot', name: 'Bigfoot', nickname: 'The Blurry', stats: [{ label: 'Camera Focus', value: 0 }, { label: 'Hide & Seek', value: 99 }, { label: 'Foot Size', value: 100 }], rarity: 'holo' },
-  
-  // Fictional & Literary
-  { id: 'sherlock', name: 'Sherlock Holmes', nickname: 'The Detective', stats: [{ label: 'Social Skills', value: 10 }, { label: 'Drug Use', value: 80 }, { label: 'Deductions', value: 99 }], rarity: 'gold' },
-  { id: 'dracula', name: 'Dracula', nickname: 'The Count', stats: [{ label: 'Sun Tan', value: 0 }, { label: 'Dental Plan', value: 99 }, { label: 'Bat Form', value: 90 }], rarity: 'legendary' },
-  { id: 'frankenstein', name: "Frankenstein's Monster", nickname: 'The Assemblage', stats: [{ label: 'Daddy Issues', value: 100 }, { label: 'Fire Fear', value: 99 }, { label: 'Stitch Count', value: 99 }], rarity: 'gold' },
-  { id: 'zorro', name: 'Zorro', nickname: 'The Fox', stats: [{ label: '"Z" Handwriting', value: 99 }, { label: 'Cape Swish', value: 90 }, { label: 'Subtlety', value: 10 }], rarity: 'silver' },
-  
-  // Mythical & Symbolic
-  { id: 'santa', name: 'Santa Claus', nickname: 'The Breaker & Enterer', stats: [{ label: 'Speed', value: 99 }, { label: 'Cookie Consumption', value: 100 }, { label: 'Labor Laws', value: 0 }], rarity: 'legendary' },
-  { id: 'tooth-fairy', name: 'The Tooth Fairy', nickname: 'The Bone Collector', stats: [{ label: 'Creepiness', value: 90 }, { label: 'Cash Dispensing', value: 20 }, { label: 'Silence', value: 99 }], rarity: 'silver' },
-  { id: 'rosie-riveter', name: 'Rosie the Riveter', nickname: 'The Flexer', stats: [{ label: 'Bicep Curl', value: 99 }, { label: 'Bandana Style', value: 100 }, { label: 'Motivation', value: 95 }], rarity: 'gold' },
-  { id: 'uncle-sam', name: 'Uncle Sam', nickname: 'The Recruiter', stats: [{ label: 'Finger Pointing', value: 99 }, { label: 'Hat Height', value: 95 }, { label: 'Wants You', value: 100 }], rarity: 'gold' },
-  { id: 'paul-bunyan', name: 'Paul Bunyan', nickname: 'The Lumberjack', stats: [{ label: 'Ox Size', value: 100 }, { label: 'Flannel Quality', value: 99 }, { label: 'Tree Hugging', value: 0 }], rarity: 'silver' },
-  { id: 'grim-reaper', name: 'The Grim Reaper', nickname: 'The Collector', stats: [{ label: 'Scythe Sharpness', value: 99 }, { label: 'Punctuality', value: 100 }, { label: 'Talkativeness', value: 5 }], rarity: 'legendary' },
-  
-  // Science Memes
-  { id: 'schrodinger-cat', name: "Schrödinger's Cat", nickname: 'The Maybe Dead', stats: [{ label: 'Alive', value: 50 }, { label: 'Dead', value: 50 }, { label: 'Box Comfort', value: 10 }], rarity: 'glitch' },
-  { id: 'pavlov-dog', name: "Pavlov's Dog", nickname: 'The Drooler', stats: [{ label: 'Bell Hearing', value: 99 }, { label: 'Saliva Production', value: 100 }, { label: 'Free Will', value: 5 }], rarity: 'silver' },
-  { id: 'dolly-sheep', name: 'Dolly the Sheep', nickname: 'The Clone', stats: [{ label: 'Uniqueness', value: 0 }, { label: 'Wool Quality', value: 90 }, { label: 'Scientific Ethics', value: 20 }], rarity: 'silver' },
-  { id: 'laika', name: 'Laika', nickname: 'Space Dog', stats: [{ label: 'Good Girl', value: 100 }, { label: 'Return Ticket', value: 0 }, { label: 'Orbit Count', value: 4 }], rarity: 'gold' },
-  { id: 'harambe', name: 'Harambe', nickname: 'The Martyr', stats: [{ label: 'Meme Life', value: 100 }, { label: 'Child Care', value: 50 }, { label: 'Never Forget', value: 99 }], rarity: 'legendary' },
-  
-  // Villains & Traitors
-  { id: 'brutus', name: 'Brutus', nickname: 'The Fake Friend', stats: [{ label: 'Loyalty', value: 0 }, { label: 'Knife Skills', value: 80 }, { label: 'Peer Pressure', value: 99 }], rarity: 'silver' },
-  { id: 'benedict-arnold', name: 'Benedict Arnold', nickname: 'The Turncoat', stats: [{ label: 'Loyalty', value: 0 }, { label: 'Breakfast Eggs', value: 99 }, { label: 'Regret', value: 50 }], rarity: 'silver' },
-  { id: 'judas', name: 'Judas', nickname: 'The Kisser', stats: [{ label: 'Silver Coins', value: 30 }, { label: 'Loyalty', value: 0 }, { label: 'Kissing', value: 99 }], rarity: 'gold' },
-  
-  // Objects & Concepts
-  { id: 'capone-vault', name: "Capone's Vault", nickname: 'The Disappointment', stats: [{ label: 'Hype', value: 100 }, { label: 'Contents', value: 0 }, { label: 'Rivera Embarrassment', value: 99 }], rarity: 'bronze' },
-  { id: 'iceberg', name: 'The Iceberg', nickname: 'Ship Sinker', stats: [{ label: 'K/D Ratio', value: 99 }, { label: 'Stealth', value: 90 }, { label: 'Cold Hearted', value: 100 }], rarity: 'gold' },
-  { id: 'rock', name: 'A Rock', nickname: 'Sedimentary', stats: [{ label: 'Speed', value: 0 }, { label: 'Hardness', value: 99 }, { label: 'Paper Beating', value: 0 }], rarity: 'bronze' },
-  { id: 'sliced-bread', name: 'Sliced Bread', nickname: 'The Benchmark', stats: [{ label: 'Best Thing Since', value: 99 }, { label: 'Crust', value: 50 }, { label: 'Usefulness', value: 99 }], rarity: 'bronze' },
-  { id: 'y2k-bug', name: 'Y2K Bug', nickname: 'The Glitch', stats: [{ label: 'Panic Induced', value: 99 }, { label: 'Actual Damage', value: 1 }, { label: 'Digital', value: 100 }], rarity: 'glitch' },
-  { id: 'trojan-horse', name: 'The Trojan Horse', nickname: 'The "Gift"', stats: [{ label: 'Woodworking', value: 90 }, { label: 'Sneak', value: 100 }, { label: 'Trustworthiness', value: 5 }], rarity: 'gold' },
-  { id: 'pandora-box', name: "Pandora's Box", nickname: 'The Oopsie', stats: [{ label: 'Curiosity', value: 100 }, { label: 'Lid Security', value: 0 }, { label: 'Hope Remaining', value: 1 }], rarity: 'legendary' },
-  { id: 'library-alexandria', name: 'Library of Alexandria', nickname: 'The Burnt', stats: [{ label: 'Knowledge', value: 100 }, { label: 'Fire Safety', value: 0 }, { label: 'Scrolls Lost', value: 99 }], rarity: 'legendary' },
-  
-  // Mythological Groups & Heroes
-  { id: '300-spartans', name: 'The 300 Spartans', nickname: 'The Squad', stats: [{ label: 'Abs', value: 99 }, { label: 'Dining in Hell', value: 100 }, { label: 'Arrow Shade', value: 99 }], rarity: 'legendary' },
-  { id: 'icarus', name: 'Icarus', nickname: 'The High Flyer', stats: [{ label: 'Sun Screen', value: 0 }, { label: 'Altitude', value: 99 }, { label: 'Listening to Dad', value: 0 }], rarity: 'gold' },
-  { id: 'sisyphus', name: 'Sisyphus', nickname: 'The Boulder Roller', stats: [{ label: 'Gains', value: 100 }, { label: 'Progress', value: 0 }, { label: 'Persistence', value: 99 }], rarity: 'gold' },
-  { id: 'midas', name: 'Midas', nickname: 'The Golden Touch', stats: [{ label: 'Net Worth', value: 99 }, { label: 'Eating Ability', value: 0 }, { label: 'Glove Wearing', value: 100 }], rarity: 'holo' },
-  { id: 'atlas', name: 'Atlas', nickname: 'The Carrier', stats: [{ label: 'Back Strength', value: 100 }, { label: 'Chiropractic Bills', value: 99 }, { label: 'Shrugging', value: 0 }], rarity: 'gold' },
-  
-  // Abstract Concepts
-  { id: 'murphy-law', name: "Murphy's Law", nickname: 'The Pessimist', stats: [{ label: 'Luck', value: 0 }, { label: 'Inevitability', value: 100 }, { label: 'Toast Butter Side', value: 99 }], rarity: 'glitch' },
-  { id: 'father-time', name: 'Father Time', nickname: 'The Old Man', stats: [{ label: 'Speed', value: 50 }, { label: 'Beard', value: 99 }, { label: 'Undo Button', value: 0 }], rarity: 'legendary' },
-  { id: 'godzilla', name: 'Godzilla', nickname: 'The Lizard', stats: [{ label: 'City Planning', value: 0 }, { label: 'Breath', value: 99 }, { label: 'Roar Volume', value: 100 }], rarity: 'legendary' },
-  
-  // Modern Celebrities (Roast Mode)
-  { id: 'drake', name: 'Drake', nickname: 'The Zesty One', stats: [{ label: 'Accent Switching', value: 99 }, { label: 'Sassy IG Captions', value: 100 }, { label: 'Beef Wins', value: 0 }], rarity: 'gold' },
-  { id: 'leo-dicaprio', name: 'Leonardo DiCaprio', nickname: 'The Pattern Recognizer', stats: [{ label: 'Dating Age Limit', value: 25 }, { label: 'Private Jet Usage', value: 99 }, { label: 'Club Headphones', value: 95 }], rarity: 'legendary' },
-  { id: 'jlo', name: 'Jennifer Lopez', nickname: 'Jenny From The Block', stats: [{ label: 'Bronx Mentions', value: 99 }, { label: 'Bodega Orders', value: 0 }, { label: 'Documentary Cringe', value: 99 }], rarity: 'gold' },
-  { id: 'jared-leto', name: 'Jared Leto', nickname: 'The Method Actor', stats: [{ label: 'Jesus Complex', value: 100 }, { label: 'Cult Leader Vibes', value: 95 }, { label: 'Good Movies', value: 3 }], rarity: 'silver' },
-  { id: 'gwyneth-paltrow', name: 'Gwyneth Paltrow', nickname: 'The Wellness Guru', stats: [{ label: 'Bone Broth Diet', value: 99 }, { label: 'Ski Trial Swag', value: 100 }, { label: 'Touch with Reality', value: 0 }], rarity: 'gold' },
-  { id: 'dj-khaled', name: 'DJ Khaled', nickname: 'The "Musician"', stats: [{ label: 'Shouting Own Name', value: 99 }, { label: 'Guitar Skill', value: 1 }, { label: 'Work Delegated', value: 100 }], rarity: 'silver' },
-  { id: 'adam-sandler', name: 'Adam Sandler', nickname: 'The Dripless God', stats: [{ label: 'Shorts Bagginess', value: 99 }, { label: 'Vacation Movies', value: 100 }, { label: 'Pickup Basketball', value: 90 }], rarity: 'gold' },
-  { id: 'tyra-banks', name: 'Tyra Banks', nickname: 'The Menace', stats: [{ label: 'Smizing', value: 99 }, { label: 'Traumatizing Teens', value: 100 }, { label: 'Made-up Words', value: 85 }], rarity: 'silver' },
-  { id: 'steven-seagal', name: 'Steven Seagal', nickname: 'The Aikido Master', stats: [{ label: 'Sitting in Scenes', value: 100 }, { label: 'Hairline Marker', value: 99 }, { label: 'Bullshido', value: 100 }], rarity: 'bronze' },
-  { id: 'kanye', name: 'Kanye West (Ye)', nickname: 'The Free Thinker', stats: [{ label: 'Caps Lock Usage', value: 99 }, { label: 'Titanium Teeth', value: 90 }, { label: 'Release Dates Met', value: 0 }], rarity: 'glitch' },
+  // ============================================
+  // GLITCH TIER - Absolute Chaos
+  // ============================================
+  {
+    name: 'Florida Man',
+    nickname: 'The Daily Headline',
+    stats: [
+      { label: 'Mugshot Variety', value: 99, emoji: '📸' },
+      { label: 'Impulse Control', value: 3, emoji: '🧠' },
+      { label: 'Gator Wrestling', value: 94, emoji: '🐊' },
+      { label: 'Meth Lab Safety', value: 8, emoji: '🔥' },
+      { label: 'Walmart Incidents', value: 100, emoji: '🛒' },
+      { label: 'Bail Money', value: 12, emoji: '💸' },
+    ],
+    rarity: 'glitch',
+    image: 'florida_man.jpg',
+  },
+  {
+    name: 'Harambe',
+    nickname: 'Gorilla Down',
+    stats: [
+      { label: 'Innocence', value: 100, emoji: '😇' },
+      { label: 'Zoo Fence Design', value: 0, emoji: '🚧' },
+      { label: 'Parenting on Display', value: 5, emoji: '👶' },
+      { label: 'Cultural Impact', value: 99, emoji: '📈' },
+      { label: 'Meme Immortality', value: 100, emoji: '🦍' },
+      { label: 'Justice Served', value: 0, emoji: '⚖️' },
+    ],
+    rarity: 'glitch',
+    image: 'harambe.jpg',
+  },
+  {
+    name: 'Killdozer',
+    nickname: 'Reasonable Man',
+    stats: [
+      { label: 'Welding Skill', value: 100, emoji: '🔧' },
+      { label: 'Conflict Resolution', value: 0, emoji: '🤝' },
+      { label: 'Property Damage', value: 100, emoji: '🏚️' },
+      { label: 'Patience', value: 2, emoji: '⏰' },
+      { label: 'City Council Relations', value: 0, emoji: '🏛️' },
+      { label: 'Folk Hero Status', value: 95, emoji: '🦸' },
+    ],
+    rarity: 'glitch',
+    image: 'killdozer.jpg',
+  },
+  {
+    name: 'Boeing Door Plug',
+    nickname: 'Emergency Exit',
+    stats: [
+      { label: 'Structural Integrity', value: 0, emoji: '🔩' },
+      { label: 'Stock Price Impact', value: 99, emoji: '📉' },
+      { label: 'Suction Power', value: 100, emoji: '💨' },
+      { label: 'Passenger Trauma', value: 99, emoji: '😱' },
+      { label: 'Quality Control', value: 0, emoji: '👷' },
+      { label: 'Oops Factor', value: 100, emoji: '🤷' },
+    ],
+    rarity: 'glitch',
+    image: 'boeing_door.jpg',
+  },
+
+  // ============================================
+  // HOLO TIER - Legends With Edge
+  // ============================================
+  {
+    name: 'Nikola Tesla',
+    nickname: 'Died Broke & Right',
+    stats: [
+      { label: 'Inventions Stolen', value: 99, emoji: '💡' },
+      { label: 'Business Acumen', value: 4, emoji: '💼' },
+      { label: 'Pigeon Romance', value: 100, emoji: '🕊️' },
+      { label: 'Edison Hatred', value: 100, emoji: '😤' },
+      { label: 'Credit Received', value: 15, emoji: '📜' },
+      { label: 'Died Alone', value: 100, emoji: '🏨' },
+    ],
+    rarity: 'holo',
+    image: 'nikola_tesla.jpg',
+  },
+  {
+    name: 'Diogenes',
+    nickname: 'Public Menace',
+    stats: [
+      { label: 'F*cks Given', value: 0, emoji: '🤷' },
+      { label: 'Barrel Living', value: 100, emoji: '🛢️' },
+      { label: 'Public Decency', value: 5, emoji: '🚫' },
+      { label: 'Alexander Roasting', value: 100, emoji: '🔥' },
+      { label: 'Chicken Plucking', value: 99, emoji: '🐔' },
+      { label: 'Hygiene', value: 8, emoji: '🧼' },
+    ],
+    rarity: 'holo',
+    image: 'diogenes.jpg',
+  },
+  {
+    name: 'Rasputin',
+    nickname: 'Hard To Kill',
+    stats: [
+      { label: 'Dying Skill', value: 3, emoji: '💀' },
+      { label: 'Royal Manipulation', value: 96, emoji: '👑' },
+      { label: 'Beard Magnitude', value: 100, emoji: '🧔' },
+      { label: 'Poison Resistance', value: 95, emoji: '☠️' },
+      { label: 'Drowning Resistance', value: 90, emoji: '🌊' },
+      { label: 'Bullet Absorption', value: 85, emoji: '🔫' },
+    ],
+    rarity: 'holo',
+    image: 'rasputin.jpg',
+  },
+  {
+    name: 'Hunter S. Thompson',
+    nickname: 'Gonzo',
+    stats: [
+      { label: 'Journalism Ethics', value: 20, emoji: '📰' },
+      { label: 'Liver Function', value: 8, emoji: '🫀' },
+      { label: 'Deadline Adherence', value: 35, emoji: '⏰' },
+      { label: 'Drug Inventory', value: 100, emoji: '💊' },
+      { label: 'Shotgun Skills', value: 95, emoji: '🔫' },
+      { label: 'Vegas Survival', value: 80, emoji: '🎰' },
+    ],
+    rarity: 'holo',
+    image: 'hunter_thompson.jpg',
+  },
+  {
+    name: 'Yusuf Dikec',
+    nickname: 'Turkish Minimalist',
+    stats: [
+      { label: 'Aura', value: 99, emoji: '🕶️' },
+      { label: 'Gear Budget', value: 0, emoji: '📉' },
+      { label: 'Hand in Pocket', value: 100, emoji: '👖' },
+      { label: 'Vision', value: 99, emoji: '🎯' },
+      { label: 'F*cks Given', value: 0, emoji: '🤷' },
+      { label: 'Job Security', value: 95, emoji: '🔫' },
+    ],
+    rarity: 'holo',
+    image: 'yusuf_dikec.jpg',
+  },
+
+  // ============================================
+  // LEGENDARY TIER - Actually Impressive
+  // ============================================
+  {
+    name: 'Genghis Khan',
+    nickname: 'Your Ancestor',
+    stats: [
+      { label: 'Conquest', value: 100, emoji: '⚔️' },
+      { label: 'Descendants', value: 100, emoji: '👶' },
+      { label: 'Mercy Shown', value: 2, emoji: '🙏' },
+      { label: 'City Burning', value: 99, emoji: '🔥' },
+      { label: 'DNA Distribution', value: 100, emoji: '🧬' },
+      { label: 'Horse Riding', value: 98, emoji: '🐎' },
+    ],
+    rarity: 'legendary',
+    image: 'genghis_khan.jpg',
+  },
+  {
+    name: 'Cleopatra',
+    nickname: 'Not About Looks',
+    stats: [
+      { label: 'Languages Spoken', value: 95, emoji: '🗣️' },
+      { label: 'Roman Collectors', value: 100, emoji: '🇮🇹' },
+      { label: 'Empire Saving', value: 40, emoji: '👑' },
+      { label: 'Brother Marriage', value: 100, emoji: '💀' },
+      { label: 'Snake Handling', value: 5, emoji: '🐍' },
+      { label: 'Hollywood Accuracy', value: 0, emoji: '🎬' },
+    ],
+    rarity: 'legendary',
+    image: 'cleopatra.jpg',
+  },
+  {
+    name: 'Frederick Douglass',
+    nickname: 'Self-Made Legend',
+    stats: [
+      { label: 'Oratory', value: 100, emoji: '🎤' },
+      { label: 'Escape Artistry', value: 95, emoji: '🏃' },
+      { label: 'Photo Game', value: 99, emoji: '📸' },
+      { label: 'Book Sales', value: 92, emoji: '📚' },
+      { label: 'Slave Owner Roasting', value: 100, emoji: '🔥' },
+      { label: 'Patience for BS', value: 0, emoji: '😤' },
+    ],
+    rarity: 'legendary',
+    image: 'frederick_douglass.jpg',
+  },
+  {
+    name: 'Sun Tzu',
+    nickname: 'LinkedIn Influencer',
+    stats: [
+      { label: 'Strategy', value: 100, emoji: '🧠' },
+      { label: 'Being Misquoted', value: 99, emoji: '❌' },
+      { label: 'May Not Exist', value: 50, emoji: '👻' },
+      { label: 'Corporate Retreats', value: 100, emoji: '💼' },
+      { label: 'Crypto Bro Citations', value: 99, emoji: '📉' },
+      { label: 'Actual War Experience', value: 60, emoji: '⚔️' },
+    ],
+    rarity: 'legendary',
+    image: 'sun_tzu.jpg',
+  },
+  {
+    name: 'Bruce Lee',
+    nickname: 'Be Water',
+    stats: [
+      { label: 'One Inch Punch', value: 100, emoji: '👊' },
+      { label: 'Films Finished', value: 45, emoji: '🎬' },
+      { label: 'Philosophy', value: 97, emoji: '🧘' },
+      { label: 'Cardio', value: 99, emoji: '❤️' },
+      { label: 'Chuck Norris Superiority', value: 100, emoji: '🥋' },
+      { label: 'Water Drinking', value: 100, emoji: '💧' },
+    ],
+    rarity: 'legendary',
+    image: 'bruce_lee.jpg',
+  },
+  {
+    name: 'Julius Caesar',
+    nickname: 'Trust Issues',
+    stats: [
+      { label: 'Leadership', value: 97, emoji: '👑' },
+      { label: 'Friend Selection', value: 8, emoji: '🤝' },
+      { label: 'Stab Wound Count', value: 23, emoji: '🔪' },
+      { label: 'Salad Legacy', value: 0, emoji: '🥗' },
+      { label: 'Last Words Quality', value: 100, emoji: '💬' },
+      { label: 'Back Watching', value: 5, emoji: '👀' },
+    ],
+    rarity: 'legendary',
+    image: 'julius_caesar.jpg',
+  },
+
+  // ============================================
+  // GOLD TIER - Solid Legends
+  // ============================================
+  {
+    name: 'Mr. Rogers',
+    nickname: 'Actual Saint',
+    stats: [
+      { label: 'Kindness', value: 100, emoji: '💖' },
+      { label: 'Cardigan Collection', value: 99, emoji: '🧥' },
+      { label: 'Senate Destruction', value: 100, emoji: '🏛️' },
+      { label: 'Neighbor Relations', value: 100, emoji: '🏠' },
+      { label: 'Puppetry', value: 95, emoji: '🧸' },
+      { label: 'Secret Military Past', value: 0, emoji: '🪖' },
+    ],
+    rarity: 'gold',
+    image: 'mr_rogers.jpg',
+  },
+  {
+    name: 'Bob Ross',
+    nickname: 'Happy Accidents',
+    stats: [
+      { label: 'Happy Trees', value: 100, emoji: '🌲' },
+      { label: 'Indoor Voice', value: 100, emoji: '🤫' },
+      { label: 'Got Screwed by BRI', value: 95, emoji: '💔' },
+      { label: 'Perm Maintenance', value: 99, emoji: '💇' },
+      { label: 'Drill Sergeant Past', value: 100, emoji: '🪖' },
+      { label: 'Yelling Ability', value: 0, emoji: '📢' },
+    ],
+    rarity: 'gold',
+    image: 'bob_ross.jpg',
+  },
+  {
+    name: 'Steve Irwin',
+    nickname: 'Crikey Forever',
+    stats: [
+      { label: 'Animal Love', value: 100, emoji: '🐊' },
+      { label: 'Personal Space', value: 5, emoji: '📏' },
+      { label: 'Khaki Drip', value: 95, emoji: '👕' },
+      { label: 'Stingray Relations', value: 5, emoji: '🦈' },
+      { label: 'Australian Energy', value: 100, emoji: '🇦🇺' },
+      { label: 'Indoor Activities', value: 10, emoji: '🏠' },
+    ],
+    rarity: 'gold',
+    image: 'steve_irwin.jpg',
+  },
+  {
+    name: 'Freddie Mercury',
+    nickname: 'The Show Must Go On',
+    stats: [
+      { label: 'Vocal Range', value: 100, emoji: '🎤' },
+      { label: 'Stage Presence', value: 100, emoji: '🎭' },
+      { label: 'Cat Ownership', value: 95, emoji: '🐱' },
+      { label: 'Teeth Coverage', value: 20, emoji: '🦷' },
+      { label: 'Mustache Power', value: 99, emoji: '👨' },
+      { label: 'Wembley Domination', value: 100, emoji: '🏟️' },
+    ],
+    rarity: 'gold',
+    image: 'freddie_mercury.jpg',
+  },
+  {
+    name: 'Teddy Roosevelt',
+    nickname: 'Shot Mid-Speech',
+    stats: [
+      { label: 'Bullet Absorption', value: 100, emoji: '🔫' },
+      { label: 'Trust Busting', value: 95, emoji: '💥' },
+      { label: 'Speech Continuation', value: 100, emoji: '🎤' },
+      { label: 'Big Stick Energy', value: 99, emoji: '🪵' },
+      { label: 'Rough Riding', value: 98, emoji: '🐎' },
+      { label: 'Indoor Voice', value: 30, emoji: '📢' },
+    ],
+    rarity: 'gold',
+    image: 'teddy_roosevelt.jpg',
+  },
+  {
+    name: 'Marie Curie',
+    nickname: 'Glowing Review',
+    stats: [
+      { label: 'Nobel Prizes', value: 100, emoji: '🏆' },
+      { label: 'Radiation Safety', value: 10, emoji: '☢️' },
+      { label: 'Still Radioactive', value: 95, emoji: '💀' },
+      { label: 'Glass Ceiling Shattering', value: 99, emoji: '🔨' },
+      { label: 'Husband Credit Stealing', value: 0, emoji: '👫' },
+      { label: 'Glow in Dark', value: 85, emoji: '✨' },
+    ],
+    rarity: 'gold',
+    image: 'marie_curie.jpg',
+  },
+  {
+    name: 'Harriet Tubman',
+    nickname: 'Never Lost One',
+    stats: [
+      { label: 'Navigation', value: 100, emoji: '🧭' },
+      { label: 'Trips Completed', value: 95, emoji: '🚶' },
+      { label: 'On the $20', value: 0, emoji: '💵' },
+      { label: 'Narcolepsy Management', value: 90, emoji: '😴' },
+      { label: 'Gun Usage', value: 85, emoji: '🔫' },
+      { label: 'Patience for Quitters', value: 0, emoji: '🚫' },
+    ],
+    rarity: 'gold',
+    image: 'harriet_tubman.jpg',
+  },
+  {
+    name: 'Muhammad Ali',
+    nickname: 'The Greatest',
+    stats: [
+      { label: 'Boxing', value: 98, emoji: '🥊' },
+      { label: 'Humility', value: 15, emoji: '🙏' },
+      { label: 'Draft Dodging', value: 100, emoji: '✌️' },
+      { label: 'Trash Talk', value: 100, emoji: '🗣️' },
+      { label: 'Butterfly Floating', value: 99, emoji: '🦋' },
+      { label: 'Bee Stinging', value: 99, emoji: '🐝' },
+    ],
+    rarity: 'gold',
+    image: 'muhammad_ali.jpg',
+  },
+
+  // ============================================
+  // SILVER TIER - Entertaining Humans
+  // ============================================
+  {
+    name: 'Keanu Reeves',
+    nickname: 'Breathtaking',
+    stats: [
+      { label: 'Kindness', value: 100, emoji: '💖' },
+      { label: 'Aging', value: 0, emoji: '👴' },
+      { label: 'Sad Bench Sitting', value: 95, emoji: '🪑' },
+      { label: 'Gun Training', value: 98, emoji: '🔫' },
+      { label: 'Whoa Count', value: 99, emoji: '😮' },
+      { label: 'Subway Seat Giving', value: 100, emoji: '🚇' },
+    ],
+    rarity: 'silver',
+    image: 'keanu_reeves.jpg',
+  },
+  {
+    name: 'Danny DeVito',
+    nickname: 'Trash Man',
+    stats: [
+      { label: 'Height', value: 15, emoji: '📏' },
+      { label: 'Egg Offerings', value: 100, emoji: '🥚' },
+      { label: 'Blasting Started', value: 99, emoji: '🔫' },
+      { label: 'Penguin Energy', value: 95, emoji: '🐧' },
+      { label: 'Rum Ham Finding', value: 90, emoji: '🍖' },
+      { label: 'Couch Emergence', value: 100, emoji: '🛋️' },
+    ],
+    rarity: 'silver',
+    image: 'danny_devito.jpg',
+  },
+  {
+    name: 'Nicolas Cage',
+    nickname: 'Yes To Everything',
+    stats: [
+      { label: 'Script Reading', value: 20, emoji: '📜' },
+      { label: 'Range', value: 100, emoji: '🎭' },
+      { label: 'Bee Avoidance', value: 0, emoji: '🐝' },
+      { label: 'Declaration Stealing', value: 99, emoji: '📜' },
+      { label: 'Financial Decisions', value: 10, emoji: '💸' },
+      { label: 'Dinosaur Skull Purchases', value: 95, emoji: '🦖' },
+    ],
+    rarity: 'silver',
+    image: 'nicolas_cage.jpg',
+  },
+  {
+    name: 'Snoop Dogg',
+    nickname: 'Fo Shizzle',
+    stats: [
+      { label: 'Flow', value: 94, emoji: '🎤' },
+      { label: 'Martha Stewart BFF', value: 100, emoji: '👵' },
+      { label: 'Smoke Consumption', value: 100, emoji: '🌿' },
+      { label: 'Cooking Show Hosting', value: 90, emoji: '🍳' },
+      { label: 'Murder Trial Survival', value: 100, emoji: '⚖️' },
+      { label: 'Olympic Torching', value: 99, emoji: '🔥' },
+    ],
+    rarity: 'silver',
+    image: 'snoop_dogg.jpg',
+  },
+  {
+    name: 'Gordon Ramsay',
+    nickname: 'Its Raw',
+    stats: [
+      { label: 'Cooking', value: 95, emoji: '👨‍🍳' },
+      { label: 'Volume Control', value: 5, emoji: '📢' },
+      { label: 'Lamb Sauce Locating', value: 0, emoji: '🍖' },
+      { label: 'Idiot Sandwich Making', value: 100, emoji: '🥪' },
+      { label: 'British Insults', value: 99, emoji: '🇬🇧' },
+      { label: 'Forehead Lines', value: 95, emoji: '😤' },
+    ],
+    rarity: 'silver',
+    image: 'gordon_ramsay.jpg',
+  },
+  {
+    name: 'Shaq',
+    nickname: 'Kazaam',
+    stats: [
+      { label: 'Basketball', value: 96, emoji: '🏀' },
+      { label: 'Free Throws', value: 25, emoji: '🎯' },
+      { label: 'Ads Appeared In', value: 100, emoji: '📺' },
+      { label: 'Genie Acting', value: 40, emoji: '🧞' },
+      { label: 'Charles Barkley Roasting', value: 95, emoji: '🔥' },
+      { label: 'Fitting in Cars', value: 10, emoji: '🚗' },
+    ],
+    rarity: 'silver',
+    image: 'shaq.jpg',
+  },
+  {
+    name: 'Martha Stewart',
+    nickname: 'Did Her Time',
+    stats: [
+      { label: 'Crafts', value: 98, emoji: '✂️' },
+      { label: 'Prison Rep Built', value: 95, emoji: '🔒' },
+      { label: 'Insider Trading', value: 85, emoji: '📈' },
+      { label: 'Snoop Friendship', value: 100, emoji: '🌿' },
+      { label: 'Table Setting', value: 100, emoji: '🍽️' },
+      { label: 'Regret Shown', value: 0, emoji: '😤' },
+    ],
+    rarity: 'silver',
+    image: 'martha_stewart.jpg',
+  },
+  {
+    name: 'Mike Tyson',
+    nickname: 'Ear Collector',
+    stats: [
+      { label: 'Punching Power', value: 100, emoji: '👊' },
+      { label: 'Ear Consumption', value: 95, emoji: '👂' },
+      { label: 'Pigeon Love', value: 99, emoji: '🕊️' },
+      { label: 'Lisp Intimidation', value: 90, emoji: '🗣️' },
+      { label: 'Face Tattoo Timing', value: 85, emoji: '🎭' },
+      { label: 'Hangover Acting', value: 75, emoji: '🎬' },
+    ],
+    rarity: 'silver',
+    image: 'mike_tyson.jpg',
+  },
+  {
+    name: 'Weird Al',
+    nickname: 'Outlasted Them All',
+    stats: [
+      { label: 'Parody Quality', value: 100, emoji: '🎵' },
+      { label: 'Relevance Maintained', value: 95, emoji: '📈' },
+      { label: 'Wholesome Energy', value: 100, emoji: '😊' },
+      { label: 'Accordion Mastery', value: 99, emoji: '🪗' },
+      { label: 'Career Outlasting', value: 100, emoji: '⏰' },
+      { label: 'Vegan Commitment', value: 90, emoji: '🥬' },
+    ],
+    rarity: 'silver',
+    image: 'weird_al.jpg',
+  },
+  {
+    name: 'Guy Fieri',
+    nickname: 'Mayor of Flavortown',
+    stats: [
+      { label: 'Donkey Sauce', value: 100, emoji: '🍔' },
+      { label: 'Hair Bleaching', value: 99, emoji: '💇' },
+      { label: 'Diner Discovery', value: 95, emoji: '🍽️' },
+      { label: 'Shirt Flames', value: 100, emoji: '🔥' },
+      { label: 'Sunglasses Backwards', value: 99, emoji: '🕶️' },
+      { label: 'Fine Dining Respect', value: 20, emoji: '🍷' },
+    ],
+    rarity: 'silver',
+    image: 'guy_fieri.jpg',
+  },
+  {
+    name: 'Bad Luck Brian',
+    nickname: 'The Vest',
+    stats: [
+      { label: 'Sweater Vest Game', value: 99, emoji: '👔' },
+      { label: 'Orthodontic Bills', value: 95, emoji: '🦷' },
+      { label: 'Winning', value: 0, emoji: '🏆' },
+      { label: 'Internet Legacy', value: 90, emoji: '🖥️' },
+      { label: 'Virginity Shield', value: 100, emoji: '🛡️' },
+      { label: 'Luck', value: -50, emoji: '🍀' },
+    ],
+    rarity: 'silver',
+    image: 'bad_luck_brian.jpg',
+  },
+  {
+    name: 'Grimace',
+    nickname: 'Purple Enigma',
+    stats: [
+      { label: 'Taste Buds Killed', value: 100, emoji: '🟣' },
+      { label: 'Mets Championship', value: 95, emoji: '⚾' },
+      { label: 'Species Ambiguity', value: 99, emoji: '❓' },
+      { label: 'Calorie Density', value: 100, emoji: '🍔' },
+      { label: 'Shake Sales', value: 99, emoji: '📈' },
+      { label: 'Mobility', value: 5, emoji: '🏃' },
+    ],
+    rarity: 'silver',
+    image: 'grimace.jpg',
+  },
+
+  // ============================================
+  // BRONZE TIER - The Everyday Legends (Roasted)
+  // ============================================
+  {
+    name: 'Elon Musk',
+    nickname: 'Reply Guy',
+    stats: [
+      { label: 'Posting Frequency', value: 100, emoji: '🐦' },
+      { label: 'Touch Grass', value: 5, emoji: '🌿' },
+      { label: 'Child Naming', value: 0, emoji: '👶' },
+      { label: 'Funding Secured', value: 50, emoji: '💰' },
+      { label: 'Employee Morale', value: 10, emoji: '😢' },
+      { label: 'Anime Knowledge', value: 85, emoji: '🎌' },
+    ],
+    rarity: 'bronze',
+    image: 'elon_musk.jpg',
+  },
+  {
+    name: 'Mark Zuckerberg',
+    nickname: 'Definitely Human',
+    stats: [
+      { label: 'Sunscreen Application', value: 100, emoji: '🧴' },
+      { label: 'Human Emotions', value: 0, emoji: '🤖' },
+      { label: 'Sweet Baby Ray Display', value: 99, emoji: '📚' },
+      { label: 'Data Harvesting', value: 100, emoji: '🕵️' },
+      { label: 'Jiu Jitsu', value: 80, emoji: '🥋' },
+      { label: 'Blinking Naturally', value: 15, emoji: '👁️' },
+    ],
+    rarity: 'bronze',
+    image: 'mark_zuckerberg.jpg',
+  },
+  {
+    name: 'Jeff Bezos',
+    nickname: 'Bathroom Breaks Denied',
+    stats: [
+      { label: 'Wealth', value: 100, emoji: '💰' },
+      { label: 'Employee Comfort', value: 0, emoji: '🚽' },
+      { label: 'Space Cowboy Cosplay', value: 85, emoji: '🤠' },
+      { label: 'Head Shine', value: 99, emoji: '✨' },
+      { label: 'Yacht Collecting', value: 95, emoji: '🛥️' },
+      { label: 'Union Relations', value: 5, emoji: '🤝' },
+    ],
+    rarity: 'bronze',
+    image: 'jeff_bezos.jpg',
+  },
+  {
+    name: 'The Rock',
+    nickname: 'Eyebrow Cinema',
+    stats: [
+      { label: 'Wake Up Time', value: 100, emoji: '⏰' },
+      { label: 'Movie Role Variety', value: 30, emoji: '🎬' },
+      { label: 'Eyebrow Control', value: 99, emoji: '🤨' },
+      { label: 'Cheat Meal Documentation', value: 95, emoji: '🍕' },
+      { label: 'Tequila Sales', value: 90, emoji: '🥃' },
+      { label: 'Political Fence Sitting', value: 100, emoji: '🤐' },
+    ],
+    rarity: 'bronze',
+    image: 'the_rock.jpg',
+  },
+  {
+    name: 'Joe Rogan',
+    nickname: 'Have You Tried DMT',
+    stats: [
+      { label: 'Podcast Length', value: 100, emoji: '🎙️' },
+      { label: 'Height', value: 40, emoji: '📏' },
+      { label: 'Elk Consumption', value: 99, emoji: '🦌' },
+      { label: 'Expert Credentials', value: 30, emoji: '🎓' },
+      { label: 'Sauna Time', value: 100, emoji: '🧖' },
+      { label: 'Opinion Changing', value: 95, emoji: '🔄' },
+    ],
+    rarity: 'bronze',
+    image: 'joe_rogan.jpg',
+  },
+  {
+    name: 'DJ Khaled',
+    nickname: 'Another One',
+    stats: [
+      { label: 'Instrument Playing', value: 0, emoji: '🎸' },
+      { label: 'Shouting Own Name', value: 100, emoji: '📢' },
+      { label: 'Jet Ski Navigation', value: 10, emoji: '🌊' },
+      { label: 'Wife Oral Relations', value: 0, emoji: '👅' },
+      { label: 'Key Possession', value: 100, emoji: '🔑' },
+      { label: 'Suffering from Success', value: 99, emoji: '😤' },
+    ],
+    rarity: 'bronze',
+    image: 'dj_khaled.jpg',
+  },
+  {
+    name: 'Tommy Wiseau',
+    nickname: 'Oh Hi Mark',
+    stats: [
+      { label: 'Acting Ability', value: 20, emoji: '🎭' },
+      { label: 'Confidence Level', value: 100, emoji: '💪' },
+      { label: 'Origin Story Clarity', value: 0, emoji: '❓' },
+      { label: 'Football Throwing', value: 15, emoji: '🏈' },
+      { label: 'Budget Management', value: 5, emoji: '💸' },
+      { label: 'Cult Following', value: 100, emoji: '🎬' },
+    ],
+    rarity: 'bronze',
+    image: 'tommy_wiseau.jpg',
+  },
+  {
+    name: 'Gary Busey',
+    nickname: 'No Helmet',
+    stats: [
+      { label: 'Intensity', value: 100, emoji: '😳' },
+      { label: 'Teeth Size', value: 95, emoji: '🦷' },
+      { label: 'Normal Behavior', value: 5, emoji: '🤔' },
+      { label: 'Motorcycle Helmet Usage', value: 0, emoji: '🏍️' },
+      { label: 'Interview Predictability', value: 5, emoji: '🎤' },
+      { label: 'Eye Contact', value: 100, emoji: '👀' },
+    ],
+    rarity: 'bronze',
+    image: 'gary_busey.jpg',
+  },
+  {
+    name: 'Charlie Sheen',
+    nickname: 'Winning',
+    stats: [
+      { label: 'Tiger Blood', value: 100, emoji: '🐯' },
+      { label: 'Career Preservation', value: 10, emoji: '📉' },
+      { label: 'Goddesses Collected', value: 95, emoji: '👯' },
+      { label: 'Winning', value: 100, emoji: '🏆' },
+      { label: 'Anger Management', value: 15, emoji: '😤' },
+      { label: 'Network Relations', value: 0, emoji: '📺' },
+    ],
+    rarity: 'bronze',
+    image: 'charlie_sheen.jpg',
+  },
+  {
+    name: 'Flavor Flav',
+    nickname: 'Yeah Boyyyy',
+    stats: [
+      { label: 'Hype Generation', value: 100, emoji: '📢' },
+      { label: 'Clock Size', value: 99, emoji: '⏰' },
+      { label: 'Punctuality', value: 50, emoji: '🕐' },
+      { label: 'Child Support Cases', value: 85, emoji: '👶' },
+      { label: 'Reality TV Chaos', value: 95, emoji: '📺' },
+      { label: 'Chicken Restaurant', value: 30, emoji: '🍗' },
+    ],
+    rarity: 'bronze',
+    image: 'flavor_flav.jpg',
+  },
+  {
+    name: 'Hulk Hogan',
+    nickname: 'Brother Brother',
+    stats: [
+      { label: 'Wrestling', value: 90, emoji: '💪' },
+      { label: 'Brother Count', value: 100, emoji: '🗣️' },
+      { label: 'Gawker Destruction', value: 99, emoji: '⚖️' },
+      { label: 'Tape Awareness', value: 0, emoji: '📹' },
+      { label: 'Racial Sensitivity', value: 10, emoji: '😬' },
+      { label: 'Bandana Collection', value: 95, emoji: '🎀' },
+    ],
+    rarity: 'bronze',
+    image: 'hulk_hogan.jpg',
+  },
+  {
+    name: 'Ozzy Osbourne',
+    nickname: 'Medical Marvel',
+    stats: [
+      { label: 'Survival Odds Defied', value: 100, emoji: '💀' },
+      { label: 'Enunciation', value: 10, emoji: '🗣️' },
+      { label: 'Bat Head Consumption', value: 95, emoji: '🦇' },
+      { label: 'Sharon Dependence', value: 100, emoji: '👰' },
+      { label: 'Substance Absorption', value: 99, emoji: '💊' },
+      { label: 'Coherent Sentences', value: 20, emoji: '💬' },
+    ],
+    rarity: 'bronze',
+    image: 'ozzy_osbourne.jpg',
+  },
+  {
+    name: 'Arnold Schwarzenegger',
+    nickname: 'Ill Be Back',
+    stats: [
+      { label: 'Muscles', value: 95, emoji: '💪' },
+      { label: 'Pronunciation', value: 60, emoji: '🗣️' },
+      { label: 'Governating', value: 70, emoji: '🏛️' },
+      { label: 'Maid Relations', value: 90, emoji: '🏠' },
+      { label: 'Catchphrase Creation', value: 100, emoji: '🎬' },
+      { label: 'Mr. Universe Wins', value: 95, emoji: '🏆' },
+    ],
+    rarity: 'bronze',
+    image: 'arnold.jpg',
+  },
+  {
+    name: 'Post Malone',
+    nickname: 'Face Tattoo Math',
+    stats: [
+      { label: 'Music Talent', value: 85, emoji: '🎵' },
+      { label: 'Hygiene Rumors', value: 60, emoji: '🚿' },
+      { label: 'Beer Pong Skill', value: 100, emoji: '🍺' },
+      { label: 'Face Real Estate Used', value: 95, emoji: '🎨' },
+      { label: 'Bud Light Consumption', value: 99, emoji: '🍻' },
+      { label: 'Genre Classification', value: 40, emoji: '🤷' },
+    ],
+    rarity: 'bronze',
+    image: 'post_malone.jpg',
+  },
+  {
+    name: 'Island Boys',
+    nickname: 'Im An Island Boy',
+    stats: [
+      { label: 'Hair Structure', value: 99, emoji: '🌴' },
+      { label: 'Synchronization', value: 0, emoji: '👯' },
+      { label: 'Freestyle Ability', value: 5, emoji: '🎤' },
+      { label: 'Pool Video Quality', value: 95, emoji: '🏊' },
+      { label: 'One Hit Wonder', value: 100, emoji: '📉' },
+      { label: 'Parent Disappointment', value: 99, emoji: '👨‍👩‍👦' },
+    ],
+    rarity: 'bronze',
+    image: 'island_boys.jpg',
+  },
+  {
+    name: 'Scumbag Steve',
+    nickname: 'The Original',
+    stats: [
+      { label: 'Hat Angle', value: 100, emoji: '🧢' },
+      { label: 'Lighter Borrowing', value: 99, emoji: '🚬' },
+      { label: 'Item Returning', value: 0, emoji: '🔙' },
+      { label: 'Couch Surfing', value: 95, emoji: '🛋️' },
+      { label: 'Rap Career', value: 1, emoji: '💿' },
+      { label: 'Reliability', value: 0, emoji: '🤝' },
+    ],
+    rarity: 'bronze',
+    image: 'scumbag_steve.jpg',
+  },
+
+  // ============================================
+  // MODERN ERA - The New Roasts
+  // ============================================
+  {
+    name: 'Elizabeth Holmes',
+    nickname: 'Fake It Till Jail',
+    stats: [
+      { label: 'Voice Depth', value: 99, emoji: '📉' },
+      { label: 'Blinking Rate', value: 0, emoji: '👁️' },
+      { label: 'Blood Testing', value: 0, emoji: '🩸' },
+      { label: 'Turtleneck Collection', value: 100, emoji: '🐢' },
+      { label: 'Gaslighting', value: 99, emoji: '🕯️' },
+      { label: 'Steve Jobs Cosplay', value: 95, emoji: '🍏' },
+    ],
+    rarity: 'bronze',
+    image: 'elizabeth_holmes.jpg',
+  },
+  {
+    name: 'George Santos',
+    nickname: 'Kitara Ravache',
+    stats: [
+      { label: 'Resume Writing', value: 100, emoji: '📝' },
+      { label: 'Volleyball Career', value: 0, emoji: '🏐' },
+      { label: 'Jewish Heritage', value: 50, emoji: '🕍' },
+      { label: 'Truth Telling', value: 0, emoji: '🤥' },
+      { label: 'Drag Performance', value: 85, emoji: '👠' },
+      { label: 'Audacity', value: 100, emoji: '😳' },
+    ],
+    rarity: 'bronze',
+    image: 'george_santos.jpg',
+  },
+  {
+    name: 'Sam Bankman-Fried',
+    nickname: 'Effective Altruism',
+    stats: [
+      { label: 'LoL Rank', value: 25, emoji: '🎮' },
+      { label: 'Hair Care', value: 0, emoji: '💇' },
+      { label: 'Funds Misplaced (B)', value: 9, emoji: '💸' },
+      { label: 'Actual Altruism', value: 0, emoji: '😇' },
+      { label: 'Snitching Speed', value: 90, emoji: '🐀' },
+      { label: 'Prison Rizz', value: 5, emoji: '🔒' },
+    ],
+    rarity: 'bronze',
+    image: 'sam_bankman.jpg',
+  },
+  {
+    name: 'Billy McFarland',
+    nickname: 'Fyre Starter',
+    stats: [
+      { label: 'Sandwich Quality', value: 0, emoji: '🥪' },
+      { label: 'Water Logistics', value: 5, emoji: '💧' },
+      { label: 'Fraud Level', value: 99, emoji: '⚖️' },
+      { label: 'Island Ownership', value: 0, emoji: '🏝️' },
+      { label: 'Hype Generation', value: 100, emoji: '📢' },
+      { label: 'Tent Quality', value: 5, emoji: '⛺' },
+    ],
+    rarity: 'bronze',
+    image: 'billy_mcfarland.jpg',
+  },
+  {
+    name: 'Liver King',
+    nickname: 'Natty or Not',
+    stats: [
+      { label: 'Natural Status', value: 0, emoji: '💉' },
+      { label: 'Steroid Budget (K/mo)', value: 11, emoji: '💊' },
+      { label: 'Testicle Eating', value: 99, emoji: '🥚' },
+      { label: 'Ab Authenticity', value: 20, emoji: '🧱' },
+      { label: 'Ancestral Tenets', value: 2, emoji: '📜' },
+      { label: 'Height (ft)', value: 56, emoji: '📏' },
+    ],
+    rarity: 'bronze',
+    image: 'liver_king.jpg',
+  },
+  {
+    name: 'Antonio Brown',
+    nickname: 'Mr Big Chest',
+    stats: [
+      { label: 'CTE Levels', value: 99, emoji: '🧠' },
+      { label: 'Shirt Removal', value: 100, emoji: '👕' },
+      { label: 'Employability', value: 0, emoji: '💼' },
+      { label: 'Rap Skills', value: 5, emoji: '🎤' },
+      { label: 'Twitter Fingers', value: 99, emoji: '🐦' },
+      { label: 'Mid-Game Exits', value: 100, emoji: '🏃' },
+    ],
+    rarity: 'bronze',
+    image: 'antonio_brown.jpg',
+  },
+  {
+    name: 'Rachel Dolezal',
+    nickname: 'Transracial Pioneer',
+    stats: [
+      { label: 'DNA Accuracy', value: 0, emoji: '🧬' },
+      { label: 'Bronzer Usage', value: 99, emoji: '🧴' },
+      { label: 'Braiding Skill', value: 90, emoji: '💇' },
+      { label: 'Cultural Appropriation', value: 100, emoji: '💃' },
+      { label: 'Delusion', value: 99, emoji: '🧠' },
+      { label: 'NAACP Status', value: 0, emoji: '✊' },
+    ],
+    rarity: 'bronze',
+    image: 'rachel_dolezal.jpg',
+  },
+  {
+    name: '6ix9ine',
+    nickname: 'Rainbow Snitch',
+    stats: [
+      { label: 'Snitching', value: 100, emoji: '🐀' },
+      { label: 'Hair Color Count', value: 99, emoji: '🌈' },
+      { label: 'Street Cred', value: 0, emoji: '🧱' },
+      { label: 'Witness Protection', value: 95, emoji: '🕵️' },
+      { label: 'N-Word Pass', value: 0, emoji: '🚫' },
+      { label: 'Music Quality', value: 10, emoji: '🎵' },
+    ],
+    rarity: 'bronze',
+    image: '6ix9ine.jpg',
+  },
+  {
+    name: 'Adam Levine',
+    nickname: 'DM Slider',
+    stats: [
+      { label: 'DM Sliding', value: 99, emoji: '📨' },
+      { label: 'Cringey Texts', value: 100, emoji: '🤳' },
+      { label: 'Tattoo Coverage', value: 90, emoji: '🖊️' },
+      { label: 'Body Absurdity', value: 99, emoji: '🤪' },
+      { label: 'Marriage Loyalty', value: 10, emoji: '💍' },
+      { label: 'High Notes', value: 85, emoji: '🎶' },
+    ],
+    rarity: 'bronze',
+    image: 'adam_levine.jpg',
+  },
+  {
+    name: 'Jojo Siwa',
+    nickname: 'Karma Is My Boyfriend',
+    stats: [
+      { label: 'Rebrand Success', value: 0, emoji: '🖤' },
+      { label: 'Hairline Tension', value: 99, emoji: '🎀' },
+      { label: 'Gay Pop Invention', value: 50, emoji: '🏳️‍🌈' },
+      { label: 'Edge Level', value: 5, emoji: '😈' },
+      { label: 'Yelling Volume', value: 100, emoji: '🗣️' },
+      { label: 'Dance Mom Trauma', value: 95, emoji: '💃' },
+    ],
+    rarity: 'bronze',
+    image: 'jojo_siwa.jpg',
+  },
+  {
+    name: 'Will Smith',
+    nickname: 'Keep My Wifes Name',
+    stats: [
+      { label: 'Slap Power', value: 99, emoji: '👋' },
+      { label: 'Entanglement Tolerance', value: 100, emoji: '🕸️' },
+      { label: 'Crying Memes', value: 95, emoji: '😭' },
+      { label: 'Career Recovery', value: 60, emoji: '📉' },
+      { label: 'Oscar Keeping', value: 100, emoji: '🏆' },
+      { label: 'Wife Defense', value: 100, emoji: '🛡️' },
+    ],
+    rarity: 'bronze',
+    image: 'will_smith.jpg',
+  },
+  {
+    name: 'Logan Paul',
+    nickname: 'Forest Navigator',
+    stats: [
+      { label: 'Forest Judgment', value: 0, emoji: '🌲' },
+      { label: 'Kid Scamming', value: 99, emoji: '🪙' },
+      { label: 'Prime Sales', value: 95, emoji: '🥤' },
+      { label: 'Likability', value: 10, emoji: '😐' },
+      { label: 'Floyd Survival', value: 100, emoji: '🥊' },
+      { label: 'Apology Videos', value: 99, emoji: '📹' },
+    ],
+    rarity: 'bronze',
+    image: 'logan_paul.jpg',
+  },
+  {
+    name: 'Salt Bae',
+    nickname: 'Elbow Seasoning',
+    stats: [
+      { label: 'Elbow Hygiene', value: 0, emoji: '🧂' },
+      { label: 'Meat Prices', value: 100, emoji: '🥩' },
+      { label: 'World Cup Cringe', value: 100, emoji: '🏆' },
+      { label: 'Indoor Sunglasses', value: 99, emoji: '🕶️' },
+      { label: 'Actual Cooking', value: 50, emoji: '🍳' },
+      { label: 'Clout Chasing', value: 100, emoji: '🏃' },
+    ],
+    rarity: 'bronze',
+    image: 'salt_bae.jpg',
+  },
+  {
+    name: 'Hilaria Baldwin',
+    nickname: 'How You Say Cucumber',
+    stats: [
+      { label: 'Spanish Accent', value: 0, emoji: '🇪🇸' },
+      { label: 'Yoga Poses', value: 99, emoji: '🧘' },
+      { label: 'Cucumber Knowledge', value: 0, emoji: '🥒' },
+      { label: 'Boston Heritage', value: 100, emoji: '🇺🇸' },
+      { label: 'Child Count', value: 7, emoji: '👶' },
+      { label: 'Grift Quality', value: 95, emoji: '🕵️' },
+    ],
+    rarity: 'bronze',
+    image: 'hilaria_baldwin.jpg',
+  },
+  {
+    name: 'Ben Shapiro',
+    nickname: 'Facts Dont Care',
+    stats: [
+      { label: 'Speaking Speed', value: 99, emoji: '⏩' },
+      { label: 'WAP Understanding', value: 0, emoji: '💦' },
+      { label: 'Height', value: 30, emoji: '📏' },
+      { label: 'Wife Doctor Status', value: 100, emoji: '🩺' },
+      { label: 'Libs Owned', value: 50, emoji: '📉' },
+      { label: 'Dryness', value: 100, emoji: '🌵' },
+    ],
+    rarity: 'bronze',
+    image: 'ben_shapiro.jpg',
+  },
+  {
+    name: 'Travis Scott',
+    nickname: 'Its Lit',
+    stats: [
+      { label: 'Autotune Reliance', value: 99, emoji: '🤖' },
+      { label: 'Apology Lighting', value: 100, emoji: '🌑' },
+      { label: 'Crowd Control', value: 0, emoji: '🚧' },
+      { label: 'McDonalds Collabs', value: 95, emoji: '🍔' },
+      { label: 'Robot Dance', value: 90, emoji: '💃' },
+      { label: 'Responsibility Taken', value: 0, emoji: '🤷' },
+    ],
+    rarity: 'bronze',
+    image: 'travis_scott.jpg',
+  },
+  {
+    name: 'Raygun',
+    nickname: 'Breaking PhD',
+    stats: [
+      { label: 'Kangaroo Hop', value: 100, emoji: '🦘' },
+      { label: 'Rhythm', value: 0, emoji: '🎵' },
+      { label: 'PhD in Yapping', value: 99, emoji: '📜' },
+      { label: 'National Embarrassment', value: 100, emoji: '🇦🇺' },
+      { label: 'Floor Cleaning', value: 90, emoji: '🧹' },
+      { label: 'Self Awareness', value: 0, emoji: '🧠' },
+    ],
+    rarity: 'bronze',
+    image: 'raygun.jpg',
+  },
 ];
 
-// Get random cards for pack opening
-export const getRandomCards = (count: number): PresetCard[] => {
-  const shuffled = [...PRESET_CARDS].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-};
+// Get card with calculated OVR
+export function getCardWithOVR(card: PresetCard): PresetCard & { overallRating: number } {
+  return {
+    ...card,
+    overallRating: calculateOVR(card.stats),
+  };
+}
 
-// Get cards by rarity (for weighted pulls)
-export const getWeightedRandomCards = (count: number): PresetCard[] => {
-  const cards: PresetCard[] = [];
-  
-  for (let i = 0; i < count; i++) {
-    const roll = Math.random() * 100;
-    let targetRarity: PresetCard['rarity'];
-    
-    // Weighted rarity: bronze 35%, silver 30%, gold 20%, legendary 10%, holo 4%, glitch 1%
-    if (roll < 35) targetRarity = 'bronze';
-    else if (roll < 65) targetRarity = 'silver';
-    else if (roll < 85) targetRarity = 'gold';
-    else if (roll < 95) targetRarity = 'legendary';
-    else if (roll < 99) targetRarity = 'holo';
-    else targetRarity = 'glitch';
-    
-    const rarityPool = PRESET_CARDS.filter(c => c.rarity === targetRarity);
-    if (rarityPool.length > 0) {
-      const randomIndex = Math.floor(Math.random() * rarityPool.length);
-      cards.push(rarityPool[randomIndex]);
-    } else {
-      // Fallback to any card if pool is empty
-      const randomIndex = Math.floor(Math.random() * PRESET_CARDS.length);
-      cards.push(PRESET_CARDS[randomIndex]);
-    }
-  }
-  
-  return cards;
-};
+// Get all cards with OVR
+export function getAllCardsWithOVR(): (PresetCard & { overallRating: number })[] {
+  return PRESET_CARDS.map(getCardWithOVR);
+}
+
+// Get cards by rarity
+export function getCardsByRarity(rarity: PresetCard['rarity']): PresetCard[] {
+  return PRESET_CARDS.filter(c => c.rarity === rarity);
+}
