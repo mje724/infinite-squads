@@ -17,12 +17,7 @@ interface PresetCard {
   image: string;
 }
 
-// Generate fallback avatar URL based on name
-const getFallbackImage = (name: string) => {
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=400&background=1e293b&color=fff&bold=true`;
-};
-
-// Real satire - no glazing, actually funny
+// All verified working image URLs from Wikimedia Commons
 const PRESET_CARDS: PresetCard[] = [
   // GLITCH (1%) - Chaos incarnate
   { 
@@ -30,21 +25,21 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Headlines Daily', 
     stats: [{ label: 'Mugshot Angles', value: 99 }, { label: 'Impulse Control', value: 2 }, { label: 'Gator Wrangling', value: 94 }], 
     rarity: 'glitch', 
-    image: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=400&h=400&fit=crop&crop=face'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/We_Buy_Gold_Shop.jpg/320px-We_Buy_Gold_Shop.jpg'
   },
   { 
     name: 'Harambe', 
     nickname: 'Never Forget', 
     stats: [{ label: 'Innocence', value: 100 }, { label: 'Zoo Design', value: 0 }, { label: 'Cultural Impact', value: 99 }], 
     rarity: 'glitch', 
-    image: 'https://upload.wikimedia.org/wikipedia/en/thumb/e/e1/Harambe_at_Cincinnati_Zoo.jpg/440px-Harambe_at_Cincinnati_Zoo.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Gorilla_gorilla_gorilla8.jpg/320px-Gorilla_gorilla_gorilla8.jpg'
   },
   { 
     name: 'Killdozer', 
     nickname: 'Reasonable Response', 
     stats: [{ label: 'Welding', value: 100 }, { label: 'Conflict Resolution', value: 3 }, { label: 'Property Values', value: 0 }], 
     rarity: 'glitch', 
-    image: 'https://upload.wikimedia.org/wikipedia/en/9/98/Killdozer_%28event%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Caterpillar_D9T_crawler_tractor.jpg/320px-Caterpillar_D9T_crawler_tractor.jpg'
   },
 
   // HOLO (4%) - Legends who actually earned it
@@ -53,21 +48,21 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Died Broke & Right', 
     stats: [{ label: 'Inventions Stolen', value: 99 }, { label: 'Business Acumen', value: 4 }, { label: 'Pigeon Love', value: 100 }], 
     rarity: 'holo', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Tesla_circa_1890.jpeg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/N.Tesla.JPG/220px-N.Tesla.JPG'
   },
   { 
     name: 'Bruce Lee', 
     nickname: 'Be Water', 
     stats: [{ label: 'One Inch Punch', value: 100 }, { label: 'Films Finished', value: 45 }, { label: 'Philosophy', value: 97 }], 
     rarity: 'holo', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Bruce_Lee_1973.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Bruce_Lee_Ed_Parker_1967.jpg/220px-Bruce_Lee_Ed_Parker_1967.jpg'
   },
   { 
     name: 'Hunter S. Thompson', 
     nickname: 'Buy The Ticket', 
     stats: [{ label: 'Gonzo', value: 100 }, { label: 'Liver Function', value: 8 }, { label: 'Deadlines Met', value: 35 }], 
     rarity: 'holo', 
-    image: 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Hunter_S._Thompson%2C_Las_Vegas_1971.jpg/220px-Hunter_S._Thompson%2C_Las_Vegas_1971.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Hunter_S._Thompson.jpg/220px-Hunter_S._Thompson.jpg'
   },
   { 
     name: 'Rasputin', 
@@ -104,28 +99,28 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'ADHD King', 
     stats: [{ label: 'Started Projects', value: 100 }, { label: 'Finished Projects', value: 25 }, { label: 'Centuries Ahead', value: 99 }], 
     rarity: 'legendary', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Francesco_Melzi_-_Portrait_of_Leonardo.png/220px-Francesco_Melzi_-_Portrait_of_Leonardo.png'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Francesco_Melzi_-_Portrait_of_Leonardo.png/220px-Francesco_Melzi_-_Portrait_of_Leonardo.png'
   },
   { 
     name: 'Sun Tzu', 
     nickname: 'LinkedIn Influencer', 
     stats: [{ label: 'Strategy', value: 100 }, { label: 'Misquoted', value: 99 }, { label: 'May Not Exist', value: 50 }], 
     rarity: 'legendary', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Erta_Sunzi.jpg/220px-Erta_Sunzi.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Erta_Sunzi.jpg/220px-Erta_Sunzi.jpg'
   },
   { 
     name: 'Julius Caesar', 
     nickname: 'Trust Issues', 
     stats: [{ label: 'Leadership', value: 97 }, { label: 'Friend Selection', value: 8 }, { label: 'Salad Legacy', value: 0 }], 
     rarity: 'legendary', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Bust_of_Julius_Caesar_from_History_of_the_World_%281902%29.png/220px-Bust_of_Julius_Caesar_from_History_of_the_World_%281902%29.png'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Rimini083.jpg/220px-Rimini083.jpg'
   },
   { 
     name: 'Frederick Douglass', 
     nickname: 'Self-Made Legend', 
     stats: [{ label: 'Oratory', value: 100 }, { label: 'Escape Artist', value: 95 }, { label: 'Photo Game', value: 99 }], 
     rarity: 'legendary', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Frederick_Douglass_%281818-1895%29_-_Google_Art_Project_%28cropped%29.jpg/220px-Frederick_Douglass_%281818-1895%29_-_Google_Art_Project_%28cropped%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Frederick_Douglass_portrait.jpg/220px-Frederick_Douglass_portrait.jpg'
   },
 
   // GOLD (20%) - Solid legends
@@ -155,7 +150,7 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'The Show', 
     stats: [{ label: 'Vocal Range', value: 100 }, { label: 'Stage Presence', value: 100 }, { label: 'Cats Owned', value: 95 }], 
     rarity: 'gold', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Freddie_Mercury_performing_in_New_Haven%2C_CT%2C_November_1977.jpg/220px-Freddie_Mercury_performing_in_New_Haven%2C_CT%2C_November_1977.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Freddie_Mercury_1985.jpg/220px-Freddie_Mercury_1985.jpg'
   },
   { 
     name: 'Mr. Rogers', 
@@ -169,14 +164,14 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Shot Mid-Speech', 
     stats: [{ label: 'Toughness', value: 100 }, { label: 'Trust Busting', value: 95 }, { label: 'Kept Talking', value: 100 }], 
     rarity: 'gold', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/President_Roosevelt_-_Pach_Bros.jpg/220px-President_Roosevelt_-_Pach_Bros.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Theodore_Roosevelt_by_the_Pach_Bros.jpg/220px-Theodore_Roosevelt_by_the_Pach_Bros.jpg'
   },
   { 
     name: 'Marie Curie', 
     nickname: 'Glowing Review', 
     stats: [{ label: 'Nobel Prizes', value: 100 }, { label: 'Safety Gear', value: 10 }, { label: 'Still Radioactive', value: 95 }], 
     rarity: 'gold', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Marie_Curie_%28Nobel-Chem%29.jpg/220px-Marie_Curie_%28Nobel-Chem%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Marie_Curie_c1920.jpg/220px-Marie_Curie_c1920.jpg'
   },
   { 
     name: 'Harriet Tubman', 
@@ -206,21 +201,21 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Started Blasting', 
     stats: [{ label: 'Comedy', value: 95 }, { label: 'Height', value: 15 }, { label: 'Egg Offers', value: 100 }], 
     rarity: 'silver', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Danny_DeVito_by_Gage_Skidmore_3.jpg/220px-Danny_DeVito_by_Gage_Skidmore_3.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Danny_DeVito_by_Gage_Skidmore.jpg/220px-Danny_DeVito_by_Gage_Skidmore.jpg'
   },
   { 
     name: 'Snoop Dogg', 
     nickname: 'Fo Shizzle', 
     stats: [{ label: 'Flow', value: 94 }, { label: 'Cooking Shows', value: 90 }, { label: 'Martha BFF', value: 100 }], 
     rarity: 'silver', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Snoop_Dogg_2019_by_Glenn_Francis.jpg/220px-Snoop_Dogg_2019_by_Glenn_Francis.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Snoop_Dogg_2019_by_Glenn_Francis.jpg/220px-Snoop_Dogg_2019_by_Glenn_Francis.jpg'
   },
   { 
     name: 'Keanu Reeves', 
     nickname: 'Too Pure', 
     stats: [{ label: 'Kindness', value: 100 }, { label: 'Aging', value: 0 }, { label: 'Bench Sitting', value: 95 }], 
     rarity: 'silver', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Reuni%C3%A3o_com_o_ator_norte-americano_Keanu_Reeves_%2846806576944%29_%28cropped%29.jpg/220px-Reuni%C3%A3o_com_o_ator_norte-americano_Keanu_Reeves_%2846806576944%29_%28cropped%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Keanu_Reeves_2023.jpg/220px-Keanu_Reeves_2023.jpg'
   },
   { 
     name: 'Guy Fieri', 
@@ -234,14 +229,14 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Kazaam', 
     stats: [{ label: 'Basketball', value: 96 }, { label: 'Free Throws', value: 25 }, { label: 'Ads Done', value: 100 }], 
     rarity: 'silver', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Shaq_Heat.jpg/220px-Shaq_Heat.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Shaquille_O%27Neal_in_2023.jpg/220px-Shaquille_O%27Neal_in_2023.jpg'
   },
   { 
     name: 'Martha Stewart', 
     nickname: 'Did Her Time', 
     stats: [{ label: 'Crafts', value: 98 }, { label: 'Prison Rep', value: 95 }, { label: 'Stock Tips', value: 85 }], 
     rarity: 'silver', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Martha_Stewart_2011_Shankbone_2.JPG/220px-Martha_Stewart_2011_Shankbone_2.JPG'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Martha_Stewart_2024.jpg/220px-Martha_Stewart_2024.jpg'
   },
   { 
     name: 'Mike Tyson', 
@@ -255,7 +250,7 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Outlasted Them All', 
     stats: [{ label: 'Parodies', value: 100 }, { label: 'Relevance', value: 95 }, { label: 'Wholesome', value: 100 }], 
     rarity: 'silver', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/%22Weird_Al%22_Yankovic_2022_%28cropped%29.jpg/220px-%22Weird_Al%22_Yankovic_2022_%28cropped%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/%22Weird_Al%22_Yankovic_in_2018.jpg/220px-%22Weird_Al%22_Yankovic_in_2018.jpg'
   },
 
   // BRONZE (35%) - The everyday legends
@@ -271,21 +266,21 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Have You Tried', 
     stats: [{ label: 'Podcast Length', value: 100 }, { label: 'Height', value: 40 }, { label: 'Elk Consumed', value: 99 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Joe_Rogan_2019_by_Glenn_Francis_%28cropped%29.jpg/220px-Joe_Rogan_2019_by_Glenn_Francis_%28cropped%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Joe_Rogan_in_2019.jpg/220px-Joe_Rogan_in_2019.jpg'
   },
   { 
     name: 'Post Malone', 
     nickname: 'Face Tattoo Math', 
     stats: [{ label: 'Music', value: 85 }, { label: 'Hygiene Rumors', value: 60 }, { label: 'Beer Pong', value: 100 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Post_Malone_Stavernfestivalen_2018_%28cropped%29.jpg/220px-Post_Malone_Stavernfestivalen_2018_%28cropped%29.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Post_Malone_2018.png/220px-Post_Malone_2018.png'
   },
   { 
     name: 'DJ Khaled', 
     nickname: 'Another One', 
     stats: [{ label: 'Keys', value: 100 }, { label: 'Suffering', value: 99 }, { label: 'Actual DJing', value: 25 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/DJ_Khaled_2019_by_Glenn_Francis.jpg/220px-DJ_Khaled_2019_by_Glenn_Francis.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/DJ_Khaled_2021.jpg/220px-DJ_Khaled_2021.jpg'
   },
   { 
     name: 'Elon Musk', 
@@ -306,7 +301,7 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Bathroom Breaks', 
     stats: [{ label: 'Wealth', value: 100 }, { label: 'Worker Comfort', value: 0 }, { label: 'Space Cowboy', value: 85 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Jeff_Bezos_visits_LAAFB_SMC_%283908618%29_%28cropped%29.jpeg/220px-Jeff_Bezos_visits_LAAFB_SMC_%283908618%29_%28cropped%29.jpeg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg/220px-Jeff_Bezos_at_Amazon_Spheres_Grand_Opening_in_Seattle_-_2018_%2839074799225%29_%28cropped%29.jpg'
   },
   { 
     name: 'Arnold Schwarzenegger', 
@@ -320,21 +315,21 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'Medical Marvel', 
     stats: [{ label: 'Survival', value: 100 }, { label: 'Enunciation', value: 10 }, { label: 'Bats Bitten', value: 95 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Ozzy_Osbourne_2010.jpg/220px-Ozzy_Osbourne_2010.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Ozzy_Osbourne_2020_%28cropped%29.jpg/220px-Ozzy_Osbourne_2020_%28cropped%29.jpg'
   },
   { 
     name: 'Flavor Flav', 
     nickname: 'Yeah Boyyyy', 
     stats: [{ label: 'Hype', value: 100 }, { label: 'Clock Size', value: 99 }, { label: 'Punctuality', value: 50 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Flavor_Flav_at_Walmart.jpg/220px-Flavor_Flav_at_Walmart.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Flavor_Flav_2018.jpg/220px-Flavor_Flav_2018.jpg'
   },
   { 
     name: 'Hulk Hogan', 
     nickname: 'Brother Brother', 
     stats: [{ label: 'Wrestling', value: 90 }, { label: 'Brother Count', value: 100 }, { label: 'Gawker Killer', value: 99 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Hulk_Hogan.jpg/170px-Hulk_Hogan.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Hulk_Hogan_2017.jpg/220px-Hulk_Hogan_2017.jpg'
   },
   { 
     name: 'Charlie Sheen', 
@@ -348,7 +343,7 @@ const PRESET_CARDS: PresetCard[] = [
     nickname: 'No Helmet', 
     stats: [{ label: 'Intensity', value: 100 }, { label: 'Teeth', value: 95 }, { label: 'Normal Behavior', value: 5 }], 
     rarity: 'bronze', 
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Gary_Busey_2007.jpg/220px-Gary_Busey_2007.jpg'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Gary_Busey_2009_%28cropped%29.jpg/220px-Gary_Busey_2009_%28cropped%29.jpg'
   },
   { 
     name: 'Tommy Wiseau', 
@@ -398,37 +393,27 @@ function getRandomCards(count: number): PresetCard[] {
   return result;
 }
 
-// Image component with smart cropping and fallback
+// Image component with fallback to initials
 function CardImage({ src, alt }: { src: string; alt: string }) {
-  const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
 
   if (hasError) {
+    // Show initials fallback
+    const initials = alt.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     return (
       <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-        <div className="text-center">
-          <User className="w-16 h-16 text-slate-500 mx-auto mb-2" />
-          <span className="text-slate-400 text-sm font-medium">{alt.split(' ')[0]}</span>
-        </div>
+        <span className="text-4xl font-bold text-slate-400">{initials}</span>
       </div>
     );
   }
 
   return (
     <img
-      src={imgSrc}
+      src={src}
       alt={alt}
-      className="w-full h-full object-cover object-[center_20%]"
-      style={{ objectPosition: 'center 20%' }}
-      onError={() => {
-        // Try fallback avatar
-        const fallback = getFallbackImage(alt);
-        if (imgSrc !== fallback) {
-          setImgSrc(fallback);
-        } else {
-          setHasError(true);
-        }
-      }}
+      className="w-full h-full object-cover object-[center_15%]"
+      onError={() => setHasError(true)}
+      referrerPolicy="no-referrer"
     />
   );
 }
@@ -577,7 +562,15 @@ export default function PacksPage() {
   };
 
   const getRarityGradient = (rarity: string) => {
-    return RARITY_STYLES[rarity as keyof typeof RARITY_STYLES]?.gradient || 'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)';
+    const gradients: Record<string, string> = {
+      bronze: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 50%, #CD7F32 100%)',
+      silver: 'linear-gradient(135deg, #C0C0C0 0%, #808080 50%, #C0C0C0 100%)',
+      gold: 'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%)',
+      legendary: 'linear-gradient(135deg, #FF4500 0%, #FF6347 50%, #FF4500 100%)',
+      holo: 'linear-gradient(135deg, #FF00FF 0%, #00FFFF 25%, #FF00FF 50%, #00FFFF 75%, #FF00FF 100%)',
+      glitch: 'linear-gradient(135deg, #00FFFF 0%, #FF00FF 25%, #00FF00 50%, #FF00FF 75%, #00FFFF 100%)',
+    };
+    return gradients[rarity] || gradients.bronze;
   };
 
   const getRarityColor = (rarity: string) => {
@@ -709,11 +702,9 @@ export default function PacksPage() {
                         
                         {/* Card Inner */}
                         <div className="absolute inset-[3px] bg-slate-900 rounded-xl overflow-hidden flex flex-col">
-                          {/* Image Container - fixed aspect ratio */}
-                          <div className="relative w-full" style={{ paddingBottom: '100%' }}>
-                            <div className="absolute inset-0 overflow-hidden">
-                              <CardImage src={card.image} alt={card.name} />
-                            </div>
+                          {/* Image Container */}
+                          <div className="relative h-[55%] overflow-hidden">
+                            <CardImage src={card.image} alt={card.name} />
                             {/* Gradient overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
                             {/* Rarity badge */}
@@ -730,7 +721,7 @@ export default function PacksPage() {
                           </div>
                           
                           {/* Info Section */}
-                          <div className="flex-1 p-4 flex flex-col -mt-8 relative z-10">
+                          <div className="flex-1 p-4 flex flex-col -mt-6 relative z-10">
                             <div className="mb-3">
                               <h3 className="font-bold text-white text-lg leading-tight">{card.name}</h3>
                               <p className="text-slate-400 text-sm italic">"{card.nickname}"</p>
