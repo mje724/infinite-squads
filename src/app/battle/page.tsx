@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Swords, Trophy, Zap, Users, ChevronRight, Home, RotateCcw, Crown, Skull, Star, Package, Check, User } from 'lucide-react';
+import { Swords, Trophy, Zap, Users, ChevronRight, Home, RotateCcw, Crown, Skull, Star, Package, Check, User, Coins } from 'lucide-react';
 import Link from 'next/link';
-import { useCardCollection } from '@/store/store';
+import { useGameCollection } from '@/hooks/useGameCollection';
+import { useCoins, REWARDS } from '@/hooks/useCoins';
+import { useAuth } from '@/components/AuthProvider';
+import { getSupabase } from '@/lib/supabase';
 import { Card } from '@/types/schema';
 import { PRESET_CARDS as ALL_PRESET_CARDS, PresetCard as BasePresetCard, calculateOVR } from '@/data/presetCards';
 
@@ -471,15 +474,38 @@ interface BattleResult {
 }
 
 export default function BattlePage() {
-  const { cards } = useCardCollection();
+  const { cards } = useGameCollection();
+  const { addCoins, isLoggedIn } = useCoins();
+  const { user } = useAuth();
+  const supabase = getSupabase();
   const packCards = getPackCards(cards);
-  
+
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [selectedCards, setSelectedCards] = useState<Card[]>([]);
   const [opponentTeam, setOpponentTeam] = useState<PresetCard[]>([]);
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
   const [battlePhase, setBattlePhase] = useState<'select' | 'lineup' | 'preview' | 'battle' | 'result'>('select');
+  const [coinsWon, setCoinsWon] = useState<number | null>(null);
+
+  const payoutForDifficulty = (d: 'easy' | 'medium' | 'hard') =>
+    d === 'easy' ? REWARDS.BATTLE_WIN_EASY : d === 'medium' ? REWARDS.BATTLE_WIN_MEDIUM : REWARDS.BATTLE_WIN_HARD;
+
+  const settleBattle = async (winner: 'player' | 'opponent' | 'tie') => {
+    if (!isLoggedIn || !user) return;
+    if (winner === 'player') {
+      const amount = payoutForDifficulty(difficulty);
+      const ok = await addCoins(amount, 'battle_win', `Won a ${difficulty} battle`);
+      if (ok) setCoinsWon(amount);
+    }
+    // win/loss record (best-effort)
+    const col = winner === 'player' ? 'battles_won' : winner === 'opponent' ? 'battles_lost' : null;
+    if (col) {
+      const { data } = await supabase.from('profiles').select(col).eq('id', user.id).single();
+      const current = (data as Record<string, number> | null)?.[col] ?? 0;
+      await supabase.from('profiles').update({ [col]: current + 1 }).eq('id', user.id);
+    }
+  };
 
   const proceedToPreview = () => {
     if (!selectedScenario || selectedCards.length !== selectedScenario.slots) return;
@@ -518,6 +544,9 @@ export default function BattlePage() {
       
       const topStat = mvpData.ps.stats.sort((a, b) => b.value - a.value)[0];
       
+      const winner: 'player' | 'opponent' | 'tie' =
+        playerFinal > opponentFinal ? 'player' : playerFinal < opponentFinal ? 'opponent' : 'tie';
+
       setBattleResult({
         playerBoxScores,
         opponentBoxScores,
@@ -527,10 +556,11 @@ export default function BattlePage() {
         opponentChemistry,
         playerFinal,
         opponentFinal,
-        winner: playerFinal > opponentFinal ? 'player' : playerFinal < opponentFinal ? 'opponent' : 'tie',
+        winner,
         mvp: { card: mvpData.ps.card, highlight: `${topStat.value} ${topStat.category}` },
       });
       setBattlePhase('result');
+      settleBattle(winner);
     }, 2500);
   };
 
@@ -549,6 +579,7 @@ export default function BattlePage() {
     setOpponentTeam([]);
     setBattleResult(null);
     setBattlePhase('select');
+    setCoinsWon(null);
   };
 
   // Mini card component
@@ -836,6 +867,14 @@ export default function BattlePage() {
                 {battleResult.winner === 'player' ? 'VICTORY!' : battleResult.winner === 'opponent' ? 'DEFEAT' : 'TIE'}
               </h2>
               <p className="text-white/90 text-xl">{battleResult.playerFinal} - {battleResult.opponentFinal}</p>
+              {battleResult.winner === 'player' && coinsWon !== null && (
+                <motion.p initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-black/25 rounded-full text-yellow-300 font-bold">
+                  <Coins className="w-4 h-4" /> +{coinsWon} coins
+                </motion.p>
+              )}
+              {battleResult.winner === 'player' && !isLoggedIn && (
+                <p className="mt-2 text-white/80 text-sm">Sign in and wins like this pay 25–100 coins.</p>
+              )}
             </motion.div>
 
             {/* Box Scores */}
