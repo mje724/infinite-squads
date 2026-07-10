@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCardCollection } from '@/store/store';
+import { useGameCollection } from '@/hooks/useGameCollection';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
 import { TRAIT_PRESETS } from '@/data/presets';
 import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
@@ -339,7 +339,7 @@ const ConnectionLines: React.FC<{
 };
 
 export default function SquadPage() {
-  const { cards } = useCardCollection();
+  const { cards } = useGameCollection();
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   
