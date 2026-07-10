@@ -1,10 +1,10 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCardCollection, useCardCreator } from '@/store/store';
+import { useCardCollection } from '@/store/store';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
 import { TRAIT_PRESETS } from '@/data/presets';
-import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles } from 'lucide-react';
+import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -237,7 +237,7 @@ const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onCl
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="p-6 border-b border-slate-700">
           <h3 className="text-xl font-bold text-white">Select a Card</h3>
-          <p className="text-slate-400 text-sm">Choose from your collection or create new</p>
+          <p className="text-slate-400 text-sm">Choose from your collection or open a pack</p>
         </div>
         <div className="flex-1 overflow-y-auto p-6">
           {cards.length > 0 ? (
@@ -270,7 +270,7 @@ const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onCl
         </div>
         <div className="p-6 border-t border-slate-700 flex gap-3">
           <button onClick={onCreateNew} className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity">
-            <Plus className="w-4 h-4" />Create New Card
+            <Package className="w-4 h-4" />Open a Pack
           </button>
           <button onClick={onClose} className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 font-semibold transition-colors">Cancel</button>
         </div>
@@ -430,7 +430,7 @@ export default function SquadPage() {
 
   const handleCreateNew = () => {
     setShowPicker(false);
-    router.push('/');
+    router.push('/packs');
   };
 
   const handleClearLineup = () => {
