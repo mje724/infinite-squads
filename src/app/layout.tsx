@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Infinite Squads - Build Your Dream Team',
-  description: 'Create cards, open packs, and battle with your squad',
+  description: 'Open packs, collect legends, build a squad, and battle',
 };
 
 export default function RootLayout({
