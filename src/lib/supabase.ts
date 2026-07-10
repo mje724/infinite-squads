@@ -24,11 +24,21 @@ export interface Profile {
   display_name: string;
   avatar_url: string | null;
   coin_balance: number;
+  gem_balance: number;
+  daily_streak: number;
+  last_daily_claim: string | null;
   packs_opened: number;
   battles_won: number;
   battles_lost: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface SetCompletion {
+  id: string;
+  user_id: string;
+  set_id: string;
+  completed_at: string;
 }
 
 export interface UserCard {

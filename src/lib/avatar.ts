@@ -291,6 +291,16 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'Benjamin Franklin': { bg: '#2a5a3a', skin: '#e6c39a', hair: 'bald', hairColor: '#c9c9c9', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '💡' },
   'P.T. Barnum': { bg: '#c9302c', skin: '#e6c39a', hair: 'tophat', hairColor: '#111', facial: 'mustache', eyes: 'wide', mouth: 'grin', prop: '🎪' },
   'Andy Warhol': { bg: '#e8e8e8', skin: '#e6c39a', hair: 'wig', hairColor: '#c9c9c9', facial: 'none', eyes: 'wide', mouth: 'neutral', prop: '🥫' },
+
+  // ── ICON cards (collection-set rewards, gilded backgrounds) ──
+  'Prime Da Vinci': { bg: '#d4af37', skin: '#d9a06a', hair: 'wavy', hairColor: '#f0f0f0', facial: 'longbeard', eyes: 'intense', mouth: 'smirk', prop: '🎨' },
+  'Hannibal of Carthage': { bg: '#b8860b', skin: '#b5804f', hair: 'helmet', hairColor: '#8a8a8a', facial: 'goatee', eyes: 'intense', mouth: 'smirk', prop: '🐘' },
+  'Charles Ponzi': { bg: '#c9a227', skin: '#e0b28a', hair: 'slick', hairColor: '#1a1a1a', facial: 'mustache', eyes: 'smug', mouth: 'grin', prop: '💸' },
+  'Doge': { bg: '#e8c56a', skin: '#e8b84a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'smug', mouth: 'smile', prop: '🐕' },
+  'Prime Rasputin': { bg: '#c9a227', skin: '#d8b48a', hair: 'wild', hairColor: '#3d2a1a', facial: 'longbeard', eyes: 'intense', mouth: 'smirk', prop: '🔮' },
+  'Marcus Aurelius': { bg: '#b8963a', skin: '#d9a06a', hair: 'laurel', hairColor: '#2e7d32', facial: 'full', eyes: 'sleepy', mouth: 'neutral', prop: '📖' },
+  'George Washington': { bg: '#c9a227', skin: '#e0b28a', hair: 'wig', hairColor: '#f0f0f0', facial: 'none', eyes: 'normal', mouth: 'neutral', prop: '🍒' },
+  'Dolly Party': { bg: '#e8b84a', skin: '#e6c39a', hair: 'wavy', hairColor: '#f0e68c', facial: 'none', eyes: 'wink', mouth: 'grin', prop: '🦋' },
 };
 
 const FALLBACK_TRAITS: AvatarTraits = { bg: '#334155', skin: '#e0b28a', hair: 'bald', hairColor: '#333', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '❓' };
