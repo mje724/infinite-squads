@@ -1,15 +1,18 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCardCollection } from '@/store/store';
+import { useGameCollection } from '@/hooks/useGameCollection';
 import { TRAIT_PRESETS } from '@/data/presets';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
-import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package } from 'lucide-react';
+import { QUICKSELL_VALUES } from '@/data/gameEconomy';
+import { PRESET_CARDS } from '@/data/presetCards';
+import { ICON_CARDS } from '@/data/collections';
+import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package, Coins, Layers } from 'lucide-react';
 import Link from 'next/link';
 import CardVisuals from '@/components/CardVisuals';
 import html2canvas from 'html2canvas';
 
-const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => void }> = ({ card, onClose, onDelete }) => {
+const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => void; onQuicksell: (() => void) | null }> = ({ card, onClose, onDelete, onQuicksell }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isSharing, setIsSharing] = useState(false);
   const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
@@ -64,6 +67,11 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => 
         </div></div>
         <div className="flex gap-3 mt-4">
           <button onClick={async () => { if (!cardRef.current) return; setIsSharing(true); try { const canvas = await html2canvas(cardRef.current, { backgroundColor: "#0f172a", scale: 2, useCORS: true, allowTaint: true, logging: false, width: 320, height: 460, scrollX: 0, scrollY: 0 }); const dataUrl = canvas.toDataURL("image/png"); const blob = await (await fetch(dataUrl)).blob(); const file = new File([blob], `${card.name}-card.png`, { type: "image/png" }); if (navigator.share && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: `${card.name} Card`, text: "Check out my card!" }); } else { const link = document.createElement("a"); link.download = `${card.name}-card.png`; link.href = dataUrl; link.click(); } } catch (e) { console.error(e); } setIsSharing(false); }} disabled={isSharing} className="px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">{isSharing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}</button>
+          {onQuicksell && (
+            <button onClick={onQuicksell} className="flex-1 px-4 py-3 bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 rounded-xl text-yellow-400 font-semibold transition-colors flex items-center justify-center gap-2">
+              <Coins className="w-5 h-5" /> Quicksell · {QUICKSELL_VALUES[card.rarity] ?? 10}
+            </button>
+          )}
           <button onClick={onDelete} className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 transition-colors"><Trash2 className="w-5 h-5" /></button>
         </div>
       </motion.div>
@@ -71,7 +79,7 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => 
   );
 };
 
-function MiniCard({ card, onClick }: { card: Card; onClick: () => void }) {
+function MiniCard({ card, onClick, copies = 1 }: { card: Card; onClick: () => void; copies?: number }) {
   const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
   const getFilterStyle = (filter: ImageFilter): string => {
     switch (filter) { case 'bw': return 'grayscale(100%)'; case 'deepfried': return 'contrast(150%) saturate(200%) brightness(110%)'; case 'security': return 'grayscale(80%) contrast(120%) brightness(90%)'; case 'vhs': return 'sepia(30%) contrast(110%) saturate(130%)'; case 'glitch': return 'hue-rotate(90deg) contrast(120%)'; default: return 'none'; }
@@ -86,7 +94,13 @@ function MiniCard({ card, onClick }: { card: Card; onClick: () => void }) {
             {card.rarity === 'legendary' && <Flame className="w-4 h-4 text-orange-500" />}
             {card.rarity === 'holo' && <Sparkles className="w-4 h-4 text-pink-500" />}
             {card.rarity === 'glitch' && <Zap className="w-4 h-4 text-cyan-400" />}
+            {card.rarity === 'icon' && <span className="text-sm">⭐</span>}
           </div>
+          {copies > 1 && (
+            <div className="absolute bottom-9 right-2 z-10 px-1.5 py-0.5 bg-slate-950/90 border border-slate-600 rounded-md">
+              <span className="text-[10px] font-black text-slate-300">×{copies}</span>
+            </div>
+          )}
           <div className="absolute top-8 left-0 right-0 h-24 overflow-hidden">
             {card.image ? <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: 'url(' + card.image + ')', filter: getFilterStyle(card.imageFilter || 'normal') }} /> : <div className="w-full h-full flex items-center justify-center bg-slate-800/50"><User className="w-10 h-10 text-slate-600" /></div>}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
@@ -110,14 +124,32 @@ function MiniCard({ card, onClick }: { card: Card; onClick: () => void }) {
 }
 
 export default function MyCardsPage() {
-  const { cards, removeCard, clearCollection } = useCardCollection();
+  const { cards, removeCard, clearCollection, quicksellCard, isLoggedIn } = useGameCollection();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [soldMsg, setSoldMsg] = useState<string | null>(null);
 
   const handleDelete = (cardId: string) => {
     removeCard(cardId);
     setSelectedCard(null);
   };
+
+  const handleQuicksell = async (card: Card) => {
+    const coins = await quicksellCard(card.id);
+    setSelectedCard(null);
+    if (coins !== null) {
+      setSoldMsg(`${card.name} quicksold for ${coins} coins`);
+      setTimeout(() => setSoldMsg(null), 2500);
+    }
+  };
+
+  // Album progress: unique characters owned vs everything collectible
+  const totalCollectible = PRESET_CARDS.length + ICON_CARDS.length;
+  const uniqueOwned = new Set(cards.map(c => c.name)).size;
+  const copiesByName = cards.reduce<Record<string, number>>((acc, c) => {
+    acc[c.name] = (acc[c.name] ?? 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -127,12 +159,35 @@ export default function MyCardsPage() {
           <div><h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">My Cards</h1><p className="text-slate-400 text-sm">{cards.length} card{cards.length !== 1 ? 's' : ''} in collection</p></div>
           <div className="flex gap-3">
             {cards.length > 0 && <button onClick={() => setShowClearConfirm(true)} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-colors">Clear All</button>}
+            <Link href="/collections" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"><Layers className="w-4 h-4" />Collections</Link>
             <Link href="/packs" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"><Package className="w-4 h-4" />Open a Pack</Link>
           </div>
         </div>
+
+        {/* Album completion — the "gotta catch em all" meter */}
+        <div className="mb-8 p-4 bg-slate-900/60 border border-slate-800 rounded-2xl">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-semibold text-slate-300">Album completion</span>
+            <span className="text-sm font-black text-purple-300">{uniqueOwned} / {totalCollectible} <span className="text-slate-500 font-normal">({Math.round((uniqueOwned / totalCollectible) * 100)}%)</span></span>
+          </div>
+          <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-amber-400 rounded-full transition-all" style={{ width: `${(uniqueOwned / totalCollectible) * 100}%` }} />
+          </div>
+          {!isLoggedIn && cards.length > 0 && (
+            <p className="text-xs text-slate-500 mt-2">Guest cards live in this browser only. Sign in to keep them forever (and get 1,000 coins).</p>
+          )}
+        </div>
+
+        <AnimatePresence>
+          {soldMsg && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-6 mx-auto max-w-md px-4 py-3 bg-yellow-500/15 border border-yellow-500/40 rounded-xl text-yellow-300 text-sm font-semibold text-center flex items-center justify-center gap-2">
+              <Coins className="w-4 h-4" /> {soldMsg}
+            </motion.div>
+          )}
+        </AnimatePresence>
         {cards.length > 0 ? (
           <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            <AnimatePresence>{cards.map((card) => <MiniCard key={card.id} card={card} onClick={() => setSelectedCard(card)} />)}</AnimatePresence>
+            <AnimatePresence>{cards.map((card) => <MiniCard key={card.id} card={card} copies={copiesByName[card.name]} onClick={() => setSelectedCard(card)} />)}</AnimatePresence>
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-20">
@@ -164,7 +219,12 @@ export default function MyCardsPage() {
           </motion.div>
         )}
         {selectedCard && (
-          <FullCardView card={selectedCard} onClose={() => setSelectedCard(null)} onDelete={() => handleDelete(selectedCard.id)} />
+          <FullCardView
+            card={selectedCard}
+            onClose={() => setSelectedCard(null)}
+            onDelete={() => handleDelete(selectedCard.id)}
+            onQuicksell={isLoggedIn ? () => handleQuicksell(selectedCard) : null}
+          />
         )}
       </AnimatePresence>
     </div>
