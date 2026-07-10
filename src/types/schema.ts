@@ -7,7 +7,7 @@
 // ENUMS & CONSTANTS
 // ─────────────────────────────────────────────
 
-export type Rarity = 'bronze' | 'silver' | 'gold' | 'holo' | 'glitch' | 'legendary';
+export type Rarity = 'bronze' | 'silver' | 'gold' | 'holo' | 'glitch' | 'legendary' | 'icon';
 
 export type Theme = 'sports' | 'office' | 'party' | 'roast' | 'rpg' | 'custom';
 
@@ -223,6 +223,11 @@ export const RARITY_STYLES: Record<Rarity, { gradient: string; glow: string; bor
     gradient: 'linear-gradient(135deg, #FFD700 0%, #FF4500 25%, #FFD700 50%, #FF6347 75%, #FFD700 100%)',
     glow: '0 0 60px rgba(255, 69, 0, 0.8), 0 0 120px rgba(255, 215, 0, 0.5)',
     border: '#FF4500',
+  },
+  icon: {
+    gradient: 'linear-gradient(135deg, #f8f4e3 0%, #e8d5a3 20%, #fffbe6 40%, #d4af37 60%, #fffbe6 80%, #f8f4e3 100%)',
+    glow: '0 0 60px rgba(248, 244, 227, 0.9), 0 0 120px rgba(212, 175, 55, 0.6)',
+    border: '#e8d5a3',
   },
 };
 
