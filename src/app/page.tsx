@@ -25,7 +25,7 @@ export default function Home() {
           Infinite Squads
         </h1>
         <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-10">
-          Pull legends and internet icons in card packs, build your ultimate squad, and battle it out in simmed events. Ratings are nuanced. The jokes are not corny. Probably.
+          Pull legends and internet icons in card packs, build your ultimate squad, and battle it out in simmed events.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-10">
