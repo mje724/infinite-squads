@@ -35,7 +35,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Walmart Incidents', value: 100, emoji: '🛒' },
       { label: 'Bail Money', value: 12, emoji: '💸' },
     ],
-    rarity: 'glitch',
+    rarity: 'bronze',
     image: 'florida_man.jpg',
   },
   {
@@ -49,7 +49,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Meme Immortality', value: 100, emoji: '🦍' },
       { label: 'Justice Served', value: 0, emoji: '⚖️' },
     ],
-    rarity: 'glitch',
+    rarity: 'bronze',
     image: 'harambe.jpg',
   },
   {
@@ -63,7 +63,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'City Council Relations', value: 0, emoji: '🏛️' },
       { label: 'Folk Hero Status', value: 95, emoji: '🦸' },
     ],
-    rarity: 'glitch',
+    rarity: 'bronze',
     image: 'killdozer.jpg',
   },
   {
@@ -77,7 +77,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Quality Control', value: 0, emoji: '👷' },
       { label: 'Oops Factor', value: 100, emoji: '🤷' },
     ],
-    rarity: 'glitch',
+    rarity: 'silver',
     image: 'boeing_door.jpg',
   },
 
@@ -95,7 +95,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Credit Received', value: 15, emoji: '📜' },
       { label: 'Died Alone', value: 100, emoji: '🏨' },
     ],
-    rarity: 'holo',
+    rarity: 'silver',
     image: 'nikola_tesla.jpg',
   },
   {
@@ -109,7 +109,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Chicken Plucking', value: 99, emoji: '🐔' },
       { label: 'Hygiene', value: 8, emoji: '🧼' },
     ],
-    rarity: 'holo',
+    rarity: 'bronze',
     image: 'diogenes.jpg',
   },
   {
@@ -123,7 +123,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Drowning Resistance', value: 90, emoji: '🌊' },
       { label: 'Bullet Absorption', value: 85, emoji: '🔫' },
     ],
-    rarity: 'holo',
+    rarity: 'gold',
     image: 'rasputin.jpg',
   },
   {
@@ -137,11 +137,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Shotgun Skills', value: 95, emoji: '🔫' },
       { label: 'Vegas Survival', value: 80, emoji: '🎰' },
     ],
-    rarity: 'holo',
+    rarity: 'bronze',
     image: 'hunter_thompson.jpg',
   },
   {
-    name: 'Yusuf Dikec',
+    name: 'Yusuf Dilek',
     nickname: 'Turkish Minimalist',
     stats: [
       { label: 'Aura', value: 99, emoji: '🕶️' },
@@ -151,7 +151,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'F*cks Given', value: 0, emoji: '🤷' },
       { label: 'Job Security', value: 95, emoji: '🔫' },
     ],
-    rarity: 'holo',
+    rarity: 'silver',
     image: 'yusuf_dikec.jpg',
   },
 
@@ -183,7 +183,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Snake Handling', value: 5, emoji: '🐍' },
       { label: 'Hollywood Accuracy', value: 0, emoji: '🎬' },
     ],
-    rarity: 'legendary',
+    rarity: 'bronze',
     image: 'cleopatra.jpg',
   },
   {
@@ -197,7 +197,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Slave Owner Roasting', value: 100, emoji: '🔥' },
       { label: 'Patience for BS', value: 0, emoji: '😤' },
     ],
-    rarity: 'legendary',
+    rarity: 'gold',
     image: 'frederick_douglass.jpg',
   },
   {
@@ -225,7 +225,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Chuck Norris Superiority', value: 100, emoji: '🥋' },
       { label: 'Water Drinking', value: 100, emoji: '💧' },
     ],
-    rarity: 'legendary',
+    rarity: 'holo',
     image: 'bruce_lee.jpg',
   },
   {
@@ -239,7 +239,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Last Words Quality', value: 100, emoji: '💬' },
       { label: 'Back Watching', value: 5, emoji: '👀' },
     ],
-    rarity: 'legendary',
+    rarity: 'bronze',
     image: 'julius_caesar.jpg',
   },
 
@@ -257,7 +257,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Puppetry', value: 95, emoji: '🧸' },
       { label: 'Secret Military Past', value: 0, emoji: '🪖' },
     ],
-    rarity: 'gold',
+    rarity: 'legendary',
     image: 'mr_rogers.jpg',
   },
   {
@@ -271,7 +271,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Drill Sergeant Past', value: 100, emoji: '🪖' },
       { label: 'Yelling Ability', value: 0, emoji: '📢' },
     ],
-    rarity: 'gold',
+    rarity: 'legendary',
     image: 'bob_ross.jpg',
   },
   {
@@ -285,7 +285,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Australian Energy', value: 100, emoji: '🇦🇺' },
       { label: 'Indoor Activities', value: 10, emoji: '🏠' },
     ],
-    rarity: 'gold',
+    rarity: 'bronze',
     image: 'steve_irwin.jpg',
   },
   {
@@ -299,7 +299,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Mustache Power', value: 99, emoji: '👨' },
       { label: 'Wembley Domination', value: 100, emoji: '🏟️' },
     ],
-    rarity: 'gold',
+    rarity: 'legendary',
     image: 'freddie_mercury.jpg',
   },
   {
@@ -313,7 +313,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Rough Riding', value: 98, emoji: '🐎' },
       { label: 'Indoor Voice', value: 30, emoji: '📢' },
     ],
-    rarity: 'gold',
+    rarity: 'holo',
     image: 'teddy_roosevelt.jpg',
   },
   {
@@ -327,7 +327,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Husband Credit Stealing', value: 0, emoji: '👫' },
       { label: 'Glow in Dark', value: 85, emoji: '✨' },
     ],
-    rarity: 'gold',
+    rarity: 'silver',
     image: 'marie_curie.jpg',
   },
   {
@@ -341,7 +341,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Gun Usage', value: 85, emoji: '🔫' },
       { label: 'Patience for Quitters', value: 0, emoji: '🚫' },
     ],
-    rarity: 'gold',
+    rarity: 'silver',
     image: 'harriet_tubman.jpg',
   },
   {
@@ -355,7 +355,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Butterfly Floating', value: 99, emoji: '🦋' },
       { label: 'Bee Stinging', value: 99, emoji: '🐝' },
     ],
-    rarity: 'gold',
+    rarity: 'legendary',
     image: 'muhammad_ali.jpg',
   },
 
@@ -363,7 +363,7 @@ export const PRESET_CARDS: PresetCard[] = [
   // SILVER TIER - Entertaining Humans
   // ============================================
   {
-    name: 'Keanu Reeves',
+    name: 'Keanu Reevos',
     nickname: 'Breathtaking',
     stats: [
       { label: 'Kindness', value: 100, emoji: '💖' },
@@ -373,11 +373,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Whoa Count', value: 99, emoji: '😮' },
       { label: 'Subway Seat Giving', value: 100, emoji: '🚇' },
     ],
-    rarity: 'silver',
+    rarity: 'legendary',
     image: 'keanu_reeves.jpg',
   },
   {
-    name: 'Danny DeVito',
+    name: 'Donny DeVito',
     nickname: 'Trash Man',
     stats: [
       { label: 'Height', value: 15, emoji: '📏' },
@@ -387,11 +387,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Rum Ham Finding', value: 90, emoji: '🍖' },
       { label: 'Couch Emergence', value: 100, emoji: '🛋️' },
     ],
-    rarity: 'silver',
+    rarity: 'legendary',
     image: 'danny_devito.jpg',
   },
   {
-    name: 'Nicolas Cage',
+    name: 'Nicolas Kage',
     nickname: 'Yes To Everything',
     stats: [
       { label: 'Script Reading', value: 20, emoji: '📜' },
@@ -401,11 +401,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Financial Decisions', value: 10, emoji: '💸' },
       { label: 'Dinosaur Skull Purchases', value: 95, emoji: '🦖' },
     ],
-    rarity: 'silver',
+    rarity: 'bronze',
     image: 'nicolas_cage.jpg',
   },
   {
-    name: 'Snoop Dogg',
+    name: 'Snoop Doggo',
     nickname: 'Fo Shizzle',
     stats: [
       { label: 'Flow', value: 94, emoji: '🎤' },
@@ -415,11 +415,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Murder Trial Survival', value: 100, emoji: '⚖️' },
       { label: 'Olympic Torching', value: 99, emoji: '🔥' },
     ],
-    rarity: 'silver',
+    rarity: 'glitch',
     image: 'snoop_dogg.jpg',
   },
   {
-    name: 'Gordon Ramsay',
+    name: 'Gordon Ramzay',
     nickname: 'Its Raw',
     stats: [
       { label: 'Cooking', value: 95, emoji: '👨‍🍳' },
@@ -433,7 +433,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'gordon_ramsay.jpg',
   },
   {
-    name: 'Shaq',
+    name: 'Shaqster',
     nickname: 'Kazaam',
     stats: [
       { label: 'Basketball', value: 96, emoji: '🏀' },
@@ -447,7 +447,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'shaq.jpg',
   },
   {
-    name: 'Martha Stewart',
+    name: 'Marfa Stewart',
     nickname: 'Did Her Time',
     stats: [
       { label: 'Crafts', value: 98, emoji: '✂️' },
@@ -457,11 +457,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Table Setting', value: 100, emoji: '🍽️' },
       { label: 'Regret Shown', value: 0, emoji: '😤' },
     ],
-    rarity: 'silver',
+    rarity: 'gold',
     image: 'martha_stewart.jpg',
   },
   {
-    name: 'Mike Tyson',
+    name: 'Mike Tyzon',
     nickname: 'Ear Collector',
     stats: [
       { label: 'Punching Power', value: 100, emoji: '👊' },
@@ -471,11 +471,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Face Tattoo Timing', value: 85, emoji: '🎭' },
       { label: 'Hangover Acting', value: 75, emoji: '🎬' },
     ],
-    rarity: 'silver',
+    rarity: 'holo',
     image: 'mike_tyson.jpg',
   },
   {
-    name: 'Weird Al',
+    name: 'Odd Al',
     nickname: 'Outlasted Them All',
     stats: [
       { label: 'Parody Quality', value: 100, emoji: '🎵' },
@@ -485,11 +485,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Career Outlasting', value: 100, emoji: '⏰' },
       { label: 'Vegan Commitment', value: 90, emoji: '🥬' },
     ],
-    rarity: 'silver',
+    rarity: 'glitch',
     image: 'weird_al.jpg',
   },
   {
-    name: 'Guy Fieri',
+    name: 'Guy Fiori',
     nickname: 'Mayor of Flavortown',
     stats: [
       { label: 'Donkey Sauce', value: 100, emoji: '🍔' },
@@ -499,7 +499,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Sunglasses Backwards', value: 99, emoji: '🕶️' },
       { label: 'Fine Dining Respect', value: 20, emoji: '🍷' },
     ],
-    rarity: 'silver',
+    rarity: 'legendary',
     image: 'guy_fieri.jpg',
   },
   {
@@ -527,7 +527,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Shake Sales', value: 99, emoji: '📈' },
       { label: 'Mobility', value: 5, emoji: '🏃' },
     ],
-    rarity: 'silver',
+    rarity: 'legendary',
     image: 'grimace.jpg',
   },
 
@@ -535,7 +535,7 @@ export const PRESET_CARDS: PresetCard[] = [
   // BRONZE TIER - The Everyday Legends (Roasted)
   // ============================================
   {
-    name: 'Elon Musk',
+    name: 'Elan Muskrat',
     nickname: 'Reply Guy',
     stats: [
       { label: 'Posting Frequency', value: 100, emoji: '🐦' },
@@ -549,7 +549,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'elon_musk.jpg',
   },
   {
-    name: 'Mark Zuckerberg',
+    name: 'Mark Zuckerbot',
     nickname: 'Definitely Human',
     stats: [
       { label: 'Sunscreen Application', value: 100, emoji: '🧴' },
@@ -559,11 +559,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Jiu Jitsu', value: 80, emoji: '🥋' },
       { label: 'Blinking Naturally', value: 15, emoji: '👁️' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'mark_zuckerberg.jpg',
   },
   {
-    name: 'Jeff Bezos',
+    name: 'Geoff Bezel',
     nickname: 'Bathroom Breaks Denied',
     stats: [
       { label: 'Wealth', value: 100, emoji: '💰' },
@@ -573,11 +573,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Yacht Collecting', value: 95, emoji: '🛥️' },
       { label: 'Union Relations', value: 5, emoji: '🤝' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'jeff_bezos.jpg',
   },
   {
-    name: 'The Rock',
+    name: 'The Pebble',
     nickname: 'Eyebrow Cinema',
     stats: [
       { label: 'Wake Up Time', value: 100, emoji: '⏰' },
@@ -587,11 +587,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Tequila Sales', value: 90, emoji: '🥃' },
       { label: 'Political Fence Sitting', value: 100, emoji: '🤐' },
     ],
-    rarity: 'bronze',
+    rarity: 'legendary',
     image: 'the_rock.jpg',
   },
   {
-    name: 'Joe Rogan',
+    name: 'Joe Rogain',
     nickname: 'Have You Tried DMT',
     stats: [
       { label: 'Podcast Length', value: 100, emoji: '🎙️' },
@@ -601,11 +601,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Sauna Time', value: 100, emoji: '🧖' },
       { label: 'Opinion Changing', value: 95, emoji: '🔄' },
     ],
-    rarity: 'bronze',
+    rarity: 'gold',
     image: 'joe_rogan.jpg',
   },
   {
-    name: 'DJ Khaled',
+    name: 'DJ Kaled',
     nickname: 'Another One',
     stats: [
       { label: 'Instrument Playing', value: 0, emoji: '🎸' },
@@ -619,7 +619,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'dj_khaled.jpg',
   },
   {
-    name: 'Tommy Wiseau',
+    name: 'Tommy Weisau',
     nickname: 'Oh Hi Mark',
     stats: [
       { label: 'Acting Ability', value: 20, emoji: '🎭' },
@@ -633,7 +633,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'tommy_wiseau.jpg',
   },
   {
-    name: 'Gary Busey',
+    name: 'Gary Buseye',
     nickname: 'No Helmet',
     stats: [
       { label: 'Intensity', value: 100, emoji: '😳' },
@@ -647,7 +647,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'gary_busey.jpg',
   },
   {
-    name: 'Charlie Sheen',
+    name: 'Charlie Sheenz',
     nickname: 'Winning',
     stats: [
       { label: 'Tiger Blood', value: 100, emoji: '🐯' },
@@ -661,7 +661,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'charlie_sheen.jpg',
   },
   {
-    name: 'Flavor Flav',
+    name: 'Flavor Flame',
     nickname: 'Yeah Boyyyy',
     stats: [
       { label: 'Hype Generation', value: 100, emoji: '📢' },
@@ -671,11 +671,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Reality TV Chaos', value: 95, emoji: '📺' },
       { label: 'Chicken Restaurant', value: 30, emoji: '🍗' },
     ],
-    rarity: 'bronze',
+    rarity: 'gold',
     image: 'flavor_flav.jpg',
   },
   {
-    name: 'Hulk Hogan',
+    name: 'Bulk Hogan',
     nickname: 'Brother Brother',
     stats: [
       { label: 'Wrestling', value: 90, emoji: '💪' },
@@ -685,11 +685,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Racial Sensitivity', value: 10, emoji: '😬' },
       { label: 'Bandana Collection', value: 95, emoji: '🎀' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'hulk_hogan.jpg',
   },
   {
-    name: 'Ozzy Osbourne',
+    name: 'Ozzy Ozzborne',
     nickname: 'Medical Marvel',
     stats: [
       { label: 'Survival Odds Defied', value: 100, emoji: '💀' },
@@ -699,11 +699,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Substance Absorption', value: 99, emoji: '💊' },
       { label: 'Coherent Sentences', value: 20, emoji: '💬' },
     ],
-    rarity: 'bronze',
+    rarity: 'gold',
     image: 'ozzy_osbourne.jpg',
   },
   {
-    name: 'Arnold Schwarzenegger',
+    name: 'Arnold Schwarzenagger',
     nickname: 'Ill Be Back',
     stats: [
       { label: 'Muscles', value: 95, emoji: '💪' },
@@ -713,11 +713,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Catchphrase Creation', value: 100, emoji: '🎬' },
       { label: 'Mr. Universe Wins', value: 95, emoji: '🏆' },
     ],
-    rarity: 'bronze',
+    rarity: 'legendary',
     image: 'arnold.jpg',
   },
   {
-    name: 'Post Malone',
+    name: 'Toast Malone',
     nickname: 'Face Tattoo Math',
     stats: [
       { label: 'Music Talent', value: 85, emoji: '🎵' },
@@ -727,11 +727,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Bud Light Consumption', value: 99, emoji: '🍻' },
       { label: 'Genre Classification', value: 40, emoji: '🤷' },
     ],
-    rarity: 'bronze',
+    rarity: 'gold',
     image: 'post_malone.jpg',
   },
   {
-    name: 'Island Boys',
+    name: 'Isle Boys',
     nickname: 'Im An Island Boy',
     stats: [
       { label: 'Hair Structure', value: 99, emoji: '🌴' },
@@ -741,7 +741,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'One Hit Wonder', value: 100, emoji: '📉' },
       { label: 'Parent Disappointment', value: 99, emoji: '👨‍👩‍👦' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'island_boys.jpg',
   },
   {
@@ -763,7 +763,7 @@ export const PRESET_CARDS: PresetCard[] = [
   // MODERN ERA - The New Roasts
   // ============================================
   {
-    name: 'Elizabeth Holmes',
+    name: 'Elizabeth Homes',
     nickname: 'Fake It Till Jail',
     stats: [
       { label: 'Voice Depth', value: 99, emoji: '📉' },
@@ -773,11 +773,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Gaslighting', value: 99, emoji: '🕯️' },
       { label: 'Steve Jobs Cosplay', value: 95, emoji: '🍏' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'elizabeth_holmes.jpg',
   },
   {
-    name: 'George Santos',
+    name: 'George Santoro',
     nickname: 'Kitara Ravache',
     stats: [
       { label: 'Resume Writing', value: 100, emoji: '📝' },
@@ -791,7 +791,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'george_santos.jpg',
   },
   {
-    name: 'Sam Bankman-Fried',
+    name: 'Sam Bankster-Fried',
     nickname: 'Effective Altruism',
     stats: [
       { label: 'LoL Rank', value: 25, emoji: '🎮' },
@@ -805,7 +805,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'sam_bankman.jpg',
   },
   {
-    name: 'Billy McFarland',
+    name: 'Billy MacFarland',
     nickname: 'Fyre Starter',
     stats: [
       { label: 'Sandwich Quality', value: 0, emoji: '🥪' },
@@ -819,7 +819,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'billy_mcfarland.jpg',
   },
   {
-    name: 'Liver King',
+    name: 'Kidney King',
     nickname: 'Natty or Not',
     stats: [
       { label: 'Natural Status', value: 0, emoji: '💉' },
@@ -833,7 +833,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'liver_king.jpg',
   },
   {
-    name: 'Antonio Brown',
+    name: 'Antonio Braun',
     nickname: 'Mr Big Chest',
     stats: [
       { label: 'CTE Levels', value: 99, emoji: '🧠' },
@@ -843,11 +843,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Twitter Fingers', value: 99, emoji: '🐦' },
       { label: 'Mid-Game Exits', value: 100, emoji: '🏃' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'antonio_brown.jpg',
   },
   {
-    name: 'Rachel Dolezal',
+    name: 'Rachel Doleza',
     nickname: 'Transracial Pioneer',
     stats: [
       { label: 'DNA Accuracy', value: 0, emoji: '🧬' },
@@ -857,11 +857,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Delusion', value: 99, emoji: '🧠' },
       { label: 'NAACP Status', value: 0, emoji: '✊' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'rachel_dolezal.jpg',
   },
   {
-    name: '6ix9ine',
+    name: '7ix8ine',
     nickname: 'Rainbow Snitch',
     stats: [
       { label: 'Snitching', value: 100, emoji: '🐀' },
@@ -875,7 +875,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: '6ix9ine.jpg',
   },
   {
-    name: 'Adam Levine',
+    name: 'Adam LeVine',
     nickname: 'DM Slider',
     stats: [
       { label: 'DM Sliding', value: 99, emoji: '📨' },
@@ -885,11 +885,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Marriage Loyalty', value: 10, emoji: '💍' },
       { label: 'High Notes', value: 85, emoji: '🎶' },
     ],
-    rarity: 'bronze',
+    rarity: 'gold',
     image: 'adam_levine.jpg',
   },
   {
-    name: 'Jojo Siwa',
+    name: 'Coco Siwa',
     nickname: 'Karma Is My Boyfriend',
     stats: [
       { label: 'Rebrand Success', value: 0, emoji: '🖤' },
@@ -903,7 +903,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'jojo_siwa.jpg',
   },
   {
-    name: 'Will Smith',
+    name: 'Wil Smyth',
     nickname: 'Keep My Wifes Name',
     stats: [
       { label: 'Slap Power', value: 99, emoji: '👋' },
@@ -913,11 +913,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Oscar Keeping', value: 100, emoji: '🏆' },
       { label: 'Wife Defense', value: 100, emoji: '🛡️' },
     ],
-    rarity: 'bronze',
+    rarity: 'holo',
     image: 'will_smith.jpg',
   },
   {
-    name: 'Logan Paul',
+    name: 'Logan Pauls',
     nickname: 'Forest Navigator',
     stats: [
       { label: 'Forest Judgment', value: 0, emoji: '🌲' },
@@ -927,11 +927,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Floyd Survival', value: 100, emoji: '🥊' },
       { label: 'Apology Videos', value: 99, emoji: '📹' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'logan_paul.jpg',
   },
   {
-    name: 'Salt Bae',
+    name: 'Pepper Bae',
     nickname: 'Elbow Seasoning',
     stats: [
       { label: 'Elbow Hygiene', value: 0, emoji: '🧂' },
@@ -941,11 +941,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Actual Cooking', value: 50, emoji: '🍳' },
       { label: 'Clout Chasing', value: 100, emoji: '🏃' },
     ],
-    rarity: 'bronze',
+    rarity: 'gold',
     image: 'salt_bae.jpg',
   },
   {
-    name: 'Hilaria Baldwin',
+    name: 'Hilaria Baldwyn',
     nickname: 'How You Say Cucumber',
     stats: [
       { label: 'Spanish Accent', value: 0, emoji: '🇪🇸' },
@@ -959,7 +959,7 @@ export const PRESET_CARDS: PresetCard[] = [
     image: 'hilaria_baldwin.jpg',
   },
   {
-    name: 'Ben Shapiro',
+    name: 'Ben Shapirno',
     nickname: 'Facts Dont Care',
     stats: [
       { label: 'Speaking Speed', value: 99, emoji: '⏩' },
@@ -969,11 +969,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Libs Owned', value: 50, emoji: '📉' },
       { label: 'Dryness', value: 100, emoji: '🌵' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'ben_shapiro.jpg',
   },
   {
-    name: 'Travis Scott',
+    name: 'Travis Scot',
     nickname: 'Its Lit',
     stats: [
       { label: 'Autotune Reliance', value: 99, emoji: '🤖' },
@@ -983,11 +983,11 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Robot Dance', value: 90, emoji: '💃' },
       { label: 'Responsibility Taken', value: 0, emoji: '🤷' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'travis_scott.jpg',
   },
   {
-    name: 'Raygun',
+    name: 'Raegun',
     nickname: 'Breaking PhD',
     stats: [
       { label: 'Kangaroo Hop', value: 100, emoji: '🦘' },
@@ -997,7 +997,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Floor Cleaning', value: 90, emoji: '🧹' },
       { label: 'Self Awareness', value: 0, emoji: '🧠' },
     ],
-    rarity: 'bronze',
+    rarity: 'silver',
     image: 'raygun.jpg',
   },
 
@@ -1016,7 +1016,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Times Exiled', value: 100, emoji: '🏝️' },
       { label: 'Legal Code Still in Use', value: 95, emoji: '📜' },
     ],
-    rarity: 'legendary',
+    rarity: 'gold',
     image: 'napoleon.jpg',
   },
   {
@@ -1044,7 +1044,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Violin Hobby', value: 75, emoji: '🎻' },
       { label: 'Gave Ex-Wife His Nobel Money', value: 100, emoji: '💍' },
     ],
-    rarity: 'legendary',
+    rarity: 'gold',
     image: 'einstein.jpg',
   },
   {
@@ -1058,7 +1058,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Actual Black Belt', value: 85, emoji: '🥋' },
       { label: 'Diet Discipline', value: 5, emoji: '🍔' },
     ],
-    rarity: 'legendary',
+    rarity: 'gold',
     image: 'elvis.jpg',
   },
   {
@@ -1072,7 +1072,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Flying Machine Success Rate', value: 0, emoji: '🛩️' },
       { label: 'Smile Mystery Level', value: 100, emoji: '🎨' },
     ],
-    rarity: 'legendary',
+    rarity: 'silver',
     image: 'da_vinci.jpg',
   },
   {
@@ -1086,7 +1086,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Afternoon Naps Required', value: 90, emoji: '😴' },
       { label: 'Bulldog Stubbornness', value: 100, emoji: '🐶' },
     ],
-    rarity: 'legendary',
+    rarity: 'holo',
     image: 'churchill.jpg',
   },
   {
@@ -1114,7 +1114,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Symphonies Written', value: 100, emoji: '🎻' },
       { label: 'Financial Management', value: 10, emoji: '💸' },
     ],
-    rarity: 'holo',
+    rarity: 'silver',
     image: 'mozart.jpg',
   },
   {
@@ -1128,7 +1128,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Wrestling Record (Near-Undefeated)', value: 97, emoji: '🤼' },
       { label: 'Beard Game', value: 90, emoji: '🧔' },
     ],
-    rarity: 'holo',
+    rarity: 'glitch',
     image: 'lincoln.jpg',
   },
   {
@@ -1142,7 +1142,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Surprisingly Modest Table Manners', value: 60, emoji: '🍖' },
       { label: 'Nickname Intimidation Factor', value: 100, emoji: '😨' },
     ],
-    rarity: 'holo',
+    rarity: 'gold',
     image: 'attila.jpg',
   },
   {
@@ -1156,7 +1156,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Mime Training (Actually True)', value: 70, emoji: '🎪' },
       { label: 'Eye Color Symmetry', value: 40, emoji: '👁️' },
     ],
-    rarity: 'holo',
+    rarity: 'legendary',
     image: 'bowie.jpg',
   },
   {
@@ -1184,7 +1184,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Straitjacket Wiggling', value: 99, emoji: '🎪' },
       { label: 'Psychic Skepticism Tours', value: 95, emoji: '🕵️' },
     ],
-    rarity: 'holo',
+    rarity: 'glitch',
     image: 'houdini.jpg',
   },
   {
@@ -1198,7 +1198,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Student Count (Traditionally 3,000)', value: 95, emoji: '🎓' },
       { label: 'Ancient Meme Status', value: 99, emoji: '😌' },
     ],
-    rarity: 'gold',
+    rarity: 'holo',
     image: 'confucius.jpg',
   },
   {
@@ -1212,7 +1212,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Debate Skills', value: 100, emoji: '🗣️' },
       { label: '"I Know Nothing" Confidence', value: 99, emoji: '🧠' },
     ],
-    rarity: 'gold',
+    rarity: 'silver',
     image: 'socrates.jpg',
   },
   {
@@ -1240,7 +1240,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Fact Checking', value: 10, emoji: '📰' },
       { label: 'Elephant Marketing', value: 90, emoji: '🐘' },
     ],
-    rarity: 'gold',
+    rarity: 'legendary',
     image: 'pt_barnum.jpg',
   },
   {
@@ -1254,7 +1254,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Small Talk Skills', value: 20, emoji: '💬' },
       { label: 'Pop Art Pioneering', value: 100, emoji: '🎨' },
     ],
-    rarity: 'gold',
+    rarity: 'legendary',
     image: 'warhol.jpg',
   },
 ];
