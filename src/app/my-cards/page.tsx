@@ -1,16 +1,15 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCardCollection, useCardCreator } from '@/store/store';
+import { useCardCollection } from '@/store/store';
 import { TRAIT_PRESETS } from '@/data/presets';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
-import { Trash2, Users, Plus, Sparkles, Flame, Zap, User, X, Edit, Share2, Download, Copy, Check, Loader2 } from 'lucide-react';
+import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import CardVisuals from '@/components/CardVisuals';
 import html2canvas from 'html2canvas';
 
-const FullCardView: React.FC<{ card: Card; onClose: () => void; onEdit: () => void; onDelete: () => void }> = ({ card, onClose, onEdit, onDelete }) => {
+const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => void }> = ({ card, onClose, onDelete }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isSharing, setIsSharing] = useState(false);
   const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
@@ -64,7 +63,7 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onEdit: () => vo
           </div>
         </div></div>
         <div className="flex gap-3 mt-4">
-          <button onClick={onEdit} className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity"><Edit className="w-4 h-4" />Edit</button><button onClick={async () => { if (!cardRef.current) return; setIsSharing(true); try { const canvas = await html2canvas(cardRef.current, { backgroundColor: "#0f172a", scale: 2, useCORS: true, allowTaint: true, logging: false, width: 320, height: 460, scrollX: 0, scrollY: 0 }); const dataUrl = canvas.toDataURL("image/png"); const blob = await (await fetch(dataUrl)).blob(); const file = new File([blob], `${card.name}-card.png`, { type: "image/png" }); if (navigator.share && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: `${card.name} Card`, text: "Check out my card!" }); } else { const link = document.createElement("a"); link.download = `${card.name}-card.png`; link.href = dataUrl; link.click(); } } catch (e) { console.error(e); } setIsSharing(false); }} disabled={isSharing} className="px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">{isSharing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}</button>
+          <button onClick={async () => { if (!cardRef.current) return; setIsSharing(true); try { const canvas = await html2canvas(cardRef.current, { backgroundColor: "#0f172a", scale: 2, useCORS: true, allowTaint: true, logging: false, width: 320, height: 460, scrollX: 0, scrollY: 0 }); const dataUrl = canvas.toDataURL("image/png"); const blob = await (await fetch(dataUrl)).blob(); const file = new File([blob], `${card.name}-card.png`, { type: "image/png" }); if (navigator.share && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: `${card.name} Card`, text: "Check out my card!" }); } else { const link = document.createElement("a"); link.download = `${card.name}-card.png`; link.href = dataUrl; link.click(); } } catch (e) { console.error(e); } setIsSharing(false); }} disabled={isSharing} className="px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">{isSharing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}</button>
           <button onClick={onDelete} className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 transition-colors"><Trash2 className="w-5 h-5" /></button>
         </div>
       </motion.div>
@@ -112,15 +111,8 @@ function MiniCard({ card, onClick }: { card: Card; onClick: () => void }) {
 
 export default function MyCardsPage() {
   const { cards, removeCard, clearCollection } = useCardCollection();
-  const { loadCard } = useCardCreator();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
-  const router = useRouter();
-
-  const handleEdit = (card: Card) => {
-    loadCard(card);
-    router.push('/');
-  };
 
   const handleDelete = (cardId: string) => {
     removeCard(cardId);
@@ -135,7 +127,7 @@ export default function MyCardsPage() {
           <div><h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">My Cards</h1><p className="text-slate-400 text-sm">{cards.length} card{cards.length !== 1 ? 's' : ''} in collection</p></div>
           <div className="flex gap-3">
             {cards.length > 0 && <button onClick={() => setShowClearConfirm(true)} className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium transition-colors">Clear All</button>}
-            <Link href="/" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"><Plus className="w-4 h-4" />Create Card</Link>
+            <Link href="/packs" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"><Package className="w-4 h-4" />Open a Pack</Link>
           </div>
         </div>
         {cards.length > 0 ? (
@@ -146,8 +138,8 @@ export default function MyCardsPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-20">
             <div className="w-24 h-24 bg-slate-800/50 rounded-full flex items-center justify-center mb-6"><Users className="w-12 h-12 text-slate-600" /></div>
             <h2 className="text-xl font-bold text-white mb-2">No Cards Yet</h2>
-            <p className="text-slate-400 mb-6">Create your first card to start building your collection!</p>
-            <Link href="/" className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity"><Plus className="w-5 h-5" />Create Your First Card</Link>
+            <p className="text-slate-400 mb-6">Open a pack to start building your collection!</p>
+            <Link href="/packs" className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity"><Package className="w-5 h-5" />Open Your First Pack</Link>
           </motion.div>
         )}
         {cards.length >= 2 && (
@@ -172,7 +164,7 @@ export default function MyCardsPage() {
           </motion.div>
         )}
         {selectedCard && (
-          <FullCardView card={selectedCard} onClose={() => setSelectedCard(null)} onEdit={() => handleEdit(selectedCard)} onDelete={() => handleDelete(selectedCard.id)} />
+          <FullCardView card={selectedCard} onClose={() => setSelectedCard(null)} onDelete={() => handleDelete(selectedCard.id)} />
         )}
       </AnimatePresence>
     </div>
