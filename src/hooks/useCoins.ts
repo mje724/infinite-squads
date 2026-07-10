@@ -69,16 +69,15 @@ export function useCoins() {
   };
 }
 
-// Cost constants
+// Cost constants (pack tier costs live in src/data/gameEconomy.ts)
 export const COSTS = {
   PACK_OPEN: 100,
 } as const;
 
-// Reward constants
+// Reward constants (daily streak values live in src/data/gameEconomy.ts)
 export const REWARDS = {
   BATTLE_WIN_EASY: 25,
   BATTLE_WIN_MEDIUM: 50,
   BATTLE_WIN_HARD: 100,
-  DAILY_LOGIN: 50,
   SIGNUP_BONUS: 1000,
 } as const;
