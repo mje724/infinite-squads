@@ -1,25 +1,32 @@
 import { createBrowserClient } from '@supabase/ssr';
 
-export function createClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+export const createClient = () => {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+};
 
-  // Return a dummy client during build if env vars are missing
-  if (!supabaseUrl || !supabaseKey) {
-    // This will only happen during static generation
-    // Return null and handle it in components
-    return null as any;
+// Singleton for client-side
+let supabaseInstance: ReturnType<typeof createBrowserClient> | null = null;
+
+export const getSupabase = () => {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient();
   }
-
-  return createBrowserClient(supabaseUrl, supabaseKey);
-}
+  return supabaseInstance;
+};
 
 // Types for our database
 export interface Profile {
   id: string;
-  display_name: string | null;
+  email: string;
+  display_name: string;
   avatar_url: string | null;
-  coins: number;
+  coin_balance: number;
+  packs_opened: number;
+  battles_won: number;
+  battles_lost: number;
   created_at: string;
   updated_at: string;
 }
@@ -27,13 +34,41 @@ export interface Profile {
 export interface UserCard {
   id: string;
   user_id: string;
-  card_data: any;
+  card_name: string;
+  card_data: Record<string, unknown>;
   pulled_at: string;
+  is_favorite: boolean;
 }
 
-export interface PackHistory {
+export interface UserTeam {
   id: string;
   user_id: string;
-  cards_pulled: any[];
-  opened_at: string;
+  team_name: string;
+  scenario_id: string;
+  team_data: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BattleHistory {
+  id: string;
+  user_id: string;
+  scenario_id: string;
+  opponent_type: 'cpu' | 'player';
+  opponent_id: string | null;
+  result: 'win' | 'loss' | 'tie';
+  player_score: number;
+  opponent_score: number;
+  player_team: Record<string, unknown>;
+  opponent_team: Record<string, unknown>;
+  played_at: string;
+}
+
+export interface Transaction {
+  id: string;
+  user_id: string;
+  amount: number;
+  type: 'signup_bonus' | 'pack_purchase' | 'battle_win' | 'daily_reward';
+  description: string;
+  created_at: string;
 }
