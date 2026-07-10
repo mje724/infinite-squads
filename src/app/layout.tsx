@@ -1,22 +1,30 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Outfit } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
+import { AuthProvider } from '@/components/AuthProvider';
 import NavHeader from '@/components/NavHeader';
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-heading', display: 'swap' });
-const outfit = Outfit({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Infinite Squads - Ultimate Card Generator & Team Builder',
-  description: 'Create custom trading cards and build your ultimate team.',
+  title: 'Infinite Squads - Build Your Dream Team',
+  description: 'Create cards, open packs, and battle with your squad',
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${spaceGrotesk.variable} ${outfit.variable} font-sans antialiased bg-slate-950 text-white`}>
-        <NavHeader />
-        <div className="pt-16">{children}</div>
+    <html lang="en">
+      <body className={`${inter.className} bg-slate-950 text-white min-h-screen`}>
+        <AuthProvider>
+          <NavHeader />
+          <main className="pt-16">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );
