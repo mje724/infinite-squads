@@ -1,13 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { Layers, Users, Package, Swords } from 'lucide-react';
+import { Layers, Users, Package, Swords, Flame } from 'lucide-react';
 import CoinDisplay from './CoinDisplay';
-import { useCardCollection } from '@/store/store';
+import { useGameCollection } from '@/hooks/useGameCollection';
+import { useAuth } from './AuthProvider';
 
 export default function NavHeader() {
-  const { cards } = useCardCollection();
-  
+  const { cards } = useGameCollection();
+  const { profile } = useAuth();
+  const streak = profile?.daily_streak ?? 0;
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -17,28 +20,41 @@ export default function NavHeader() {
             <Layers className="w-5 h-5 text-white" />
           </div>
           <span className="font-bold text-white text-lg hidden sm:block">Infinite Squads</span>
+          {streak > 0 && (
+            <span className="flex items-center gap-0.5 text-orange-400 text-xs font-bold" title={`${streak}-day login streak`}>
+              <Flame className="w-3.5 h-3.5" />{streak}
+            </span>
+          )}
         </Link>
 
         {/* Navigation Links */}
         <div className="flex items-center gap-2">
-          <Link 
-            href="/packs" 
+          <Link
+            href="/packs"
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             <Package className="w-4 h-4" />
             <span className="hidden sm:inline">Packs</span>
           </Link>
-          
-          <Link 
-            href="/battle" 
+
+          <Link
+            href="/collections"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+          >
+            <Flame className="w-4 h-4" />
+            <span className="hidden sm:inline">Collections</span>
+          </Link>
+
+          <Link
+            href="/battle"
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             <Swords className="w-4 h-4" />
             <span className="hidden sm:inline">Battle</span>
           </Link>
-          
-          <Link 
-            href="/my-cards" 
+
+          <Link
+            href="/my-cards"
             className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 hover:text-white text-sm font-medium transition-colors"
           >
             <Users className="w-4 h-4" />
@@ -49,7 +65,7 @@ export default function NavHeader() {
               </span>
             )}
           </Link>
-          
+
           {/* Coin Display & User Menu */}
           <CoinDisplay />
         </div>
