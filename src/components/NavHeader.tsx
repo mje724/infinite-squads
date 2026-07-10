@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Layers, Users, Plus, Package, Swords } from 'lucide-react';
+import { Layers, Users, Package, Swords } from 'lucide-react';
 import CoinDisplay from './CoinDisplay';
 import { useCardCollection } from '@/store/store';
 
@@ -50,14 +50,6 @@ export default function NavHeader() {
             )}
           </Link>
           
-          <Link 
-            href="/" 
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Create</span>
-          </Link>
-
           {/* Coin Display & User Menu */}
           <CoinDisplay />
         </div>
