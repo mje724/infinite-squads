@@ -7,23 +7,18 @@ import Link from 'next/link';
 import { useCardCollection } from '@/store/store';
 import { nanoid } from 'nanoid';
 import { PRESET_CARDS, PresetCard, calculateOVR } from '@/data/presetCards';
+import { getImageUrl } from '@/lib/avatar';
 
+// Rarity now tops out at 'legendary' for the preset roster (see
+// src/data/presetCards.ts banding) — 'glitch' is retained only for
+// user-created custom cards in the Card Creator.
 const RARITY_WEIGHTS = {
   bronze: 45,
   silver: 30,
   gold: 15,
-  legendary: 6,
+  legendary: 7,
   holo: 3,
-  glitch: 1,
 };
-
-// Card art is generated (not real photos of real people) — this avoids both
-// broken/hotlinked image URLs and any real-likeness legal exposure now that
-// the app is publicly deployed. Each name deterministically seeds a unique,
-// colorful abstract avatar that always renders.
-function getImageUrl(name: string): string {
-  return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(name)}&backgroundColor=1e293b,334155,0f172a`;
-}
 
 function getRandomCards(count: number): (PresetCard & { overallRating: number })[] {
   const result: (PresetCard & { overallRating: number })[] = [];
@@ -240,7 +235,7 @@ export default function PacksPage() {
                       >
                         <div className="absolute inset-[3px] bg-slate-900 rounded-xl overflow-hidden flex flex-col">
                           <div className="relative h-[45%] overflow-hidden bg-slate-800">
-                            <img src={getImageUrl(card.name)} alt={card.name} className="w-full h-full object-cover object-top" onError={(e) => { (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${card.name}&backgroundColor=1e293b`; }} />
+                            <img src={getImageUrl(card.name)} alt={card.name} className="w-full h-full object-cover object-top" />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
                             <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 rounded-lg">
                               <span className="text-white font-bold text-lg">{card.overallRating}</span>
