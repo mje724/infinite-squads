@@ -16,6 +16,7 @@
 import { PresetCard, calculateOVR } from '@/data/presetCards';
 import { getImageUrl } from '@/lib/avatar';
 import { Rarity } from '@/types/schema';
+import { Tag } from '@/data/cardRegistry';
 
 // ─────────────────────────────────────────────
 // ICON REWARD CARDS (exclusive to collections)
@@ -118,6 +119,58 @@ export const ICON_CARDS: IconCard[] = [
     rarity: 'icon', image: getImageUrl('George Washington'),
   },
   {
+    name: 'The Missing Link',
+    nickname: 'Cryptid Family Reunion',
+    stats: [
+      { label: 'Existence Ambiguity', value: 99, emoji: '❓' },
+      { label: 'Family Tree Chaos', value: 97, emoji: '🌳' },
+      { label: 'Documentary Bait', value: 96, emoji: '🎥' },
+      { label: 'Fossil Record Evasion', value: 98, emoji: '🦴' },
+      { label: 'Reunion Attendance', value: 91, emoji: '🎪' },
+      { label: 'Anthropologist Torment', value: 95, emoji: '🔬' },
+    ],
+    rarity: 'icon', image: getImageUrl('The Missing Link'),
+  },
+  {
+    name: 'The GOAT',
+    nickname: 'Greatest Of All Time, Literally',
+    stats: [
+      { label: 'Being The GOAT', value: 99, emoji: '🐐' },
+      { label: 'Debate Ending Power', value: 98, emoji: '🎤' },
+      { label: 'Fence Climbing', value: 95, emoji: '🧗' },
+      { label: 'Eating Anything', value: 97, emoji: '🍽️' },
+      { label: 'Screaming Like A Human', value: 94, emoji: '📢' },
+      { label: 'Humility', value: 90, emoji: '🙇' },
+    ],
+    rarity: 'icon', image: getImageUrl('The GOAT'),
+  },
+  {
+    name: 'The Speedgod',
+    nickname: 'Frame-Perfect Everything',
+    stats: [
+      { label: 'Frame Perfection', value: 99, emoji: '🎯' },
+      { label: 'Reality Clipping', value: 97, emoji: '🌀' },
+      { label: 'Load Time Immunity', value: 96, emoji: '⚡' },
+      { label: 'RNG Manipulation', value: 95, emoji: '🎲' },
+      { label: 'Sleep Schedule', value: 92, emoji: '😴' },
+      { label: 'World Record Permanence', value: 94, emoji: '🏆' },
+    ],
+    rarity: 'icon', image: getImageUrl('The Speedgod'),
+  },
+  {
+    name: 'Main Character',
+    nickname: 'The Algorithm Chose Them',
+    stats: [
+      { label: 'Plot Armor', value: 99, emoji: '🛡️' },
+      { label: 'Feed Domination', value: 98, emoji: '📱' },
+      { label: 'Being Perceived', value: 97, emoji: '👁️' },
+      { label: 'Consequence Immunity', value: 93, emoji: '🃏' },
+      { label: 'Arc Development', value: 95, emoji: '📈' },
+      { label: 'Spotlight Gravity', value: 99, emoji: '🔦' },
+    ],
+    rarity: 'icon', image: getImageUrl('Main Character'),
+  },
+  {
     name: 'Dolly Party',
     nickname: 'Immune To Scandal',
     stats: [
@@ -145,11 +198,13 @@ export function iconOVR(card: IconCard): number {
 // ─────────────────────────────────────────────
 
 export interface SetRequirement {
-  kind: 'specific' | 'rarity';
+  kind: 'specific' | 'rarity' | 'tag';
   // kind === 'specific'
   cardName?: string;
   // kind === 'rarity'
   rarity?: Rarity;
+  // kind === 'tag' — any cards carrying this identity tag
+  tag?: Tag;
   count?: number;
 }
 
@@ -312,6 +367,115 @@ export const COLLECTION_SETS: CollectionSet[] = [
     repeatable: false,
   },
 ];
+
+// ── Expansion sets: the new roster's trophy lines ──
+COLLECTION_SETS.push(
+  {
+    id: 'cryptid-conference',
+    name: 'The Cryptid Conference',
+    blurb: 'Five creatures who have dodged cameras for a combined 400 years. Get them in one room and their common ancestor finally shows up.',
+    emoji: '📸',
+    requirements: [
+      { kind: 'specific', cardName: 'Bigfoot' },
+      { kind: 'specific', cardName: 'Mothman' },
+      { kind: 'specific', cardName: 'The Loch Ness Monster' },
+      { kind: 'specific', cardName: 'Chupacabra' },
+      { kind: 'specific', cardName: 'The Yeti' },
+    ],
+    reward: { kind: 'icon', cardName: 'The Missing Link' },
+    bonusCoins: 250,
+    repeatable: false,
+  },
+  {
+    id: 'war-pets-battalion',
+    name: 'War Pets Battalion',
+    blurb: 'A bear who carried artillery. A pigeon who finished the mission shot. A cat who out-survived three navies. Salute them all and meet their commanding officer.',
+    emoji: '🎖️',
+    requirements: [
+      { kind: 'specific', cardName: 'Wojtek the Bear' },
+      { kind: 'specific', cardName: 'Cher Ami' },
+      { kind: 'specific', cardName: 'Unsinkable Sam' },
+      { kind: 'specific', cardName: 'Laika' },
+      { kind: 'specific', cardName: 'Balto' },
+    ],
+    reward: { kind: 'icon', cardName: 'The GOAT' },
+    bonusCoins: 250,
+    repeatable: false,
+  },
+  {
+    id: 'terminally-online',
+    name: 'Terminally Online',
+    blurb: 'The feed, the chat, the ratio, the loop, the scroll. Feed all five back into the machine and the machine picks its Main Character.',
+    emoji: '📶',
+    requirements: [
+      { kind: 'specific', cardName: 'Twitch Chat' },
+      { kind: 'specific', cardName: 'The Algorithm' },
+      { kind: 'specific', cardName: 'Ratio King' },
+      { kind: 'specific', cardName: 'NPC Streamer' },
+      { kind: 'specific', cardName: 'Doomscroller' },
+    ],
+    reward: { kind: 'icon', cardName: 'Main Character' },
+    bonusCoins: 250,
+    repeatable: false,
+  },
+  {
+    id: 'speedrun-council',
+    name: 'The Speedrun Council',
+    blurb: 'The kid, the quitter, the completionist, the boss, and the lag itself. Burn the whole leaderboard to summon the one who beat the game before it loaded.',
+    emoji: '⏱️',
+    requirements: [
+      { kind: 'specific', cardName: 'Speedrun Kid' },
+      { kind: 'specific', cardName: 'Rage Quitter' },
+      { kind: 'specific', cardName: 'The Completionist' },
+      { kind: 'specific', cardName: 'Final Boss' },
+      { kind: 'specific', cardName: 'Lag' },
+    ],
+    reward: { kind: 'icon', cardName: 'The Speedgod' },
+    bonusCoins: 250,
+    repeatable: false,
+  },
+  // ── Tag furnaces: repeatable identity-based sinks ──
+  {
+    id: 'conquerors-cabinet',
+    name: "Conqueror's Cabinet",
+    blurb: 'Four warlords walk into a tent. History teaches us exactly one walks out — and it\'s always someone stronger.',
+    emoji: '⚔️',
+    requirements: [{ kind: 'tag', tag: 'warlord', count: 4 }],
+    reward: { kind: 'random', rarity: 'legendary', label: 'Random LEGENDARY card' },
+    bonusCoins: 0,
+    repeatable: true,
+  },
+  {
+    id: 'petting-zoo',
+    name: 'The Petting Zoo',
+    blurb: 'Four animals, one enclosure, zero supervision. Whatever comes out of that barn is shinier than what went in.',
+    emoji: '🐾',
+    requirements: [{ kind: 'tag', tag: 'animal', count: 4 }],
+    reward: { kind: 'random', rarity: 'gold', label: 'Random GOLD card' },
+    bonusCoins: 0,
+    repeatable: true,
+  },
+  {
+    id: 'villain-monologue',
+    name: 'The Villain Monologue',
+    blurb: 'Four villains explaining their master plans simultaneously creates enough hot air to forge something legendary.',
+    emoji: '🎭',
+    requirements: [{ kind: 'tag', tag: 'villain', count: 4 }],
+    reward: { kind: 'random', rarity: 'legendary', label: 'Random LEGENDARY card' },
+    bonusCoins: 0,
+    repeatable: true,
+  },
+  {
+    id: 'big-brain-time',
+    name: 'Big Brain Time',
+    blurb: 'Four geniuses in one study group. They argue about methodology until they collectively transcend.',
+    emoji: '🧠',
+    requirements: [{ kind: 'tag', tag: 'genius', count: 4 }],
+    reward: { kind: 'random', rarity: 'legendary', label: 'Random LEGENDARY card' },
+    bonusCoins: 0,
+    repeatable: true,
+  },
+);
 
 export function getSet(id: string): CollectionSet | undefined {
   return COLLECTION_SETS.find(s => s.id === id);

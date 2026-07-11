@@ -5,6 +5,8 @@
 // ============================================
 
 import { getImageUrl } from '@/lib/avatar';
+import { EXPANSION_A } from '@/data/presetCardsExpansionA';
+import { EXPANSION_B } from '@/data/presetCardsExpansionB';
 
 export interface PresetCard {
   name: string;
@@ -1106,3 +1108,8 @@ export function getAllCardsWithOVR(): (PresetCard & { overallRating: number })[]
 export function getCardsByRarity(rarity: PresetCard['rarity']): PresetCard[] {
   return PRESET_CARDS.filter(c => c.rarity === rarity);
 }
+
+// ── Expansions: Terminally Online (A) + Legends & Folklore (B) ──
+// Pushed onto the same pool so packs, battles, and opponent
+// generation all pick them up automatically.
+PRESET_CARDS.push(...EXPANSION_A, ...EXPANSION_B);
