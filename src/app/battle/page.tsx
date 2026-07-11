@@ -210,7 +210,7 @@ const SCENARIOS: Scenario[] = [
     subtitle: '8 in the bridal party',
     icon: '💒',
     slots: 8,
-    color: 'from-pink-400 to-rose-500',
+    color: 'from-pink-500 to-rose-600',
     isSport: false,
     scoring: {
       categories: [
