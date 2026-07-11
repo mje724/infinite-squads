@@ -6,7 +6,7 @@ import { TRAIT_PRESETS } from '@/data/presets';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
 import { QUICKSELL_VALUES } from '@/data/gameEconomy';
 import { PRESET_CARDS } from '@/data/presetCards';
-import { ICON_CARDS } from '@/data/collections';
+import { ICON_CARDS, setsNeedingCard } from '@/data/collections';
 import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package, Coins, Layers } from 'lucide-react';
 import Link from 'next/link';
@@ -79,6 +79,19 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => 
               {coreEntries.map(([k, v]) => (
                 <span key={k} className="px-2 py-0.5 bg-slate-800/80 border border-slate-600 rounded-full text-slate-300 text-[10px] font-bold uppercase">{k} {v}</span>
               ))}
+            </div>
+          );
+        })()}
+        {/* Collection-piece warning: don't let anyone vaporize an icon-set
+            requirement for pocket change without knowing it */}
+        {(() => {
+          const needed = setsNeedingCard(card.name);
+          if (needed.length === 0) return null;
+          return (
+            <div className="mt-3 px-3 py-2 bg-amber-500/10 border border-amber-500/40 rounded-xl text-center">
+              <p className="text-amber-300 text-xs font-bold">
+                🔥 Collection piece — needed for {needed.map(s => s.name).join(' & ')}
+              </p>
             </div>
           );
         })()}
