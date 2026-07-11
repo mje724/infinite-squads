@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameCollection } from '@/hooks/useGameCollection';
+import { pairVerdict, cardPerformance } from '@/data/chemistry';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
 import { TRAIT_PRESETS } from '@/data/presets';
 import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
@@ -233,7 +234,10 @@ const MiniCardSlot: React.FC<{
   );
 };
 
-const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onClose: () => void; onCreateNew: () => void }> = ({ cards, onSelect, onClose, onCreateNew }) => {
+const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onClose: () => void; onCreateNew: () => void; scenarioId?: string }> = ({ cards, onSelect, onClose, onCreateNew, scenarioId }) => {
+  const sortedCards = scenarioId
+    ? [...cards].sort((a, b) => cardPerformance(b, scenarioId) - cardPerformance(a, scenarioId))
+    : cards;
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
@@ -244,13 +248,18 @@ const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onCl
         <div className="flex-1 overflow-y-auto p-6">
           {cards.length > 0 ? (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-              {cards.map((card) => {
+              {sortedCards.map((card) => {
                 const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
+                const fit = scenarioId ? cardPerformance(card, scenarioId) : null;
+                const fitColor = fit === null ? '#94a3b8' : fit >= 85 ? '#22c55e' : fit >= 65 ? '#eab308' : fit >= 45 ? '#f97316' : '#ef4444';
                 return (
                   <motion.div key={card.id} whileHover={{ scale: 1.05 }} onClick={() => onSelect(card)} className="cursor-pointer">
                     <div className="relative w-full aspect-[4/5] rounded-lg overflow-hidden" style={{ background: rarityStyle.gradient }}>
                       <div className="absolute inset-[2px] rounded-md bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
                         <div className="absolute top-1 left-1"><span className="text-sm font-black" style={{ color: rarityStyle.border }}>{card.overallRating}</span></div>
+                        {fit !== null && (
+                          <div className="absolute top-1 right-1 px-1 py-0.5 rounded text-[8px] font-black" style={{ background: 'rgba(0,0,0,0.7)', color: fitColor }}>F{fit}</div>
+                        )}
                         <div className="absolute top-5 left-0 right-0 h-10 overflow-hidden">
                           {card.image ? <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: 'url(' + card.image + ')' }} /> : <div className="w-full h-full flex items-center justify-center bg-slate-800/50"><User className="w-4 h-4 text-slate-600" /></div>}
                         </div>
@@ -407,26 +416,24 @@ export default function SquadPage() {
   };
 
   const handleAutoConnect = () => {
+    // Real chemistry: named duos, tag synergies, era bonds — green lines
+    // for allies, red lines for beef. Same engine the Battle sim scores with.
     const newConnections: Connection[] = [];
     const filledSlots = lineup.map((card, idx) => card ? idx : -1).filter(idx => idx !== -1);
-    
+
     for (let i = 0; i < filledSlots.length; i++) {
       for (let j = i + 1; j < filledSlots.length; j++) {
         const cardA = lineup[filledSlots[i]];
         const cardB = lineup[filledSlots[j]];
         if (!cardA || !cardB) continue;
 
-        // Check for shared traits
-        const traitsA = cardA.traits || [];
-        const traitsB = cardB.traits || [];
-        const sharedTraits = traitsA.filter(t => traitsB.includes(t));
-        
-        if (sharedTraits.length > 0) {
-          newConnections.push({ from: filledSlots[i], to: filledSlots[j], type: 'good' });
+        const verdict = pairVerdict(cardA, cardB);
+        if (verdict) {
+          newConnections.push({ from: filledSlots[i], to: filledSlots[j], type: verdict.type });
         }
       }
     }
-    
+
     setConnections(newConnections);
   };
 
@@ -601,7 +608,7 @@ export default function SquadPage() {
 
       <AnimatePresence>
         {showPicker && (
-          <CardPicker cards={cards} onSelect={handleSelectCard} onClose={() => { setShowPicker(false); setActiveSlot(null); }} onCreateNew={handleCreateNew} />
+          <CardPicker cards={cards} scenarioId={selectedScenario.id} onSelect={handleSelectCard} onClose={() => { setShowPicker(false); setActiveSlot(null); }} onCreateNew={handleCreateNew} />
         )}
       </AnimatePresence>
     </div>
