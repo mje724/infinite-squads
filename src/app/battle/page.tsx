@@ -10,6 +10,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { getSupabase } from '@/lib/supabase';
 import { Card } from '@/types/schema';
 import { PRESET_CARDS as ALL_PRESET_CARDS, PresetCard as BasePresetCard, calculateOVR } from '@/data/presetCards';
+import { cardPerformance, chemistrySummary } from '@/data/chemistry';
 
 // ============================================
 // PRESET CARDS DATABASE — sourced from the single shared roster in
@@ -307,11 +308,13 @@ interface PlayerBoxScore {
 function generateBoxScore(
   cards: (PresetCard | Card)[],
   categories: ScoreCategory[],
-  isSport: boolean
+  isSport: boolean,
+  scenarioId: string
 ): PlayerBoxScore[] {
   return cards.map(card => {
-    const ovr = 'overallRating' in card ? card.overallRating : 50;
-    const baseMultiplier = ovr / 100;
+    // Performance = core stats weighted by THIS scenario + identity affinities.
+    // A famous card with the wrong skill set genuinely underperforms here.
+    const baseMultiplier = cardPerformance(card, scenarioId) / 100;
     
     const stats = categories.map(cat => {
       let value: number;
@@ -523,14 +526,16 @@ export default function BattlePage() {
     setBattlePhase('battle');
     
     setTimeout(() => {
-      const playerBoxScores = generateBoxScore(selectedCards, selectedScenario.scoring.categories, selectedScenario.isSport);
-      const opponentBoxScores = generateBoxScore(opponentTeam, selectedScenario.scoring.categories, selectedScenario.isSport);
-      
+      const playerBoxScores = generateBoxScore(selectedCards, selectedScenario.scoring.categories, selectedScenario.isSport, selectedScenario.id);
+      const opponentBoxScores = generateBoxScore(opponentTeam, selectedScenario.scoring.categories, selectedScenario.isSport, selectedScenario.id);
+
       const playerTotal = calculateTeamTotal(playerBoxScores, selectedScenario.scoring.categories);
       const opponentTotal = calculateTeamTotal(opponentBoxScores, selectedScenario.scoring.categories);
-      
-      const playerChemistry = calculateChemistry(selectedCards, selectedScenario.scoring.chemistryBonuses);
-      const opponentChemistry = calculateChemistry(opponentTeam, selectedScenario.scoring.chemistryBonuses);
+
+      // Chemistry with a "why": named duos, tag synergies, era bonds —
+      // every line item in the result screen names the pair that caused it.
+      const playerChemistry = chemistrySummary(selectedCards, selectedScenario.id);
+      const opponentChemistry = chemistrySummary(opponentTeam, selectedScenario.id);
       
       const playerFinal = playerTotal + playerChemistry.total;
       const opponentFinal = opponentTotal + opponentChemistry.total;
@@ -724,10 +729,16 @@ export default function BattlePage() {
                   <Link href="/packs" className="text-purple-400">Open packs →</Link>
                 </div>
               ) : (
+                <>
+                <p className="text-slate-500 text-xs mb-3">
+                  FIT = how this card performs in <span className="text-slate-300 font-semibold">this</span> scenario — fame (OVR) and function are not the same thing. Sort your lineup by FIT, not clout.
+                </p>
                 <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-                  {packCards.map(card => {
+                  {[...packCards].sort((a, b) => cardPerformance(b, selectedScenario.id) - cardPerformance(a, selectedScenario.id)).map(card => {
                     const isSelected = selectedCards.find(c => c.id === card.id);
                     const isDisabled = !isSelected && selectedCards.length >= selectedScenario.slots;
+                    const fit = cardPerformance(card, selectedScenario.id);
+                    const fitColor = fit >= 85 ? '#22c55e' : fit >= 65 ? '#eab308' : fit >= 45 ? '#f97316' : '#ef4444';
                     return (
                       <motion.button
                         key={card.id}
@@ -737,6 +748,12 @@ export default function BattlePage() {
                         className={`relative ${isSelected ? 'ring-2 ring-green-400 ring-offset-2 ring-offset-slate-900' : ''} ${isDisabled ? 'opacity-40' : ''}`}
                       >
                         <MiniCard card={card} />
+                        <div
+                          className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md text-[10px] font-black backdrop-blur-sm"
+                          style={{ background: 'rgba(0,0,0,0.75)', color: fitColor, border: `1px solid ${fitColor}55` }}
+                        >
+                          FIT {fit}
+                        </div>
                         {isSelected && (
                           <div className="absolute top-1 right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                             <Check className="w-3 h-3 text-white" />
@@ -746,6 +763,7 @@ export default function BattlePage() {
                     );
                   })}
                 </div>
+                </>
               )}
             </div>
 
