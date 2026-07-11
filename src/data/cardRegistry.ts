@@ -294,10 +294,40 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'Zeus': d('ancient', ['ruler', 'entity', 'chaos'], 95, 80, 85, 90, 88, 99),
 };
 
+// Cards pulled before the parody-name distance pass keep their identity:
+// old name → current registry key.
+const LEGACY_ALIASES: Record<string, string> = {
+  'Keanu Reevos': 'Kianu Reaves',
+  'Donny DeVito': 'Donny DeVeeto',
+  'Nicolas Kage': 'Nicolaus Kage',
+  'Gordon Ramzay': 'Gordo Ramzey',
+  'Marfa Stewart': 'Marfa Stewhart',
+  'Mike Tyzon': 'Iron Mike Tyzen',
+  'Guy Fiori': 'Guy Fierro',
+  'Joe Rogain': 'Joey Rogaine',
+  'DJ Kaled': 'DJ Khaleb',
+  'Charlie Sheenz': 'Charlee Sheenz',
+  'Bulk Hogan': 'Bulk Hogman',
+  'Arnold Schwarzenagger': 'Arnold Schwarzenlifter',
+  'Adam LeVine': 'Atom Levine',
+  'Logan Pauls': 'Logang Paulson',
+  'Travis Scot': 'Travesty Scott',
+  'Hilaria Baldwyn': 'Hilarya Baldwing',
+  'Elizabeth Homes': 'Lizzy Holmz',
+  'Billy MacFarland': 'Billy FyreFarland',
+  'Rachel Doleza': 'Rachael Dolezall',
+  'Wayne Gretzkee': 'Wayne Greatzky',
+  'Slim Shadey': 'Slim Shadow',
+  'Willie Nelsong': 'Willie Nelsun',
+  'Lionel Pessi': 'Leo Pessi',
+  'Cristiano Penaldo': 'Cris Penaldo',
+  'Usain Jolt': 'Insane Jolt',
+};
+
 // Legacy/custom cards not in the registry still play: derive a flat
 // profile from OVR so nothing breaks, it's just unspecialized.
 export function getGameData(name: string, ovr: number): CardGameData {
-  const found = CARD_REGISTRY[name];
+  const found = CARD_REGISTRY[name] ?? CARD_REGISTRY[LEGACY_ALIASES[name]];
   if (found) return found;
   const flat = Math.max(10, Math.min(95, Math.round(ovr * 0.85)));
   return { era: 'timeless', tags: [], core: { might: flat, brains: flat, charm: flat, chaos: flat, grit: flat, clout: flat } };

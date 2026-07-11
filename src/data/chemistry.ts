@@ -267,14 +267,25 @@ export function teamChemistry(cards: AnyCard[], scenarioId: string): { total: nu
   return { total, effects };
 }
 
-// Legacy-compatible summary strings for the battle UI
+// Legacy-compatible summary strings for the battle UI.
+// Repeated generic effects collapse ("Contemporaries ×6 (+12)") so the
+// named duos — the interesting part — stay readable at the top.
 export function chemistrySummary(cards: AnyCard[], scenarioId: string): { total: number; active: string[] } {
   const { total, effects } = teamChemistry(cards, scenarioId);
-  const sorted = [...effects].sort((a, b) => Math.abs(b.bonus) - Math.abs(a.bonus));
-  return {
-    total,
-    active: sorted.map(e => `${e.name}: ${e.detail} (${e.bonus > 0 ? '+' : ''}${e.bonus})`),
-  };
+  const grouped = new Map<string, { count: number; sum: number; sample: string }>();
+  for (const e of effects) {
+    const g = grouped.get(e.name) ?? { count: 0, sum: 0, sample: e.detail };
+    g.count++; g.sum += e.bonus;
+    grouped.set(e.name, g);
+  }
+  const lines = [...grouped.entries()]
+    .sort((a, b) => Math.abs(b[1].sum) - Math.abs(a[1].sum))
+    .map(([name, g]) =>
+      g.count === 1
+        ? `${name}: ${g.sample} (${g.sum > 0 ? '+' : ''}${g.sum})`
+        : `${name} ×${g.count} (${g.sum > 0 ? '+' : ''}${g.sum})`
+    );
+  return { total, active: lines };
 }
 
 // Pair verdict for squad-builder connection lines

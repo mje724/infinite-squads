@@ -509,3 +509,11 @@ COLLECTION_SETS.push(
 export function getSet(id: string): CollectionSet | undefined {
   return COLLECTION_SETS.find(s => s.id === id);
 }
+
+// Which one-time sets need a specific card by name — used to warn
+// before someone quicksells a collection piece for pocket change.
+export function setsNeedingCard(cardName: string): CollectionSet[] {
+  return COLLECTION_SETS.filter(
+    s => !s.repeatable && s.requirements.some(r => r.kind === 'specific' && r.cardName === cardName)
+  );
+}
