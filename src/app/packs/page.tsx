@@ -27,7 +27,12 @@ import {
   QUICKSELL_VALUES,
   GUEST_FREE_PACK_KEY,
 } from '@/data/gameEconomy';
+import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { Card } from '@/types/schema';
+
+// Bad-luck protection: every PITY_LIMIT-th pack without a legendary/holo
+// in its contents guarantees one. Gacha that respects the floor keeps players.
+const PITY_LIMIT = 10;
 
 type PulledCard = PresetCard & { overallRating: number };
 
@@ -42,7 +47,7 @@ function rollRarity(tier: PackTier): PackRarity {
   return 'bronze';
 }
 
-function getRandomCards(tier: PackTier, count: number): PulledCard[] {
+function getRandomCards(tier: PackTier, count: number, guaranteeLegendary = false): PulledCard[] {
   const result: PulledCard[] = [];
   let guard = 0;
   while (result.length < count && guard++ < 200) {
@@ -52,6 +57,16 @@ function getRandomCards(tier: PackTier, count: number): PulledCard[] {
     const pick = pool[Math.floor(Math.random() * pool.length)];
     if (!result.find(c => c.name === pick.name)) {
       result.push({ ...pick, overallRating: calculateOVR(pick.stats) });
+    }
+  }
+  // Pity trigger: swap one card for a legendary/holo if none rolled
+  if (guaranteeLegendary && !result.some(c => c.rarity === 'legendary' || c.rarity === 'holo')) {
+    const pool = PRESET_CARDS.filter(
+      c => (c.rarity === 'legendary' || c.rarity === 'holo') && !result.find(r => r.name === c.name)
+    );
+    if (pool.length > 0) {
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      result[Math.floor(Math.random() * result.length)] = { ...pick, overallRating: calculateOVR(pick.stats) };
     }
   }
   return result;
@@ -92,10 +107,18 @@ export default function PacksPage() {
   const [showOdds, setShowOdds] = useState(false);
   const [guestPackUsed, setGuestPackUsed] = useState(true); // pessimistic until read
   const [opening, setOpening] = useState(false);
+  const [pityCount, setPityCount] = useState(0);
+  const [heatFlash, setHeatFlash] = useState(false);
+
+  const pityKey = `is-pity-${user?.id ?? 'guest'}`;
 
   useEffect(() => {
     setGuestPackUsed(localStorage.getItem(GUEST_FREE_PACK_KEY) === '1');
   }, []);
+
+  useEffect(() => {
+    setPityCount(parseInt(localStorage.getItem(pityKey) ?? '0', 10) || 0);
+  }, [pityKey]);
 
   const openPack = async (tier: PackTier) => {
     if (opening || packCards.length > 0) return;
@@ -122,11 +145,24 @@ export default function PacksPage() {
       setGuestPackUsed(true);
     }
 
-    setPackCards(getRandomCards(tier, 3));
+    const cards = getRandomCards(tier, 3, pityCount >= PITY_LIMIT - 1);
+    const hasHeat = cards.some(c => c.rarity === 'legendary' || c.rarity === 'holo');
+    const nextPity = hasHeat ? 0 : pityCount + 1;
+    localStorage.setItem(pityKey, String(nextPity));
+    setPityCount(nextPity);
+
+    setPackCards(cards);
     setSelectedCard(null);
     setIsRevealed(false);
     setHoveredCard(null);
-    setTimeout(() => setIsRevealed(true), 500);
+    // Anticipation: big pulls get a golden beat before the flip
+    if (hasHeat) {
+      setHeatFlash(true);
+      setTimeout(() => setHeatFlash(false), 1400);
+      setTimeout(() => setIsRevealed(true), 1500);
+    } else {
+      setTimeout(() => setIsRevealed(true), 500);
+    }
     setOpening(false);
   };
 
@@ -205,7 +241,28 @@ export default function PacksPage() {
             <Info className="w-4 h-4" />
             <span className="text-sm font-medium">Odds</span>
           </button>
+          {isLoggedIn && PITY_LIMIT - pityCount <= 5 && (
+            <div className="bg-orange-500/10 border border-orange-500/40 rounded-xl px-4 py-3 flex items-center gap-2">
+              <span className="text-orange-300 text-sm font-bold">
+                ⚡ Legendary+ guaranteed within {PITY_LIMIT - pityCount} pack{PITY_LIMIT - pityCount === 1 ? '' : 's'}
+              </span>
+            </div>
+          )}
         </div>
+
+        {/* Heat flash: the golden beat before a big pull flips */}
+        <AnimatePresence>
+          {heatFlash && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.35, 0.15, 0.5, 0.25, 0.7] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.3 }}
+              className="fixed inset-0 z-50 pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse at center, rgba(255,200,60,0.55) 0%, rgba(255,120,0,0.18) 45%, transparent 75%)' }}
+            />
+          )}
+        </AnimatePresence>
 
         {/* Odds panel — published like a casino that respects you */}
         <AnimatePresence>
@@ -361,6 +418,11 @@ export default function PacksPage() {
                             <div className="mb-2">
                               <h3 className="font-bold text-white text-base leading-tight">{card.name}</h3>
                               <p className="text-slate-400 text-xs italic">&quot;{card.nickname}&quot;</p>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {getGameData(card.name, card.overallRating).tags.map(t => (
+                                  <span key={t} className="px-1.5 py-0.5 bg-purple-500/15 border border-purple-500/30 rounded-full text-purple-300 text-[9px] font-bold uppercase tracking-wide">{TAG_LABELS[t]}</span>
+                                ))}
+                              </div>
                             </div>
                             <div className="space-y-1 flex-1 overflow-y-auto">
                               {card.stats.map((stat, i) => (
