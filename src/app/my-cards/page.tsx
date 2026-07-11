@@ -7,6 +7,7 @@ import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
 import { QUICKSELL_VALUES } from '@/data/gameEconomy';
 import { PRESET_CARDS } from '@/data/presetCards';
 import { ICON_CARDS } from '@/data/collections';
+import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package, Coins, Layers } from 'lucide-react';
 import Link from 'next/link';
 import CardVisuals from '@/components/CardVisuals';
@@ -65,6 +66,22 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => 
             </div>
           </div>
         </div></div>
+        {/* Identity chips: tags + top core stats — who this card IS */}
+        {(() => {
+          const gd = getGameData(card.name, card.overallRating);
+          if (gd.tags.length === 0) return null;
+          const coreEntries = Object.entries(gd.core).sort((a, b) => b[1] - a[1]).slice(0, 3);
+          return (
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
+              {gd.tags.map(t => (
+                <span key={t} className="px-2 py-0.5 bg-purple-500/15 border border-purple-500/40 rounded-full text-purple-300 text-[10px] font-bold uppercase tracking-wide">{TAG_LABELS[t]}</span>
+              ))}
+              {coreEntries.map(([k, v]) => (
+                <span key={k} className="px-2 py-0.5 bg-slate-800/80 border border-slate-600 rounded-full text-slate-300 text-[10px] font-bold uppercase">{k} {v}</span>
+              ))}
+            </div>
+          );
+        })()}
         <div className="flex gap-3 mt-4">
           <button onClick={async () => { if (!cardRef.current) return; setIsSharing(true); try { const canvas = await html2canvas(cardRef.current, { backgroundColor: "#0f172a", scale: 2, useCORS: true, allowTaint: true, logging: false, width: 320, height: 460, scrollX: 0, scrollY: 0 }); const dataUrl = canvas.toDataURL("image/png"); const blob = await (await fetch(dataUrl)).blob(); const file = new File([blob], `${card.name}-card.png`, { type: "image/png" }); if (navigator.share && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: `${card.name} Card`, text: "Check out my card!" }); } else { const link = document.createElement("a"); link.download = `${card.name}-card.png`; link.href = dataUrl; link.click(); } } catch (e) { console.error(e); } setIsSharing(false); }} disabled={isSharing} className="px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">{isSharing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}</button>
           {onQuicksell && (
