@@ -254,46 +254,50 @@ const SCENARIOS: Scenario[] = [
 // ============================================
 
 function generateOpponentTeam(
-  slots: number, 
-  playerAvgOVR: number, 
+  slots: number,
+  playerAvgOVR: number,
   difficulty: 'easy' | 'medium' | 'hard',
-  excludeNames: string[]
+  excludeNames: string[],
+  scenarioId: string
 ): PresetCard[] {
   // Difficulty affects target OVR
   const ovrAdjust = difficulty === 'easy' ? -10 : difficulty === 'hard' ? 10 : 0;
   const targetOVR = Math.max(30, Math.min(95, playerAvgOVR + ovrAdjust));
-  
+
   // Filter out cards already on player's team
   const available = PRESET_CARDS.filter(c => !excludeNames.includes(c.name));
-  
-  // Sort by how close they are to target OVR
-  const sorted = [...available].sort((a, b) => 
-    Math.abs(a.overallRating - targetOVR) - Math.abs(b.overallRating - targetOVR)
-  );
-  
-  // Pick cards, trying to get close to target average
-  const selected: PresetCard[] = [];
-  let currentSum = 0;
-  
-  // First pass: pick cards close to target
-  for (const card of sorted) {
-    if (selected.length >= slots) break;
-    if (!selected.find(c => c.name === card.name)) {
-      selected.push(card);
-      currentSum += card.overallRating;
-    }
+
+  // Candidate pool: closest to target OVR (2× slots deep so difficulty
+  // sorting below has real choices to make)
+  const nearTarget = [...available]
+    .sort((a, b) => Math.abs(a.overallRating - targetOVR) - Math.abs(b.overallRating - targetOVR))
+    .slice(0, Math.max(slots * 2, 16));
+
+  // The difficulty "why": HARD opponents draft for the scenario (high FIT),
+  // EASY opponents draft famous-but-wrong cards (low FIT), MEDIUM doesn't think.
+  if (difficulty === 'hard') {
+    nearTarget.sort((a, b) => cardPerformance(b, scenarioId) - cardPerformance(a, scenarioId));
+  } else if (difficulty === 'easy') {
+    nearTarget.sort((a, b) => cardPerformance(a, scenarioId) - cardPerformance(b, scenarioId));
   }
-  
-  // Fill remaining slots if needed
+
+  const selected: PresetCard[] = [];
+  for (const card of nearTarget) {
+    if (selected.length >= slots) break;
+    if (!selected.find(c => c.name === card.name)) selected.push(card);
+  }
   while (selected.length < slots) {
     const remaining = available.filter(c => !selected.find(s => s.name === c.name));
     if (remaining.length === 0) break;
-    const pick = remaining[Math.floor(Math.random() * remaining.length)];
-    selected.push(pick);
+    selected.push(remaining[Math.floor(Math.random() * remaining.length)]);
   }
-  
-  // Shuffle for variety
-  return selected.sort(() => Math.random() - 0.5);
+
+  // Fisher–Yates (the lazy sort(random) shuffle is biased)
+  for (let i = selected.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [selected[i], selected[j]] = [selected[j], selected[i]];
+  }
+  return selected;
 }
 
 // ============================================
@@ -315,21 +319,25 @@ function generateBoxScore(
     // Performance = core stats weighted by THIS scenario + identity affinities.
     // A famous card with the wrong skill set genuinely underperforms here.
     const baseMultiplier = cardPerformance(card, scenarioId) / 100;
-    
+
     const stats = categories.map(cat => {
       let value: number;
-      const rand = Math.random();
+      // Skill-dominant randomness: magnitude rolls live in a tight band
+      // around the midpoint (0.35–0.75) so FIT decides games ~70/30 over
+      // luck, while binary events (goals, TDs, INTs) stay truly random.
+      const rand = 0.35 + Math.random() * 0.4;
+      const chance = Math.random();
       
       if (isSport) {
         if (cat.name === 'PTS') value = Math.round((rand * 25 + 5) * baseMultiplier);
         else if (cat.name === 'REB') value = Math.round((rand * 12 + 2) * baseMultiplier);
         else if (cat.name === 'AST') value = Math.round((rand * 10 + 1) * baseMultiplier);
-        else if (cat.name === 'Goals') value = rand < baseMultiplier * 0.35 ? Math.ceil(rand * 2) : 0;
-        else if (cat.name === 'Assists') value = rand < baseMultiplier * 0.4 ? Math.ceil(rand * 2) : 0;
+        else if (cat.name === 'Goals') value = chance < baseMultiplier * 0.35 ? Math.ceil(chance * 2) : 0;
+        else if (cat.name === 'Assists') value = chance < baseMultiplier * 0.4 ? Math.ceil(chance * 2) : 0;
         else if (cat.name === 'Saves') value = Math.round((rand * 6) * baseMultiplier);
-        else if (cat.name === 'TD') value = rand < baseMultiplier * 0.45 ? Math.ceil(rand * 2) : 0;
+        else if (cat.name === 'TD') value = chance < baseMultiplier * 0.45 ? Math.ceil(chance * 2) : 0;
         else if (cat.name === 'YDS') value = Math.round((rand * 120 + 15) * baseMultiplier);
-        else if (cat.name === 'INT') value = rand < (1 - baseMultiplier) * 0.35 ? 1 : 0;
+        else if (cat.name === 'INT') value = chance < (1 - baseMultiplier) * 0.35 ? 1 : 0;
         else value = Math.round(rand * 15 * baseMultiplier);
       } else {
         // Satirical - values that make sense for each category
@@ -337,7 +345,7 @@ function generateBoxScore(
         else if (cat.name === 'Pee Breaks') value = Math.round((rand * 4) * (1.2 - baseMultiplier));
         else if (cat.name === 'Wrong Turns') value = Math.round((rand * 3) * (1.2 - baseMultiplier));
         else if (cat.name === 'Venmo Speed') value = Math.round(100 * baseMultiplier - rand * 20);
-        else if (cat.name === 'Salad Claims') value = rand < (1 - baseMultiplier) * 0.4 ? 1 : 0;
+        else if (cat.name === 'Salad Claims') value = chance < (1 - baseMultiplier) * 0.4 ? 1 : 0;
         else if (cat.name === 'Tip %') value = Math.round(12 + 10 * baseMultiplier + rand * 5);
         else if (cat.name === 'Phone Checks') value = Math.round((rand * 15) * (1.3 - baseMultiplier));
         else if (cat.name === '"Huh?" Count' || cat.name === 'Huh? Count') value = Math.round((rand * 8) * (1.2 - baseMultiplier));
@@ -349,7 +357,7 @@ function generateBoxScore(
         else if (cat.name === 'Cringe Stories') value = Math.round((rand * 4) * (1.2 - baseMultiplier));
         else if (cat.name === 'Dance Mins') value = Math.round((rand * 40 + 10) * baseMultiplier);
         else if (cat.name === 'Days Alive') value = Math.round((rand * 25 + 5) * baseMultiplier);
-        else if (cat.name === 'Dumb Deaths') value = rand < (1 - baseMultiplier) * 0.4 ? 1 : 0;
+        else if (cat.name === 'Dumb Deaths') value = chance < (1 - baseMultiplier) * 0.4 ? 1 : 0;
         else if (cat.name === 'Supplies') value = Math.round((rand * 15 + 5) * baseMultiplier);
         else value = Math.round(rand * 10 * baseMultiplier);
       }
@@ -515,7 +523,7 @@ export default function BattlePage() {
     
     const playerAvgOVR = selectedCards.reduce((s, c) => s + c.overallRating, 0) / selectedCards.length;
     const excludeNames = selectedCards.map(c => c.name);
-    const opponents = generateOpponentTeam(selectedScenario.slots, playerAvgOVR, difficulty, excludeNames);
+    const opponents = generateOpponentTeam(selectedScenario.slots, playerAvgOVR, difficulty, excludeNames, selectedScenario.id);
     
     setOpponentTeam(opponents);
     setBattlePhase('preview');
@@ -537,8 +545,11 @@ export default function BattlePage() {
       const playerChemistry = chemistrySummary(selectedCards, selectedScenario.id);
       const opponentChemistry = chemistrySummary(opponentTeam, selectedScenario.id);
       
-      const playerFinal = playerTotal + playerChemistry.total;
-      const opponentFinal = opponentTotal + opponentChemistry.total;
+      // Chemistry as a percentage multiplier (cap ±20%) so a +10 bond is
+      // worth the same in every scenario, whatever the raw score scale.
+      const chemMult = (t: number) => 1 + Math.max(-40, Math.min(40, t)) / 200;
+      const playerFinal = Math.round(playerTotal * chemMult(playerChemistry.total));
+      const opponentFinal = Math.round(opponentTotal * chemMult(opponentChemistry.total));
       
       // Find MVP
       const allBoxScores = [...playerBoxScores, ...opponentBoxScores];
