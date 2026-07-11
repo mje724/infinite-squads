@@ -253,7 +253,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Crying Meme Immortality', value: 95, emoji: '😢' },
     ], rarity: 'legendary', image: getImageUrl('Air Goatness') },
   {
-    name: 'Lionel Pessi', nickname: 'Left Foot of God',
+    name: 'Leo Pessi', nickname: 'Left Foot of God',
     stats: [
       { label: 'Left Foot Sorcery', value: 99, emoji: '🦶' },
       { label: 'Gravity Defiance', value: 94, emoji: '🌍' },
@@ -261,9 +261,9 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Walking Efficiency', value: 96, emoji: '🚶' },
       { label: 'World Cup Completion', value: 95, emoji: '🏆' },
       { label: 'Humility Per Goal', value: 92, emoji: '🙇' },
-    ], rarity: 'legendary', image: getImageUrl('Lionel Pessi') },
+    ], rarity: 'legendary', image: getImageUrl('Leo Pessi') },
   {
-    name: 'Cristiano Penaldo', nickname: 'SIUUU Machine',
+    name: 'Cris Penaldo', nickname: 'SIUUU Machine',
     stats: [
       { label: 'SIUUU Altitude', value: 97, emoji: '🦘' },
       { label: 'Penalty Magnetism', value: 94, emoji: '🧲' },
@@ -271,9 +271,9 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Soda Removal Impact', value: 90, emoji: '🥤' },
       { label: 'Aging Denial', value: 95, emoji: '⏳' },
       { label: 'Statue Superiority', value: 94, emoji: '🗿' },
-    ], rarity: 'legendary', image: getImageUrl('Cristiano Penaldo') },
+    ], rarity: 'legendary', image: getImageUrl('Cris Penaldo') },
   {
-    name: 'Usain Jolt', nickname: 'Chose Violence Against Physics',
+    name: 'Insane Jolt', nickname: 'Chose Violence Against Physics',
     stats: [
       { label: 'Straight Line Speed', value: 99, emoji: '⚡' },
       { label: 'Mid-Race Showboating', value: 93, emoji: '😎' },
@@ -281,7 +281,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Pose Trademark Power', value: 95, emoji: '🏹' },
       { label: 'Second Place Familiarity', value: 4, emoji: '🥈' },
       { label: 'Soccer Career Attempt', value: 70, emoji: '⚽' },
-    ], rarity: 'gold', image: getImageUrl('Usain Jolt') },
+    ], rarity: 'gold', image: getImageUrl('Insane Jolt') },
   {
     name: 'Serena Willpower', nickname: '23 Reasons To Quit Arguing',
     stats: [
@@ -303,7 +303,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Surgery Comeback Count', value: 94, emoji: '🦵' },
     ], rarity: 'gold', image: getImageUrl('Lion Woods') },
   {
-    name: 'Wayne Gretzkee', nickname: 'Skated Where It Was Going',
+    name: 'Wayne Greatzky', nickname: 'Skated Where It Was Going',
     stats: [
       { label: 'Puck Precognition', value: 99, emoji: '🔮' },
       { label: 'Record Unbreakability', value: 97, emoji: '📊' },
@@ -311,7 +311,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Being The Reference Quote', value: 96, emoji: '💬' },
       { label: 'Trade Trauma Caused (Canada)', value: 90, emoji: '🍁' },
       { label: 'Great One Trademark', value: 94, emoji: '™️' },
-    ], rarity: 'gold', image: getImageUrl('Wayne Gretzkee') },
+    ], rarity: 'gold', image: getImageUrl('Wayne Greatzky') },
   {
     name: 'Yogi Barely', nickname: 'Quote Machine',
     stats: [
@@ -365,7 +365,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Off Days Concealment', value: 99, emoji: '📅' },
     ], rarity: 'legendary', image: getImageUrl('The Hive Queen') },
   {
-    name: 'Slim Shadey', nickname: 'Will Really Stand Up',
+    name: 'Slim Shadow', nickname: 'Will Really Stand Up',
     stats: [
       { label: 'Syllables Per Second', value: 98, emoji: '💨' },
       { label: 'Mom Spaghetti Composure', value: 15, emoji: '🍝' },
@@ -373,7 +373,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Beef Longevity', value: 92, emoji: '🥩' },
       { label: 'Apology Songs To Mom', value: 80, emoji: '💐' },
       { label: 'Radio Censor Fatigue', value: 96, emoji: '📻' },
-    ], rarity: 'gold', image: getImageUrl('Slim Shadey') },
+    ], rarity: 'gold', image: getImageUrl('Slim Shadow') },
   {
     name: 'Drayke', nickname: 'Started From The Meme',
     stats: [
@@ -395,7 +395,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Streaming Records Held', value: 95, emoji: '📈' },
     ], rarity: 'gold', image: getImageUrl('Bad Rabbit') },
   {
-    name: 'Willie Nelsong', nickname: 'Outlaw Botanist',
+    name: 'Willie Nelsun', nickname: 'Outlaw Botanist',
     stats: [
       { label: 'Braid Longevity', value: 93, emoji: '💇' },
       { label: 'Botanical Enthusiasm', value: 97, emoji: '🌿' },
@@ -403,7 +403,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Tour Bus Mileage', value: 94, emoji: '🚌' },
       { label: 'Outliving Everyone', value: 94, emoji: '⏳' },
       { label: 'Guitar Hole Authenticity', value: 92, emoji: '🎸' },
-    ], rarity: 'gold', image: getImageUrl('Willie Nelsong') },
+    ], rarity: 'gold', image: getImageUrl('Willie Nelsun') },
   {
     name: 'Lil Blimp', nickname: 'SoundCloud Admiral',
     stats: [

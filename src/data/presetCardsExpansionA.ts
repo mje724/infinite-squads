@@ -142,26 +142,6 @@ export const EXPANSION_A: PresetCard[] = [
       { label: 'Indoor Optimization', value: 93, emoji: '🌳' },
     ], rarity: 'legendary', image: getImageUrl('Speedrun Kid') },
   {
-    name: 'Twitch Chat', nickname: '10,000 Voices, Zero Thoughts',
-    stats: [
-      { label: 'Spam Velocity', value: 99, emoji: '💬' },
-      { label: 'Collective IQ', value: 12, emoji: '🧠' },
-      { label: 'Emote Fluency', value: 99, emoji: '😂' },
-      { label: 'Backseat Gaming', value: 98, emoji: '🎮' },
-      { label: 'Mod Evasion', value: 90, emoji: '🛡️' },
-      { label: 'Hive Mind Sync', value: 97, emoji: '🐝' },
-    ], rarity: 'holo', image: getImageUrl('Twitch Chat') },
-  {
-    name: 'The Algorithm', nickname: 'It Knows',
-    stats: [
-      { label: 'Knowing You', value: 99, emoji: '👁️' },
-      { label: 'Inexplicability', value: 99, emoji: '🤐' },
-      { label: 'Rabbit Hole Depth', value: 99, emoji: '🕳️' },
-      { label: 'Attention Harvesting', value: 98, emoji: '🌾' },
-      { label: 'Ruthless Optimization', value: 99, emoji: '🙏' },
-      { label: 'One More Video', value: 99, emoji: '▶️' },
-    ], rarity: 'holo', image: getImageUrl('The Algorithm') },
-  {
     name: 'Wojak Doomer', nickname: "It's Over",
     stats: [
       { label: 'It Being Over', value: 95, emoji: '🌆' },
@@ -284,26 +264,6 @@ export const EXPANSION_A: PresetCard[] = [
       { label: 'Snack Table Curation', value: 95, emoji: '🍕' },
     ], rarity: 'gold', image: getImageUrl('The Dungeon Master') },
   {
-    name: 'Lag', nickname: 'The Great Equalizer',
-    stats: [
-      { label: 'Clutch Moment Timing', value: 99, emoji: '⏱️' },
-      { label: 'Rubber Banding', value: 97, emoji: '🪀' },
-      { label: 'Blame Absorption', value: 95, emoji: '🛡️' },
-      { label: 'Scapegoat Immunity', value: 94, emoji: '🫵' },
-      { label: 'Teleportation', value: 93, emoji: '🌀' },
-      { label: 'Mercilessness', value: 99, emoji: '🙏' },
-    ], rarity: 'legendary', image: getImageUrl('Lag') },
-  {
-    name: 'Patch Notes', nickname: 'Nerfed Your Main',
-    stats: [
-      { label: 'Main Nerfing Precision', value: 94, emoji: '🎯' },
-      { label: 'Buffing Wrong Things', value: 88, emoji: '📈' },
-      { label: 'Wall of Text', value: 92, emoji: '📜' },
-      { label: 'Community Calm Induced', value: 6, emoji: '🧘' },
-      { label: 'Bug Fixes (Claimed)', value: 85, emoji: '🐛' },
-      { label: 'Bug Fixes (Actual)', value: 35, emoji: '🔧' },
-    ], rarity: 'silver', image: getImageUrl('Patch Notes') },
-  {
     name: 'Esports Washout', nickname: 'Retired at 24',
     stats: [
       { label: 'Peak Reflexes (Former)', value: 92, emoji: '⚡' },
@@ -313,16 +273,6 @@ export const EXPANSION_A: PresetCard[] = [
       { label: 'Wrist Health', value: 15, emoji: '🤕' },
       { label: 'One More Comeback', value: 65, emoji: '🔄' },
     ], rarity: 'silver', image: getImageUrl('Esports Washout') },
-  {
-    name: 'The Backlog', nickname: '600 Unplayed Games',
-    stats: [
-      { label: 'Steam Sale Resistance', value: 3, emoji: '🛒' },
-      { label: 'Games Owned', value: 97, emoji: '📚' },
-      { label: 'Games Played', value: 12, emoji: '🎮' },
-      { label: 'Guilt Radiation', value: 90, emoji: '😔' },
-      { label: 'Someday Energy', value: 95, emoji: '🌈' },
-      { label: 'Library Organization', value: 40, emoji: '🗂️' },
-    ], rarity: 'bronze', image: getImageUrl('The Backlog') },
 
   // ── Modern archetypes & entities ──
   {
@@ -415,74 +365,4 @@ export const EXPANSION_A: PresetCard[] = [
       { label: 'Meme Reacts Only', value: 90, emoji: '😂' },
       { label: 'Guilt Felt', value: 20, emoji: '😔' },
     ], rarity: 'bronze', image: getImageUrl('Group Chat Ghost') },
-  {
-    name: 'The Wi-Fi Router', nickname: 'Have You Tried Restarting',
-    stats: [
-      { label: 'Blinking Ominously', value: 95, emoji: '🚨' },
-      { label: 'Working During Meetings', value: 15, emoji: '💼' },
-      { label: 'Full Bars, No Internet', value: 93, emoji: '📶' },
-      { label: 'Restart Ritual Demands', value: 90, emoji: '🔄' },
-      { label: 'Corner Placement Dust', value: 88, emoji: '🕸️' },
-      { label: 'Household Power Held', value: 97, emoji: '👑' },
-    ], rarity: 'gold', image: getImageUrl('The Wi-Fi Router') },
-  {
-    name: 'Printer At Work', nickname: 'PC LOAD LETTER',
-    stats: [
-      { label: 'Jam Timing', value: 96, emoji: '⏰' },
-      { label: 'Toner Honesty', value: 5, emoji: '🖨️' },
-      { label: 'Error Message Clarity', value: 3, emoji: '❓' },
-      { label: 'Deadline Detection', value: 94, emoji: '🎯' },
-      { label: 'Surviving Office Rage', value: 80, emoji: '🔨' },
-      { label: 'One Good Day A Year', value: 60, emoji: '🌈' },
-    ], rarity: 'bronze', image: getImageUrl('Printer At Work') },
-  {
-    name: 'Monday', nickname: 'The Eternal Return',
-    stats: [
-      { label: 'Inevitability', value: 99, emoji: '♾️' },
-      { label: 'Alarm Clock Alliance', value: 95, emoji: '⏰' },
-      { label: 'Weekend Murder', value: 97, emoji: '🔪' },
-      { label: 'Being Dreaded', value: 99, emoji: '💔' },
-      { label: 'Meeting Density', value: 93, emoji: '📅' },
-      { label: 'Coffee Dependency Caused', value: 96, emoji: '☕' },
-    ], rarity: 'legendary', image: getImageUrl('Monday') },
-  {
-    name: 'Autocorrect', nickname: 'Ducking Menace',
-    stats: [
-      { label: 'Duck Insertion Rate', value: 97, emoji: '🦆' },
-      { label: 'Context Reading', value: 8, emoji: '📖' },
-      { label: 'Boss Text Sabotage', value: 92, emoji: '💼' },
-      { label: 'Learning Your Name', value: 12, emoji: '🪪' },
-      { label: 'Confidence While Wrong', value: 99, emoji: '😤' },
-      { label: 'Well Done Sports', value: 90, emoji: '🏆' },
-    ], rarity: 'silver', image: getImageUrl('Autocorrect') },
-  {
-    name: 'Student Loans', nickname: 'The Collector',
-    stats: [
-      { label: 'Interest Compounding', value: 99, emoji: '📈' },
-      { label: 'Unforgiveness', value: 99, emoji: '🙏' },
-      { label: 'Following You Forever', value: 98, emoji: '👣' },
-      { label: 'Grace Period Brevity', value: 90, emoji: '⏳' },
-      { label: 'Haunting Dreams', value: 88, emoji: '👻' },
-      { label: 'Minimum Payment Trap', value: 95, emoji: '🪤' },
-    ], rarity: 'legendary', image: getImageUrl('Student Loans') },
-  {
-    name: 'The Aux Cord', nickname: 'Power Broker',
-    stats: [
-      { label: 'Vibe Responsibility', value: 99, emoji: '🎵' },
-      { label: 'Trust Required', value: 99, emoji: '🤝' },
-      { label: 'One Bad Song Tolerance', value: 10, emoji: '⏭️' },
-      { label: 'Career Making Potential', value: 96, emoji: '🌟' },
-      { label: 'Career Ending Potential', value: 92, emoji: '💀' },
-      { label: 'Connection Reliability', value: 79, emoji: '🔌' },
-    ], rarity: 'gold', image: getImageUrl('The Aux Cord') },
-  {
-    name: 'Jury Duty', nickname: 'The Summons',
-    stats: [
-      { label: 'Arrival Timing (Worst)', value: 95, emoji: '📬' },
-      { label: 'Excuse Rejection', value: 90, emoji: '🚫' },
-      { label: 'Civic Pride Generated', value: 40, emoji: '🏛️' },
-      { label: 'Waiting Room Stamina', value: 92, emoji: '🪑' },
-      { label: 'Snack Machine Quality', value: 25, emoji: '🍫' },
-      { label: 'Twelve Angry Energy', value: 70, emoji: '😠' },
-    ], rarity: 'silver', image: getImageUrl('Jury Duty') },
 ];

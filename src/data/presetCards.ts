@@ -7,6 +7,7 @@
 import { getImageUrl } from '@/lib/avatar';
 import { EXPANSION_A } from '@/data/presetCardsExpansionA';
 import { EXPANSION_B } from '@/data/presetCardsExpansionB';
+import { EXPANSION_C } from '@/data/presetCardsExpansionC';
 
 export interface PresetCard {
   name: string;
@@ -64,18 +65,6 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Interior Presence', value: 90, emoji: '🧱' },
     ],
     rarity: 'bronze', image: getImageUrl('Killdozer') },
-  {
-    name: 'Boeing Door Plug',
-    nickname: 'Emergency Exit',
-    stats: [
-      { label: 'Structural Integrity', value: 18, emoji: '🔩' },
-      { label: 'Stock Price Impact', value: 100, emoji: '📉' },
-      { label: 'Suction Power', value: 100, emoji: '💨' },
-      { label: 'Passenger Trauma', value: 100, emoji: '😱' },
-      { label: 'Quality Control', value: 18, emoji: '👷' },
-      { label: 'Special Teams Energy', value: 40, emoji: '🌀' },
-    ],
-    rarity: 'bronze', image: getImageUrl('Boeing Door Plug') },
 
   // ============================================
   // Legends With Edge
@@ -321,7 +310,7 @@ export const PRESET_CARDS: PresetCard[] = [
   // Entertaining Humans
   // ============================================
   {
-    name: 'Keanu Reevos',
+    name: 'Kianu Reaves',
     nickname: 'Breathtaking',
     stats: [
       { label: 'Kindness', value: 100, emoji: '💖' },
@@ -331,9 +320,9 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Whoa Count', value: 100, emoji: '😮' },
       { label: 'Team Chemistry', value: 90, emoji: '🤝' },
     ],
-    rarity: 'gold', image: getImageUrl('Keanu Reevos') },
+    rarity: 'gold', image: getImageUrl('Kianu Reaves') },
   {
-    name: 'Donny DeVito',
+    name: 'Donny DeVeeto',
     nickname: 'Trash Man',
     stats: [
       { label: 'Height', value: 21, emoji: '📏' },
@@ -343,9 +332,9 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Rum Ham Finding', value: 96, emoji: '🍖' },
       { label: 'Low Post Sneakiness', value: 70, emoji: '😏' },
     ],
-    rarity: 'gold', image: getImageUrl('Donny DeVito') },
+    rarity: 'gold', image: getImageUrl('Donny DeVeeto') },
   {
-    name: 'Nicolas Kage',
+    name: 'Nicolaus Kage',
     nickname: 'Yes To Everything',
     stats: [
       { label: 'Script Reading', value: 32, emoji: '📜' },
@@ -355,7 +344,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Financial Decisions', value: 22, emoji: '💸' },
       { label: 'X-Factor Energy', value: 85, emoji: '⚡' },
     ],
-    rarity: 'bronze', image: getImageUrl('Nicolas Kage') },
+    rarity: 'bronze', image: getImageUrl('Nicolaus Kage') },
   {
     name: 'Snoop Doggo',
     nickname: 'Fo Shizzle',
@@ -369,7 +358,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'legendary', image: getImageUrl('Snoop Doggo') },
   {
-    name: 'Gordon Ramzay',
+    name: 'Gordo Ramzey',
     nickname: 'Its Raw',
     stats: [
       { label: 'Cooking', value: 100, emoji: '👨‍🍳' },
@@ -379,7 +368,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'British Insults', value: 100, emoji: '🇬🇧' },
       { label: 'Halftime Speech Intensity', value: 97, emoji: '😤' },
     ],
-    rarity: 'silver', image: getImageUrl('Gordon Ramzay') },
+    rarity: 'silver', image: getImageUrl('Gordo Ramzey') },
   {
     name: 'Shaqster',
     nickname: 'Kazaam',
@@ -393,7 +382,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'silver', image: getImageUrl('Shaqster') },
   {
-    name: 'Marfa Stewart',
+    name: 'Marfa Stewhart',
     nickname: 'Did Her Time',
     stats: [
       { label: 'Crafts', value: 98, emoji: '✂️' },
@@ -403,9 +392,9 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Table Setting', value: 100, emoji: '🍽️' },
       { label: 'Game Plan Precision', value: 92, emoji: '📋' },
     ],
-    rarity: 'holo', image: getImageUrl('Marfa Stewart') },
+    rarity: 'holo', image: getImageUrl('Marfa Stewhart') },
   {
-    name: 'Mike Tyzon',
+    name: 'Iron Mike Tyzen',
     nickname: 'Ear Collector',
     stats: [
       { label: 'Punching Power', value: 100, emoji: '👊' },
@@ -415,7 +404,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Face Tattoo Timing', value: 91, emoji: '🎭' },
       { label: 'Knockout Power', value: 99, emoji: '👊' },
     ],
-    rarity: 'legendary', image: getImageUrl('Mike Tyzon') },
+    rarity: 'legendary', image: getImageUrl('Iron Mike Tyzen') },
   {
     name: 'Odd Al',
     nickname: 'Outlasted Them All',
@@ -429,7 +418,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'legendary', image: getImageUrl('Odd Al') },
   {
-    name: 'Guy Fiori',
+    name: 'Guy Fierro',
     nickname: 'Mayor of Flavortown',
     stats: [
       { label: 'Donkey Sauce', value: 100, emoji: '🍔' },
@@ -439,7 +428,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Sunglasses Backwards', value: 100, emoji: '🕶️' },
       { label: 'Locker Room Flavor', value: 88, emoji: '🔥' },
     ],
-    rarity: 'legendary', image: getImageUrl('Guy Fiori') },
+    rarity: 'legendary', image: getImageUrl('Guy Fierro') },
   {
     name: 'Bad Luck Brian',
     nickname: 'The Vest',
@@ -517,7 +506,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'gold', image: getImageUrl('The Pebble') },
   {
-    name: 'Joe Rogain',
+    name: 'Joey Rogaine',
     nickname: 'Have You Tried DMT',
     stats: [
       { label: 'Podcast Length', value: 100, emoji: '🎙️' },
@@ -527,9 +516,9 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Sauna Time', value: 100, emoji: '🧖' },
       { label: 'Broadcast Presence', value: 90, emoji: '🎙️' },
     ],
-    rarity: 'silver', image: getImageUrl('Joe Rogain') },
+    rarity: 'silver', image: getImageUrl('Joey Rogaine') },
   {
-    name: 'DJ Kaled',
+    name: 'DJ Khaleb',
     nickname: 'Another One',
     stats: [
       { label: 'Instrument Playing', value: 12, emoji: '🎸' },
@@ -539,7 +528,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Key Possession', value: 100, emoji: '🔑' },
       { label: 'Hype Man Energy', value: 97, emoji: '📢' },
     ],
-    rarity: 'bronze', image: getImageUrl('DJ Kaled') },
+    rarity: 'bronze', image: getImageUrl('DJ Khaleb') },
   {
     name: 'Tommy Weisau',
     nickname: 'Oh Hi Mark',
@@ -565,7 +554,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'bronze', image: getImageUrl('Gary Buseye') },
   {
-    name: 'Charlie Sheenz',
+    name: 'Charlee Sheenz',
     nickname: 'Winning',
     stats: [
       { label: 'Tiger Blood', value: 100, emoji: '🐯' },
@@ -575,7 +564,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Anger Management', value: 21, emoji: '😤' },
       { label: 'Streaky Confidence', value: 65, emoji: '🔥' },
     ],
-    rarity: 'silver', image: getImageUrl('Charlie Sheenz') },
+    rarity: 'silver', image: getImageUrl('Charlee Sheenz') },
   {
     name: 'Flavor Flame',
     nickname: 'Yeah Boyyyy',
@@ -589,7 +578,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'gold', image: getImageUrl('Flavor Flame') },
   {
-    name: 'Bulk Hogan',
+    name: 'Bulk Hogman',
     nickname: 'Brother Brother',
     stats: [
       { label: 'Wrestling', value: 96, emoji: '💪' },
@@ -599,7 +588,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Racial Sensitivity', value: 16, emoji: '😬' },
       { label: 'Main Event Strength', value: 88, emoji: '💪' },
     ],
-    rarity: 'silver', image: getImageUrl('Bulk Hogan') },
+    rarity: 'silver', image: getImageUrl('Bulk Hogman') },
   {
     name: 'Ozzy Ozzborne',
     nickname: 'Medical Marvel',
@@ -613,7 +602,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'gold', image: getImageUrl('Ozzy Ozzborne') },
   {
-    name: 'Arnold Schwarzenagger',
+    name: 'Arnold Schwarzenlifter',
     nickname: 'Ill Be Back',
     stats: [
       { label: 'Muscles', value: 100, emoji: '💪' },
@@ -623,7 +612,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Catchphrase Creation', value: 100, emoji: '🎬' },
       { label: 'Raw Strength', value: 93, emoji: '💪' },
     ],
-    rarity: 'gold', image: getImageUrl('Arnold Schwarzenagger') },
+    rarity: 'gold', image: getImageUrl('Arnold Schwarzenlifter') },
   {
     name: 'Toast Malone',
     nickname: 'Face Tattoo Math',
@@ -665,7 +654,7 @@ export const PRESET_CARDS: PresetCard[] = [
   // MODERN ERA - The New Roasts
   // ============================================
   {
-    name: 'Elizabeth Homes',
+    name: 'Lizzy Holmz',
     nickname: 'Fake It Till Jail',
     stats: [
       { label: 'Voice Depth', value: 100, emoji: '📉' },
@@ -675,7 +664,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Gaslighting', value: 100, emoji: '🕯️' },
       { label: 'Sales Pitch IQ', value: 85, emoji: '🕯️' },
     ],
-    rarity: 'silver', image: getImageUrl('Elizabeth Homes') },
+    rarity: 'silver', image: getImageUrl('Lizzy Holmz') },
   {
     name: 'George Santoro',
     nickname: 'Kitara Ravache',
@@ -701,7 +690,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'bronze', image: getImageUrl('Sam Bankster-Fried') },
   {
-    name: 'Billy MacFarland',
+    name: 'Billy FyreFarland',
     nickname: 'Fyre Starter',
     stats: [
       { label: 'Sandwich Quality', value: 12, emoji: '🥪' },
@@ -711,7 +700,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Hype Generation', value: 100, emoji: '📢' },
       { label: 'Hype Generation', value: 88, emoji: '📢' },
     ],
-    rarity: 'bronze', image: getImageUrl('Billy MacFarland') },
+    rarity: 'bronze', image: getImageUrl('Billy FyreFarland') },
   {
     name: 'Kidney King',
     nickname: 'Natty or Not',
@@ -737,7 +726,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'silver', image: getImageUrl('Antonio Braun') },
   {
-    name: 'Rachel Doleza',
+    name: 'Rachael Dolezall',
     nickname: 'Transracial Pioneer',
     stats: [
       { label: 'DNA Accuracy', value: 18, emoji: '🧬' },
@@ -747,7 +736,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Delusion', value: 100, emoji: '🧠' },
       { label: 'Commitment to the Bit', value: 90, emoji: '🎭' },
     ],
-    rarity: 'gold', image: getImageUrl('Rachel Doleza') },
+    rarity: 'gold', image: getImageUrl('Rachael Dolezall') },
   {
     name: '7ix8ine',
     nickname: 'Rainbow Snitch',
@@ -761,7 +750,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'silver', image: getImageUrl('7ix8ine') },
   {
-    name: 'Adam LeVine',
+    name: 'Atom Levine',
     nickname: 'DM Slider',
     stats: [
       { label: 'DM Sliding', value: 100, emoji: '📨' },
@@ -771,7 +760,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Marriage Loyalty', value: 22, emoji: '💍' },
       { label: 'Stage Presence', value: 85, emoji: '🎶' },
     ],
-    rarity: 'gold', image: getImageUrl('Adam LeVine') },
+    rarity: 'gold', image: getImageUrl('Atom Levine') },
   {
     name: 'Coco Siwa',
     nickname: 'Karma Is My Boyfriend',
@@ -797,7 +786,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'holo', image: getImageUrl('Wil Smyth') },
   {
-    name: 'Logan Pauls',
+    name: 'Logang Paulson',
     nickname: 'Forest Navigator',
     stats: [
       { label: 'Forest Judgment', value: 12, emoji: '🌲' },
@@ -807,7 +796,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Floyd Survival', value: 100, emoji: '🥊' },
       { label: 'Content Hustle', value: 85, emoji: '📹' },
     ],
-    rarity: 'silver', image: getImageUrl('Logan Pauls') },
+    rarity: 'silver', image: getImageUrl('Logang Paulson') },
   {
     name: 'Pepper Bae',
     nickname: 'Elbow Seasoning',
@@ -821,7 +810,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'silver', image: getImageUrl('Pepper Bae') },
   {
-    name: 'Hilaria Baldwyn',
+    name: 'Hilarya Baldwing',
     nickname: 'How You Say Cucumber',
     stats: [
       { label: 'Spanish Accent', value: 12, emoji: '🇪🇸' },
@@ -831,7 +820,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Child Count', value: 19, emoji: '👶' },
       { label: 'Improv Confidence', value: 70, emoji: '🧘' },
     ],
-    rarity: 'bronze', image: getImageUrl('Hilaria Baldwyn') },
+    rarity: 'bronze', image: getImageUrl('Hilarya Baldwing') },
   {
     name: 'Ben Shapirno',
     nickname: 'Facts Dont Care',
@@ -845,7 +834,7 @@ export const PRESET_CARDS: PresetCard[] = [
     ],
     rarity: 'silver', image: getImageUrl('Ben Shapirno') },
   {
-    name: 'Travis Scot',
+    name: 'Travesty Scott',
     nickname: 'Its Lit',
     stats: [
       { label: 'Autotune Reliance', value: 100, emoji: '🤖' },
@@ -855,7 +844,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Robot Dance', value: 100, emoji: '💃' },
       { label: 'Crowd Control (Literally)', value: 85, emoji: '🔥' },
     ],
-    rarity: 'gold', image: getImageUrl('Travis Scot') },
+    rarity: 'gold', image: getImageUrl('Travesty Scott') },
   {
     name: 'Raegun',
     nickname: 'Breaking PhD',
@@ -1112,4 +1101,4 @@ export function getCardsByRarity(rarity: PresetCard['rarity']): PresetCard[] {
 // ── Expansions: Terminally Online (A) + Legends & Folklore (B) ──
 // Pushed onto the same pool so packs, battles, and opponent
 // generation all pick them up automatically.
-PRESET_CARDS.push(...EXPANSION_A, ...EXPANSION_B);
+PRESET_CARDS.push(...EXPANSION_A, ...EXPANSION_B, ...EXPANSION_C);
