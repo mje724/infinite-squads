@@ -27,6 +27,7 @@ import {
 } from '@/data/collections';
 import { PRESET_CARDS, calculateOVR } from '@/data/presetCards';
 import { getImageUrl } from '@/lib/avatar';
+import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { Card, RARITY_STYLES } from '@/types/schema';
 
 // ─────────────────────────────────────────────
@@ -66,12 +67,31 @@ function planBurn(cards: Card[], reqs: SetRequirement[]): { ok: boolean; burnIds
     }
   }
 
+  // Tag requirements: any card whose identity carries the tag qualifies.
+  // Icons are protected — the furnace never eats your trophies.
+  for (const req of reqs.filter(r => r.kind === 'tag')) {
+    const candidates = cards
+      .filter(c => c.rarity !== 'icon' && !used.has(c.id) && getGameData(c.name, c.overallRating).tags.includes(req.tag!))
+      .sort((a, b) => preference(a) - preference(b));
+    if (candidates.length < (req.count ?? 1)) return { ok: false, burnIds: [] };
+    for (let i = 0; i < (req.count ?? 1); i++) {
+      used.add(candidates[i].id);
+      burnIds.push(candidates[i].id);
+    }
+  }
+
   return { ok: true, burnIds };
 }
 
 function requirementProgress(cards: Card[], req: SetRequirement): { have: number; need: number } {
   if (req.kind === 'specific') {
     return { have: Math.min(1, cards.filter(c => c.name === req.cardName).length), need: 1 };
+  }
+  if (req.kind === 'tag') {
+    return {
+      have: Math.min(req.count ?? 1, cards.filter(c => c.rarity !== 'icon' && getGameData(c.name, c.overallRating).tags.includes(req.tag!)).length),
+      need: req.count ?? 1,
+    };
   }
   return {
     have: Math.min(req.count ?? 1, cards.filter(c => c.rarity === req.rarity).length),
@@ -483,8 +503,8 @@ function SetCard({
               }`}
             >
               {done ? '✓ ' : ''}
-              {req.kind === 'specific' ? req.cardName : `${need}× ${req.rarity!.toUpperCase()}`}
-              {req.kind === 'rarity' ? ` (${have}/${need})` : ''}
+              {req.kind === 'specific' ? req.cardName : req.kind === 'tag' ? `${need}× ${TAG_LABELS[req.tag!]}` : `${need}× ${req.rarity!.toUpperCase()}`}
+              {req.kind !== 'specific' ? ` (${have}/${need})` : ''}
             </span>
           );
         })}
