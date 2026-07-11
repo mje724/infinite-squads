@@ -134,7 +134,9 @@ const SCENARIOS = [
     name: 'Wedding Party',
     description: '8 in the bridal party',
     slots: 8,
-    background: 'linear-gradient(135deg, #fdf6f0 0%, #f5e6d3 50%, #e8d4c4 100%)',
+    // NOTE: scenario backgrounds must stay DARK — the whole page renders
+    // white/slate text on top of them. (This one used to be ivory: white-on-white.)
+    background: 'linear-gradient(135deg, #2b1a22 0%, #4a2b3a 50%, #6b3d52 100%)',
     backgroundImage: '💒',
     roles: ['The Bride', 'The Groom', 'Best Man', 'Maid of Honor', 'Bridesmaid', 'Bridesmaid', 'Groomsman', 'Groomsman'],
     positions: [
