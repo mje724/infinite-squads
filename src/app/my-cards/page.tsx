@@ -155,7 +155,7 @@ function MiniCard({ card, onClick, copies = 1 }: { card: Card; onClick: () => vo
 }
 
 export default function MyCardsPage() {
-  const { cards, removeCard, clearCollection, quicksellCard, isLoggedIn } = useGameCollection();
+  const { cards, removeCard, clearCollection, quicksellCard, isLoggedIn, loading } = useGameCollection();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [soldMsg, setSoldMsg] = useState<string | null>(null);
@@ -217,7 +217,13 @@ export default function MyCardsPage() {
             </motion.div>
           )}
         </AnimatePresence>
-        {cards.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-xl bg-slate-800/60 animate-pulse" />
+            ))}
+          </div>
+        ) : cards.length > 0 ? (
           <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             <AnimatePresence>{cards.map((card) => <MiniCard key={card.id} card={card} copies={copiesByName[card.name]} onClick={() => setSelectedCard(card)} />)}</AnimatePresence>
           </motion.div>
