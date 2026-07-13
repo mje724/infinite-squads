@@ -39,10 +39,20 @@ export interface Profile {
   gem_balance: number;
   daily_streak: number;
   last_daily_claim: string | null;
+  pvp_rating: number;
   packs_opened: number;
   battles_won: number;
   battles_lost: number;
   created_at: string;
+  updated_at: string;
+}
+
+export interface PvpSquad {
+  id: string;
+  user_id: string;
+  scenario_id: string;
+  display_name: string;
+  card_names: string[];
   updated_at: string;
 }
 
