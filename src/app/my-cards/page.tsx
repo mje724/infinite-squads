@@ -8,6 +8,7 @@ import { QUICKSELL_VALUES } from '@/data/gameEconomy';
 import { PRESET_CARDS } from '@/data/presetCards';
 import { ICON_CARDS, setsNeedingCard } from '@/data/collections';
 import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
+import { trackObjective } from '@/data/objectives';
 import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package, Coins, Layers } from 'lucide-react';
 import Link from 'next/link';
 import CardVisuals from '@/components/CardVisuals';
@@ -168,6 +169,7 @@ export default function MyCardsPage() {
     const coins = await quicksellCard(card.id);
     setSelectedCard(null);
     if (coins !== null) {
+      trackObjective('quicksell');
       setSoldMsg(`${card.name} quicksold for ${coins} coins`);
       setTimeout(() => setSoldMsg(null), 2500);
     }
