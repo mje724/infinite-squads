@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Package, Swords, Users, Sparkles, Flame, Gem } from 'lucide-react';
 import { getImageUrl } from '@/lib/avatar';
+import DailyObjectives from '@/components/DailyObjectives';
 
 const SHOWCASE_NAMES = ['Albert Einstein', 'Napoleon Bonaparte', 'Grimace', 'Elvis Presley', 'Snoop Doggo', 'Cleopatra'];
 
@@ -58,6 +59,8 @@ export default function Home() {
           </Link>
         </div>
       </div>
+
+      <DailyObjectives />
 
       <div className="relative max-w-4xl mx-auto px-4 pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
