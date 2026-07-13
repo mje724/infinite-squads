@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameCollection } from '@/hooks/useGameCollection';
-import { pairVerdict, cardPerformance } from '@/data/chemistry';
+import { pairVerdict, cardPerformance, teamChemistry } from '@/data/chemistry';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
 import { TRAIT_PRESETS } from '@/data/presets';
 import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
@@ -508,6 +508,41 @@ export default function SquadPage() {
             ))}
           </div>
         </div>
+
+        {/* Live team readout: the sandbox gets a scoreboard */}
+        {(() => {
+          const filled = lineup.filter((c): c is Card => c !== null);
+          if (filled.length === 0) return null;
+          const avgFit = Math.round(filled.reduce((s, c) => s + cardPerformance(c, selectedScenario.id), 0) / filled.length);
+          const chem = teamChemistry(filled, selectedScenario.id);
+          const fitColor = avgFit >= 85 ? '#22c55e' : avgFit >= 65 ? '#eab308' : avgFit >= 45 ? '#f97316' : '#ef4444';
+          const topEffects = [...chem.effects].sort((a, b) => Math.abs(b.bonus) - Math.abs(a.bonus)).slice(0, 3);
+          return (
+            <div className="mb-4 p-4 bg-slate-900/70 border border-slate-700 rounded-2xl flex flex-wrap items-center gap-x-6 gap-y-2">
+              <div>
+                <span className="text-slate-400 text-xs uppercase tracking-wider block">Team Fit</span>
+                <span className="text-2xl font-black" style={{ color: fitColor }}>{avgFit}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 text-xs uppercase tracking-wider block">Chemistry</span>
+                <span className={`text-2xl font-black ${chem.total >= 0 ? 'text-green-400' : 'text-red-400'}`}>{chem.total >= 0 ? '+' : ''}{chem.total}</span>
+              </div>
+              <div className="flex-1 min-w-[200px]">
+                {topEffects.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {topEffects.map((e, i) => (
+                      <span key={i} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${e.bonus >= 0 ? 'bg-green-500/10 border-green-500/40 text-green-300' : 'bg-red-500/10 border-red-500/40 text-red-300'}`}>
+                        {e.name} {e.bonus >= 0 ? '+' : ''}{e.bonus}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-slate-500 text-xs">No chemistry yet — try cards that share an era, a tag, or a grudge.</span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Connection Controls */}
         <div className="flex gap-2 mb-4">
