@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Swords, Trophy, Zap, Users, ChevronRight, Home, RotateCcw, Crown, Skull, Star, Package, Check, User, Coins } from 'lucide-react';
 import Link from 'next/link';
 import { useGameCollection } from '@/hooks/useGameCollection';
-import { useCoins, REWARDS } from '@/hooks/useCoins';
 import { useAuth } from '@/components/AuthProvider';
-import { getSupabase } from '@/lib/supabase';
+import { getSupabase, PvpSquad } from '@/lib/supabase';
 import { Card } from '@/types/schema';
 import { PRESET_CARDS as ALL_PRESET_CARDS, PresetCard as BasePresetCard, calculateOVR } from '@/data/presetCards';
+import { ICON_CARDS } from '@/data/collections';
 import { cardPerformance, chemistrySummary } from '@/data/chemistry';
+import { trackObjective } from '@/data/objectives';
 
 // ============================================
 // PRESET CARDS DATABASE — sourced from the single shared roster in
@@ -459,6 +460,7 @@ const getRarityColor = (rarity: string) => {
     legendary: '#FF4500',
     holo: '#FF00FF',
     glitch: '#00FFFF',
+    icon: '#e8d5a3',
   };
   return colors[rarity] || '#CD7F32';
 };
@@ -484,10 +486,31 @@ interface BattleResult {
   mvp: { card: PresetCard | Card; highlight: string };
 }
 
+// Rebuild a defense squad from stored card names (packs + icons only —
+// custom cards can't travel because opponents don't have their data)
+function rebuildSquad(cardNames: string[]): PresetCard[] {
+  const out: PresetCard[] = [];
+  for (const name of cardNames) {
+    const preset = PRESET_CARDS.find(c => c.name === name);
+    if (preset) { out.push(preset); continue; }
+    const icon = ICON_CARDS.find(c => c.name === name);
+    if (icon) {
+      out.push({
+        name: icon.name, nickname: icon.nickname, stats: icon.stats, image: icon.image,
+        rarity: icon.rarity as unknown as BasePresetCard['rarity'],
+        overallRating: calculateOVR(icon.stats),
+      });
+    }
+  }
+  return out;
+}
+
+interface LeaderboardRow { display_name: string; pvp_rating: number; battles_won: number }
+
 export default function BattlePage() {
   const { cards } = useGameCollection();
-  const { addCoins, isLoggedIn } = useCoins();
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const isLoggedIn = !!user;
   const supabase = getSupabase();
   const packCards = getPackCards(cards);
 
@@ -498,34 +521,102 @@ export default function BattlePage() {
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
   const [battlePhase, setBattlePhase] = useState<'select' | 'lineup' | 'preview' | 'battle' | 'result'>('select');
   const [coinsWon, setCoinsWon] = useState<number | null>(null);
+  const [mode, setMode] = useState<'cpu' | 'ranked'>('cpu');
+  const [opponentInfo, setOpponentInfo] = useState<{ userId: string; displayName: string } | null>(null);
+  const [ratingDelta, setRatingDelta] = useState<number | null>(null);
+  const [defenseSaved, setDefenseSaved] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
 
-  const payoutForDifficulty = (d: 'easy' | 'medium' | 'hard') =>
-    d === 'easy' ? REWARDS.BATTLE_WIN_EASY : d === 'medium' ? REWARDS.BATTLE_WIN_MEDIUM : REWARDS.BATTLE_WIN_HARD;
+  useEffect(() => {
+    if (mode !== 'ranked') return;
+    supabase.rpc('get_leaderboard').then(({ data }: { data: LeaderboardRow[] | null }) => {
+      setLeaderboard(data ?? []);
+    });
+  }, [mode, supabase]);
 
   const settleBattle = async (winner: 'player' | 'opponent' | 'tie') => {
-    if (!isLoggedIn || !user) return;
+    // objectives count for everyone playing while logged in
+    trackObjective('battle_played');
     if (winner === 'player') {
-      const amount = payoutForDifficulty(difficulty);
-      const ok = await addCoins(amount, 'battle_win', `Won a ${difficulty} battle`);
-      if (ok) setCoinsWon(amount);
+      trackObjective('battle_won');
+      if (mode === 'cpu' && difficulty === 'hard') trackObjective('hard_win');
     }
-    // win/loss record (best-effort)
-    const col = winner === 'player' ? 'battles_won' : winner === 'opponent' ? 'battles_lost' : null;
-    if (col) {
-      const { data } = await supabase.from('profiles').select(col).eq('id', user.id).single();
-      const current = (data as Record<string, number> | null)?.[col] ?? 0;
-      await supabase.from('profiles').update({ [col]: current + 1 }).eq('id', user.id);
+    if (!isLoggedIn || !user) return;
+
+    if (mode === 'ranked' && opponentInfo) {
+      if (winner === 'tie') return;
+      // Rating + coins settled server-side: fixed swings, rate-limited, daily-capped
+      const { data } = await supabase.rpc('record_pvp_result', {
+        p_user_id: user.id,
+        p_opponent_id: opponentInfo.userId,
+        p_won: winner === 'player',
+      });
+      const res = data as { ok?: boolean; reward?: number; delta?: number } | null;
+      if (res?.ok) {
+        setCoinsWon(res.reward ?? 0);
+        setRatingDelta(res.delta ?? 0);
+        await refreshProfile();
+      }
+    } else {
+      // CPU rewards also server-fixed now — the client just reports win/loss
+      const { data } = await supabase.rpc('claim_battle_reward', {
+        p_user_id: user.id,
+        p_difficulty: difficulty,
+        p_won: winner === 'player',
+      });
+      if (typeof data === 'number' && data > 0) setCoinsWon(data);
+      await refreshProfile();
     }
   };
 
-  const proceedToPreview = () => {
+  const saveDefenseSquad = async () => {
+    if (!user || !selectedScenario || selectedCards.length !== selectedScenario.slots) return;
+    const names = selectedCards.map(c => c.name);
+    if (rebuildSquad(names).length !== names.length) return; // custom cards can't defend
+    const { error } = await supabase.from('pvp_squads').upsert(
+      {
+        user_id: user.id,
+        scenario_id: selectedScenario.id,
+        display_name: profile?.display_name ?? 'Anonymous',
+        card_names: names,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id,scenario_id' }
+    );
+    if (!error) setDefenseSaved(true);
+  };
+
+  const proceedToPreview = async () => {
     if (!selectedScenario || selectedCards.length !== selectedScenario.slots) return;
-    
+
     const playerAvgOVR = selectedCards.reduce((s, c) => s + c.overallRating, 0) / selectedCards.length;
     const excludeNames = selectedCards.map(c => c.name);
-    const opponents = generateOpponentTeam(selectedScenario.slots, playerAvgOVR, difficulty, excludeNames, selectedScenario.id);
-    
-    setOpponentTeam(opponents);
+
+    // Ranked: fight a real player's saved defense squad for this scenario
+    if (mode === 'ranked' && user) {
+      const { data } = await supabase
+        .from('pvp_squads')
+        .select('*')
+        .eq('scenario_id', selectedScenario.id)
+        .neq('user_id', user.id)
+        .limit(25);
+      const squads = [...((data ?? []) as PvpSquad[])];
+      while (squads.length > 0) {
+        const idx = Math.floor(Math.random() * squads.length);
+        const squad = squads.splice(idx, 1)[0];
+        const rebuilt = rebuildSquad(squad.card_names);
+        if (rebuilt.length === selectedScenario.slots) {
+          setOpponentTeam(rebuilt);
+          setOpponentInfo({ userId: squad.user_id, displayName: squad.display_name });
+          setBattlePhase('preview');
+          return;
+        }
+      }
+      // nobody has defended this scenario yet — CPU scout team, unranked
+    }
+
+    setOpponentInfo(null);
+    setOpponentTeam(generateOpponentTeam(selectedScenario.slots, playerAvgOVR, difficulty, excludeNames, selectedScenario.id));
     setBattlePhase('preview');
   };
 
@@ -596,6 +687,9 @@ export default function BattlePage() {
     setBattleResult(null);
     setBattlePhase('select');
     setCoinsWon(null);
+    setOpponentInfo(null);
+    setRatingDelta(null);
+    setDefenseSaved(false);
   };
 
   // Mini card component
@@ -645,6 +739,31 @@ export default function BattlePage() {
         {/* PHASE: Select */}
         {battlePhase === 'select' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+            {/* Mode: CPU gauntlet or ranked ghost battles vs real players */}
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setMode('cpu')}
+                className={`px-6 py-3 rounded-xl font-bold text-sm transition-all ${mode === 'cpu' ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg' : 'bg-slate-800/60 border border-slate-700 text-slate-400 hover:text-white'}`}
+              >
+                🤖 CPU Gauntlet
+              </button>
+              <button
+                onClick={() => isLoggedIn && setMode('ranked')}
+                className={`px-6 py-3 rounded-xl font-bold text-sm transition-all ${mode === 'ranked' ? 'bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-900 shadow-lg' : 'bg-slate-800/60 border border-slate-700 text-slate-400 hover:text-white'} ${!isLoggedIn ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                🏆 Ranked{profile ? ` · ${profile.pvp_rating ?? 1000}` : ''}
+              </button>
+            </div>
+            {mode === 'ranked' && (
+              <p className="text-center text-slate-400 text-sm -mt-4">
+                Fight real players&apos; defense squads. Win +20 rating & 75 coins, lose −15 rating & 15 coins.
+                Set your own defense squad from the lineup screen so others can challenge you.
+              </p>
+            )}
+            {!isLoggedIn && (
+              <p className="text-center text-slate-500 text-xs -mt-4">Sign in to play Ranked and earn coins.</p>
+            )}
+
             <h2 className="text-xl font-bold text-white">Choose Scenario</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {SCENARIOS.map(s => (
@@ -663,6 +782,23 @@ export default function BattlePage() {
               ))}
             </div>
             
+            {/* Ladder */}
+            {mode === 'ranked' && leaderboard.length > 0 && (
+              <div className="bg-slate-900/60 border border-amber-500/20 rounded-2xl p-5 max-w-md mx-auto w-full">
+                <h3 className="font-black text-amber-300 mb-3 text-sm uppercase tracking-wider">🏆 Ladder — Top {leaderboard.length}</h3>
+                <div className="space-y-1">
+                  {leaderboard.map((row, i) => (
+                    <div key={i} className={`flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm ${row.display_name === profile?.display_name ? 'bg-amber-500/10 border border-amber-500/30' : ''}`}>
+                      <span className={`w-6 text-center font-black ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-amber-600' : 'text-slate-500'}`}>{i + 1}</span>
+                      <span className="flex-1 text-white font-semibold truncate">{row.display_name}</span>
+                      <span className="text-amber-300 font-bold">{row.pvp_rating}</span>
+                      <span className="text-slate-500 text-xs w-14 text-right">{row.battles_won}W</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {packCards.length === 0 && (
               <div className="text-center py-12 bg-slate-800/30 rounded-xl border border-slate-700">
                 <Package className="w-16 h-16 text-slate-600 mx-auto mb-4" />
@@ -692,8 +828,8 @@ export default function BattlePage() {
               </button>
             </div>
 
-            {/* Difficulty */}
-            <div className="flex items-center gap-4 justify-center">
+            {/* Difficulty (CPU only — ranked difficulty is whoever defends) */}
+            <div className={`flex items-center gap-4 justify-center ${mode === 'ranked' ? 'hidden' : ''}`}>
               <span className="text-slate-400">Difficulty:</span>
               {(['easy', 'medium', 'hard'] as const).map(d => (
                 <button
@@ -778,7 +914,17 @@ export default function BattlePage() {
               )}
             </div>
 
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center gap-3 pt-4 flex-wrap">
+              {isLoggedIn && selectedCards.length === selectedScenario.slots && (
+                <motion.button
+                  onClick={saveDefenseSquad}
+                  whileTap={{ scale: 0.95 }}
+                  disabled={defenseSaved}
+                  className={`px-6 py-4 rounded-xl font-bold flex items-center gap-2 border ${defenseSaved ? 'bg-green-500/10 border-green-500/40 text-green-400' : 'bg-slate-800/70 border-amber-500/40 text-amber-300 hover:border-amber-400'}`}
+                >
+                  {defenseSaved ? '✓ Defense Set' : '🛡 Set as Defense Squad'}
+                </motion.button>
+              )}
               <motion.button
                 onClick={proceedToPreview}
                 disabled={selectedCards.length !== selectedScenario.slots}
@@ -815,7 +961,7 @@ export default function BattlePage() {
               {/* Opponent Team */}
               <div className="bg-slate-800/50 rounded-xl p-6 border border-red-500/30">
                 <h3 className="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5" /> Opponent Squad
+                  <Zap className="w-5 h-5" /> {opponentInfo ? `${opponentInfo.displayName}'s Defense` : 'Opponent Squad'}
                   <span className={`text-xs px-2 py-1 rounded ml-2 ${
                     difficulty === 'easy' ? 'bg-green-500/20 text-green-400' 
                     : difficulty === 'hard' ? 'bg-red-500/20 text-red-400' 
@@ -896,9 +1042,14 @@ export default function BattlePage() {
                 {battleResult.winner === 'player' ? 'VICTORY!' : battleResult.winner === 'opponent' ? 'DEFEAT' : 'TIE'}
               </h2>
               <p className="text-white/90 text-xl">{battleResult.playerFinal} - {battleResult.opponentFinal}</p>
-              {battleResult.winner === 'player' && coinsWon !== null && (
+              {coinsWon !== null && coinsWon > 0 && (
                 <motion.p initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-black/25 rounded-full text-yellow-300 font-bold">
                   <Coins className="w-4 h-4" /> +{coinsWon} coins
+                  {ratingDelta !== null && (
+                    <span className={ratingDelta >= 0 ? 'text-green-300' : 'text-red-300'}>
+                      · {ratingDelta >= 0 ? '+' : ''}{ratingDelta} rating
+                    </span>
+                  )}
                 </motion.p>
               )}
               {battleResult.winner === 'player' && !isLoggedIn && (
