@@ -11,7 +11,10 @@ export default function CoinDisplay() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  if (loading) {
+  // Still resolving auth, OR signed in but profile still fetching:
+  // show a skeleton. "Sign In" only renders when we KNOW there's no user —
+  // flashing it at logged-in players reads as being logged out.
+  if (loading || (user && !profile)) {
     return (
       <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl animate-pulse">
         <div className="w-5 h-5 bg-slate-700 rounded-full" />

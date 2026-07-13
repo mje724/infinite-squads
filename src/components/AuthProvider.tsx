@@ -48,6 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Watchdog: whatever happens below, the UI never hangs on a skeleton
+    // for more than 6s — worst case it shows Sign In and recovers on click.
+    const watchdog = setTimeout(() => setLoading(false), 6000);
+
     // Get initial session. Never let a hung/failed getSession leave the app
     // stuck on the loading skeleton — resolve loading no matter what.
     supabase.auth
@@ -63,27 +67,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('getSession failed:', err);
       })
       .finally(() => {
+        clearTimeout(watchdog);
         setLoading(false);
       });
 
-    // Listen for auth changes
+    // Listen for auth changes.
+    // IMPORTANT: per Supabase docs, do NOT await Supabase calls inside this
+    // callback — it runs while the auth lock is held, and a nested call that
+    // needs the same lock deadlocks the whole client (the original cause of
+    // the frozen coin display). State updates are sync; the profile fetch is
+    // deferred out of the callback with setTimeout(0).
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
+      (event: AuthChangeEvent, session: Session | null) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+        setLoading(false);
+
         if (session?.user) {
-          const profileData = await fetchProfile(session.user.id);
-          setProfile(profileData);
+          const userId = session.user.id;
+          setTimeout(() => {
+            fetchProfile(userId).then(setProfile);
+          }, 0);
         } else {
           setProfile(null);
         }
-        
-        setLoading(false);
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(watchdog);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
