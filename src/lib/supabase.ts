@@ -1,21 +1,15 @@
 import { createBrowserClient } from '@supabase/ssr';
 
 export const createClient = () => {
+  // Default navigator.locks behavior is intentional: it coordinates token
+  // refresh ACROSS TABS. Without it, two open tabs race the same refresh
+  // token, Supabase rotates it, the loser gets "already used" and the
+  // session dies on reload. The deadlock we once saw here wasn't the lock's
+  // fault — it was our auth callback making Supabase calls while the lock
+  // was held (fixed in AuthProvider by deferring those calls).
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        // Bypass navigator.locks. The built-in LockManager-based lock is known
-        // to deadlock in Chrome ("AbortError: signal is aborted without reason"),
-        // which leaves getSession() hanging forever — auth never resolves, the
-        // coin display stays on its loading skeleton, and daily rewards never
-        // fire. We don't need cross-tab lock coordination for this app.
-        lock: async <R,>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
-          return await fn();
-        },
-      },
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 };
 
