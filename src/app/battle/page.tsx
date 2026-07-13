@@ -525,6 +525,8 @@ export default function BattlePage() {
   const [opponentInfo, setOpponentInfo] = useState<{ userId: string; displayName: string } | null>(null);
   const [ratingDelta, setRatingDelta] = useState<number | null>(null);
   const [defenseSaved, setDefenseSaved] = useState(false);
+  const [defenseError, setDefenseError] = useState<string | null>(null);
+  const [cooldownMsg, setCooldownMsg] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
 
   useEffect(() => {
@@ -556,6 +558,10 @@ export default function BattlePage() {
         setCoinsWon(res.reward ?? 0);
         setRatingDelta(res.delta ?? 0);
         await refreshProfile();
+      } else if (res && 'reason' in res) {
+        const reason = (res as { reason?: string }).reason;
+        if (reason === 'too_fast') setCooldownMsg('Ranked cooldown — rating resumes in ~45s.');
+        else if (reason === 'daily_cap') setCooldownMsg('Daily ranked cap reached (40). Back tomorrow.');
       }
     } else {
       // CPU rewards also server-fixed now — the client just reports win/loss
@@ -565,25 +571,29 @@ export default function BattlePage() {
         p_won: winner === 'player',
       });
       if (typeof data === 'number' && data > 0) setCoinsWon(data);
+      else if (data === -2) setCooldownMsg('Reward cooldown — coins resume in ~30s. The W still counts.');
+      else if (data === -3) setCooldownMsg('Daily battle-reward cap reached (40). Back tomorrow, champion.');
       await refreshProfile();
     }
   };
 
   const saveDefenseSquad = async () => {
     if (!user || !selectedScenario || selectedCards.length !== selectedScenario.slots) return;
+    setDefenseError(null);
     const names = selectedCards.map(c => c.name);
-    if (rebuildSquad(names).length !== names.length) return; // custom cards can't defend
-    const { error } = await supabase.from('pvp_squads').upsert(
-      {
-        user_id: user.id,
-        scenario_id: selectedScenario.id,
-        display_name: profile?.display_name ?? 'Anonymous',
-        card_names: names,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'user_id,scenario_id' }
-    );
-    if (!error) setDefenseSaved(true);
+    if (rebuildSquad(names).length !== names.length) {
+      setDefenseError('Defense squads can only use pack & icon cards.');
+      return;
+    }
+    // Server validates ownership of every card — no phantom squads
+    const { data, error } = await supabase.rpc('set_defense_squad', {
+      p_user_id: user.id,
+      p_scenario_id: selectedScenario.id,
+      p_display_name: profile?.display_name ?? 'Anonymous',
+      p_card_names: names,
+    });
+    if (!error && data === true) setDefenseSaved(true);
+    else setDefenseError('Could not verify squad ownership — try again.');
   };
 
   const proceedToPreview = async () => {
@@ -690,6 +700,8 @@ export default function BattlePage() {
     setOpponentInfo(null);
     setRatingDelta(null);
     setDefenseSaved(false);
+    setDefenseError(null);
+    setCooldownMsg(null);
   };
 
   // Mini card component
@@ -790,7 +802,7 @@ export default function BattlePage() {
                   {leaderboard.map((row, i) => (
                     <div key={i} className={`flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm ${row.display_name === profile?.display_name ? 'bg-amber-500/10 border border-amber-500/30' : ''}`}>
                       <span className={`w-6 text-center font-black ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-amber-600' : 'text-slate-500'}`}>{i + 1}</span>
-                      <span className="flex-1 text-white font-semibold truncate">{row.display_name}</span>
+                      <span className="flex-1 text-white font-semibold truncate">{(row.display_name ?? 'Anonymous').slice(0, 24)}</span>
                       <span className="text-amber-300 font-bold">{row.pvp_rating}</span>
                       <span className="text-slate-500 text-xs w-14 text-right">{row.battles_won}W</span>
                     </div>
@@ -938,6 +950,7 @@ export default function BattlePage() {
                 <ChevronRight className="w-6 h-6" /> See Opponent
               </motion.button>
             </div>
+            {defenseError && <p className="text-center text-red-400 text-sm">{defenseError}</p>}
           </motion.div>
         )}
 
@@ -961,7 +974,7 @@ export default function BattlePage() {
               {/* Opponent Team */}
               <div className="bg-slate-800/50 rounded-xl p-6 border border-red-500/30">
                 <h3 className="text-xl font-bold text-red-400 mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5" /> {opponentInfo ? `${opponentInfo.displayName}'s Defense` : 'Opponent Squad'}
+                  <Zap className="w-5 h-5" /> {opponentInfo ? `${opponentInfo.displayName.slice(0, 24)}'s Defense` : 'Opponent Squad'}
                   <span className={`text-xs px-2 py-1 rounded ml-2 ${
                     difficulty === 'easy' ? 'bg-green-500/20 text-green-400' 
                     : difficulty === 'hard' ? 'bg-red-500/20 text-red-400' 
@@ -1042,6 +1055,9 @@ export default function BattlePage() {
                 {battleResult.winner === 'player' ? 'VICTORY!' : battleResult.winner === 'opponent' ? 'DEFEAT' : 'TIE'}
               </h2>
               <p className="text-white/90 text-xl">{battleResult.playerFinal} - {battleResult.opponentFinal}</p>
+              {cooldownMsg && (
+                <p className="mt-2 text-white/80 text-sm">{cooldownMsg}</p>
+              )}
               {coinsWon !== null && coinsWon > 0 && (
                 <motion.p initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 bg-black/25 rounded-full text-yellow-300 font-bold">
                   <Coins className="w-4 h-4" /> +{coinsWon} coins
@@ -1157,6 +1173,12 @@ export default function BattlePage() {
             </div>
 
             <div className="flex justify-center gap-4">
+              <button
+                onClick={() => { setBattleResult(null); setCoinsWon(null); setRatingDelta(null); setCooldownMsg(null); proceedToPreview(); }}
+                className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl text-white font-semibold flex items-center gap-2"
+              >
+                <Swords className="w-5 h-5" /> Rematch
+              </button>
               <button onClick={resetBattle} className="px-6 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl text-white font-semibold flex items-center gap-2">
                 <RotateCcw className="w-5 h-5" /> New Battle
               </button>
