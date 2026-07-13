@@ -28,6 +28,7 @@ import {
   GUEST_FREE_PACK_KEY,
 } from '@/data/gameEconomy';
 import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
+import { trackObjective } from '@/data/objectives';
 import { Card } from '@/types/schema';
 
 // Bad-luck protection: every PITY_LIMIT-th pack without a legendary/holo
@@ -145,6 +146,7 @@ export default function PacksPage() {
       setGuestPackUsed(true);
     }
 
+    trackObjective('pack_opened');
     const cards = getRandomCards(tier, 3, pityCount >= PITY_LIMIT - 1);
     const hasHeat = cards.some(c => c.rarity === 'legendary' || c.rarity === 'holo');
     const nextPity = hasHeat ? 0 : pityCount + 1;
