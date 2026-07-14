@@ -14,10 +14,11 @@ import { useAuth } from '@/components/AuthProvider';
 import { getSupabase, UserCard } from '@/lib/supabase';
 import { useCardCollection } from '@/store/store';
 import { Card } from '@/types/schema';
+import { progressIdentity, recordProgress } from '@/data/progression';
 
 function rowToCard(row: UserCard): Card {
   const card = row.card_data as unknown as Card;
-  return { ...card, id: row.id };
+  return { ...card, id: row.id, isFavorite: row.is_favorite };
 }
 
 // Cross-instance sync: NavHeader and pages each own a hook instance,
@@ -83,6 +84,29 @@ export function useGameCollection() {
     return true;
   };
 
+  const addCards = async (newCards: Card[]): Promise<boolean> => {
+    if (newCards.length === 0) return true;
+    if (!user) {
+      newCards.forEach(card => local.addCard(card));
+      announceCardsChanged();
+      return true;
+    }
+    const { error } = await supabase.from('user_cards').insert(
+      newCards.map(card => ({
+        user_id: user.id,
+        card_name: card.name,
+        card_data: card as unknown as Record<string, unknown>,
+      }))
+    );
+    if (error) {
+      console.error('Error adding starter cards:', error);
+      return false;
+    }
+    await fetchCards();
+    announceCardsChanged();
+    return true;
+  };
+
   const removeCard = async (id: string): Promise<boolean> => {
     if (!user) {
       local.removeCard(id);
@@ -112,6 +136,29 @@ export function useGameCollection() {
     announceCardsChanged();
   };
 
+  const toggleFavorite = async (id: string): Promise<boolean> => {
+    const card = cards.find(candidate => candidate.id === id);
+    if (!card) return false;
+    const next = !card.isFavorite;
+    if (!user) {
+      local.updateCard(id, { isFavorite: next });
+      announceCardsChanged();
+      return true;
+    }
+    const { error } = await supabase
+      .from('user_cards')
+      .update({ is_favorite: next })
+      .eq('id', id)
+      .eq('user_id', user.id);
+    if (error) {
+      console.error('Error toggling favorite:', error);
+      return false;
+    }
+    await fetchCards();
+    announceCardsChanged();
+    return true;
+  };
+
   // Returns coins received, or null on failure. Guests can't quicksell
   // (no wallet) — the UI uses that to sell the signup.
   const quicksellCard = async (id: string): Promise<number | null> => {
@@ -125,6 +172,7 @@ export function useGameCollection() {
       return null;
     }
     await Promise.all([fetchCards(), refreshProfile()]);
+    recordProgress(progressIdentity(user.id), 'quicksell');
     announceCardsChanged();
     return data;
   };
@@ -138,8 +186,10 @@ export function useGameCollection() {
     loading: user ? loading : false,
     isLoggedIn: !!user,
     addCard,
+    addCards,
     removeCard,
     clearCollection,
+    toggleFavorite,
     quicksellCard,
     copiesOf,
     refresh: fetchCards,

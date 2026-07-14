@@ -9,8 +9,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Package, Sparkles, Check, Coins, Lock, Info, Layers } from 'lucide-react';
+import { Package, Sparkles, Check, Coins, Lock, Info, Layers, Users, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
 import { PRESET_CARDS, PresetCard, calculateOVR } from '@/data/presetCards';
 import { getImageUrl } from '@/lib/avatar';
@@ -29,13 +30,43 @@ import {
 } from '@/data/gameEconomy';
 import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { trackObjective } from '@/data/objectives';
+import { progressIdentity, recordProgress } from '@/data/progression';
 import { Card } from '@/types/schema';
+import { playGameSound } from '@/lib/gameAudio';
 
 // Bad-luck protection: every PITY_LIMIT-th pack without a legendary/holo
 // in its contents guarantees one. Gacha that respects the floor keeps players.
 const PITY_LIMIT = 10;
 
 type PulledCard = PresetCard & { overallRating: number };
+
+function toCollectionCard(selectedCard: PulledCard): Card {
+  const now = new Date();
+  return {
+    id: nanoid(),
+    name: selectedCard.name,
+    nickname: selectedCard.nickname,
+    position: '',
+    image: getImageUrl(selectedCard.name),
+    imageFilter: 'normal',
+    rarity: selectedCard.rarity,
+    theme: 'custom',
+    mode: 'unserious',
+    overallRating: selectedCard.overallRating,
+    statBlock: selectedCard.stats.map((stat, index) => ({
+      id: `stat-${index}`,
+      label: `${stat.emoji} ${stat.label}`,
+      value: stat.value,
+      icon: stat.emoji,
+      category: 'custom',
+    })),
+    traits: [],
+    bio: `"${selectedCard.nickname}"`,
+    activeEffects: [],
+    createdAt: now,
+    updatedAt: now,
+  };
+}
 
 function rollRarity(tier: PackTier): PackRarity {
   const entries = Object.entries(tier.weights) as [PackRarity, number][];
@@ -94,7 +125,8 @@ const getRarityGlow = (rarity: string) => {
 };
 
 export default function PacksPage() {
-  const { addCard, copiesOf, isLoggedIn } = useGameCollection();
+  const router = useRouter();
+  const { cards, loading: collectionLoading, addCard, addCards, copiesOf, isLoggedIn } = useGameCollection();
   const { balance, spendCoins, canAfford } = useCoins();
   const { user } = useAuth();
   const supabase = getSupabase();
@@ -110,13 +142,18 @@ export default function PacksPage() {
   const [opening, setOpening] = useState(false);
   const [pityCount, setPityCount] = useState(0);
   const [heatFlash, setHeatFlash] = useState(false);
+  const [starterClaimed, setStarterClaimed] = useState(true);
+  const [starterDraft, setStarterDraft] = useState(false);
 
   const pityKey = `is-pity-${user?.id ?? 'guest'}`;
   const pendingPackKey = `is-pending-pack-${user?.id ?? 'guest'}`;
+  const starterKey = `is-starter-draft-${user?.id ?? 'guest'}`;
+  const identity = progressIdentity(user?.id);
 
   useEffect(() => {
     setGuestPackUsed(localStorage.getItem(GUEST_FREE_PACK_KEY) === '1');
-  }, []);
+    setStarterClaimed(localStorage.getItem(starterKey) === '1');
+  }, [starterKey]);
 
   useEffect(() => {
     setPityCount(parseInt(localStorage.getItem(pityKey) ?? '0', 10) || 0);
@@ -126,9 +163,11 @@ export default function PacksPage() {
   // Otherwise leaving this page after the reveal burns the pack for nothing.
   useEffect(() => {
     try {
-      const pending = JSON.parse(localStorage.getItem(pendingPackKey) ?? 'null') as PulledCard[] | null;
-      if (Array.isArray(pending) && pending.length === 3) {
-        setPackCards(pending);
+      const pending = JSON.parse(localStorage.getItem(pendingPackKey) ?? 'null') as PulledCard[] | { cards: PulledCard[]; starter?: boolean } | null;
+      const pendingCards = Array.isArray(pending) ? pending : pending?.cards;
+      if (Array.isArray(pendingCards) && (pendingCards.length === 3 || pendingCards.length === 5)) {
+        setPackCards(pendingCards);
+        setStarterDraft(!Array.isArray(pending) && pending?.starter === true);
         setIsRevealed(true);
       }
     } catch {
@@ -138,6 +177,7 @@ export default function PacksPage() {
 
   const openPack = async (tier: PackTier) => {
     if (opening || packCards.length > 0) return;
+    playGameSound('tap');
     setOpening(true);
 
     if (isLoggedIn) {
@@ -160,11 +200,12 @@ export default function PacksPage() {
     }
 
     trackObjective('pack_opened');
+    recordProgress(identity, 'pack_opened');
     const cards = getRandomCards(tier, 3, pityCount >= PITY_LIMIT - 1);
     const hasHeat = cards.some(c => c.rarity === 'legendary' || c.rarity === 'holo');
     const nextPity = hasHeat ? 0 : pityCount + 1;
     localStorage.setItem(pityKey, String(nextPity));
-    localStorage.setItem(pendingPackKey, JSON.stringify(cards));
+    localStorage.setItem(pendingPackKey, JSON.stringify({ cards, starter: false }));
     setPityCount(nextPity);
 
     setPackCards(cards);
@@ -175,46 +216,46 @@ export default function PacksPage() {
     if (hasHeat) {
       setHeatFlash(true);
       setTimeout(() => setHeatFlash(false), 1400);
-      setTimeout(() => setIsRevealed(true), 1500);
+      setTimeout(() => {
+        setIsRevealed(true);
+        playGameSound('reveal');
+      }, 1500);
     } else {
-      setTimeout(() => setIsRevealed(true), 500);
+      setTimeout(() => {
+        setIsRevealed(true);
+        playGameSound('reveal');
+      }, 500);
     }
+    setOpening(false);
+  };
+
+  const openStarterDraft = () => {
+    if (opening || packCards.length > 0 || starterClaimed || cards.length > 0) return;
+    playGameSound('tap');
+    setOpening(true);
+    const tier = PACK_TIERS[1];
+    const drafted = getRandomCards(tier, 5, true);
+    trackObjective('pack_opened');
+    localStorage.setItem(pendingPackKey, JSON.stringify({ cards: drafted, starter: true }));
+    setPackCards(drafted);
+    setStarterDraft(true);
+    setSelectedCard(null);
+    setIsRevealed(false);
+    setTimeout(() => {
+      setIsRevealed(true);
+      playGameSound('reveal');
+    }, 650);
     setOpening(false);
   };
 
   const confirmSelection = async () => {
     if (!selectedCard) return;
 
-    const now = new Date();
-    const statBlock = selectedCard.stats.map((s, i) => ({
-      id: `stat-${i}`,
-      label: `${s.emoji} ${s.label}`,
-      value: s.value,
-      icon: s.emoji,
-      category: 'custom',
-    }));
-
-    const card: Card = {
-      id: nanoid(),
-      name: selectedCard.name,
-      nickname: selectedCard.nickname,
-      position: '',
-      image: getImageUrl(selectedCard.name),
-      imageFilter: 'normal',
-      rarity: selectedCard.rarity,
-      theme: 'custom',
-      mode: 'unserious',
-      overallRating: selectedCard.overallRating,
-      statBlock,
-      traits: [],
-      bio: `"${selectedCard.nickname}"`,
-      activeEffects: [],
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    const added = await addCard(card);
+    const added = await addCard(toCollectionCard(selectedCard));
     if (!added) return;
+
+    recordProgress(identity, 'card_added');
+    playGameSound('success');
 
     localStorage.removeItem(pendingPackKey);
     if (!isLoggedIn) {
@@ -230,7 +271,29 @@ export default function PacksPage() {
     }, 2000);
   };
 
+  const confirmStarterDraft = async () => {
+    if (!starterDraft || packCards.length !== 5) return;
+    const added = await addCards(packCards.map(toCollectionCard));
+    if (!added) return;
+    localStorage.removeItem(pendingPackKey);
+    localStorage.setItem(starterKey, '1');
+    localStorage.setItem(GUEST_FREE_PACK_KEY, '1');
+    setStarterClaimed(true);
+    setGuestPackUsed(true);
+    recordProgress(identity, 'starter_claimed');
+    recordProgress(identity, 'card_added', packCards.length);
+    playGameSound('success');
+    setShowConfirmation(true);
+    setTimeout(() => {
+      setShowConfirmation(false);
+      setPackCards([]);
+      setStarterDraft(false);
+      router.push('/squad');
+    }, 1800);
+  };
+
   const bigPull = selectedCard && ['legendary', 'holo'].includes(selectedCard.rarity);
+  const starterEligible = !collectionLoading && cards.length === 0 && !starterClaimed;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950 p-4 md:p-8">
@@ -320,6 +383,22 @@ export default function PacksPage() {
 
         {packCards.length === 0 ? (
           <>
+            {starterEligible && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-8 overflow-hidden rounded-3xl border border-cyan-400/35 bg-gradient-to-br from-cyan-500/15 via-purple-500/15 to-pink-500/10 p-6 shadow-xl shadow-purple-950/20 sm:p-8">
+                <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-4xl shadow-lg">🫡</div>
+                  <div className="flex-1">
+                    <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">One-time starter draft</p>
+                    <h2 className="mt-2 text-2xl font-black text-white">Recruit five. Keep all five. Start fighting.</h2>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-300">This guaranteed starter lineup includes at least one Legendary or Holo card and immediately unlocks four-card scenarios.</p>
+                  </div>
+                  <motion.button onClick={openStarterDraft} disabled={opening} whileTap={{ scale: 0.96 }} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 font-black text-slate-950 hover:bg-cyan-50 disabled:opacity-50 sm:w-auto">
+                    <Users className="h-5 w-5" /> Draft free <ArrowRight className="h-4 w-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
+
             {/* Tier storefront */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
               {PACK_TIERS.map((tier, i) => {
@@ -388,10 +467,16 @@ export default function PacksPage() {
         ) : (
           <div className="space-y-8">
             <h2 className="text-2xl font-bold text-center text-white">
-              {showConfirmation ? (bigPull ? '🎆 BIG PULL. Card Added!' : '✨ Card Added!') : 'Choose One Card'}
+              {showConfirmation
+                ? starterDraft ? '🫡 Starter Squad Recruited!' : (bigPull ? '🎆 BIG PULL. Card Added!' : '✨ Card Added!')
+                : starterDraft ? 'Your Starter Squad — Keep All Five' : 'Choose One Card'}
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+            {starterDraft && !showConfirmation && (
+              <p className="mx-auto max-w-xl text-center text-sm text-slate-400">Your first decision comes in the lineup. For now, meet the five recruits who can get you there.</p>
+            )}
+
+            <div className={`grid grid-cols-1 gap-6 px-4 ${starterDraft ? 'sm:grid-cols-2 lg:grid-cols-5' : 'md:grid-cols-3'}`}>
               <AnimatePresence>
                 {packCards.map((card, index) => {
                   const isSelected = selectedCard?.name === card.name;
@@ -405,10 +490,10 @@ export default function PacksPage() {
                       initial={{ rotateY: 180, opacity: 0, y: 50 }}
                       animate={isRevealed ? { rotateY: 0, opacity: otherSelected ? 0.4 : 1, y: isSelected ? -20 : isHovered ? -10 : 0, scale: isSelected ? 1.05 : otherSelected ? 0.95 : 1 } : {}}
                       transition={{ delay: index * 0.15, duration: 0.5 }}
-                      onClick={() => !showConfirmation && setSelectedCard(card)}
+                      onClick={() => !starterDraft && !showConfirmation && setSelectedCard(card)}
                       onMouseEnter={() => !showConfirmation && setHoveredCard(card.name)}
                       onMouseLeave={() => setHoveredCard(null)}
-                      className="cursor-pointer"
+                      className={starterDraft ? 'cursor-default' : 'cursor-pointer'}
                     >
                       <motion.div
                         className="relative rounded-2xl overflow-hidden aspect-[3/4]"
@@ -471,6 +556,13 @@ export default function PacksPage() {
             </div>
 
             <AnimatePresence>
+              {starterDraft && !showConfirmation && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex justify-center pt-4">
+                  <motion.button onClick={confirmStarterDraft} whileTap={{ scale: 0.95 }} className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 px-8 py-4 text-lg font-black text-white shadow-xl shadow-purple-500/20">
+                    <Check className="h-5 w-5" /> Recruit all five
+                  </motion.button>
+                </motion.div>
+              )}
               {selectedCard && !showConfirmation && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex justify-center pt-4">
                   <motion.button onClick={confirmSelection} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl font-bold text-white text-lg shadow-lg flex items-center gap-3">

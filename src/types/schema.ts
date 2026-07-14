@@ -83,6 +83,7 @@ export interface Card {
   // Metadata
   position?: string; // "Striker", "Project Manager", "The Enabler"
   teamId?: string;
+  isFavorite?: boolean; // protected from accidental sell/delete in collection UI
   createdAt: Date;
   updatedAt: Date;
 }

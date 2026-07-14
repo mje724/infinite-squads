@@ -6,6 +6,7 @@ import { Layers, Users, Package, Swords, Flame } from 'lucide-react';
 import CoinDisplay from './CoinDisplay';
 import { useGameCollection } from '@/hooks/useGameCollection';
 import { useAuth } from './AuthProvider';
+import SoundToggle from './SoundToggle';
 
 export default function NavHeader() {
   const pathname = usePathname();
@@ -77,6 +78,7 @@ export default function NavHeader() {
           </Link>
 
           {/* Coin Display & User Menu */}
+          <SoundToggle />
           <CoinDisplay />
         </div>
       </div>

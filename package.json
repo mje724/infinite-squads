@@ -12,8 +12,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "check": "npm run validate:cards && npm run typecheck && npm run lint && npm run build",
-    "validate:cards": "tsx scripts/validate-cards.ts"
+    "check": "npm run validate:cards && npm run audit:economy && npm run typecheck && npm run lint && npm run build",
+    "validate:cards": "tsx scripts/validate-cards.ts",
+    "audit:economy": "tsx scripts/audit-economy.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",

@@ -5,6 +5,7 @@ import NavHeader from '@/components/NavHeader';
 import DailyRewardModal from '@/components/DailyRewardModal';
 import SiteFooter from '@/components/SiteFooter';
 import NativeBridge from '@/components/NativeBridge';
+import OnboardingModal from '@/components/OnboardingModal';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://infinite-squads.vercel.app'),
@@ -49,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className="bg-slate-950 text-white min-h-screen">
         <a
           href="#main-content"
@@ -61,6 +62,7 @@ export default function RootLayout({
           <NativeBridge />
           <NavHeader />
           <DailyRewardModal />
+          <OnboardingModal />
           <main id="main-content" className="pt-16" tabIndex={-1}>
             {children}
           </main>
