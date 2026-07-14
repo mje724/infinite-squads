@@ -104,6 +104,12 @@ export function recordProgress(identity: string, event: ProgressEvent, amount = 
   return next;
 }
 
+export function savePlayerProgress(identity: string, progress: PlayerProgress, announce = true): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(progressKey(identity), JSON.stringify(progress));
+  if (announce) window.dispatchEvent(new CustomEvent(PROGRESS_CHANGED_EVENT, { detail: { event: 'sync', progress } }));
+}
+
 export function levelForXp(xp: number): number {
   return Math.floor(Math.sqrt(Math.max(0, xp) / 100)) + 1;
 }

@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <li><strong>Account information:</strong> email address, user ID, authentication provider, display name, and optional profile image.</li>
         <li><strong>Gameplay information:</strong> card collection, squads, balances, pack and reward history, battle results, streaks, and leaderboard statistics.</li>
         <li><strong>Technical information:</strong> device, browser, network, security, and diagnostic information that our hosting and authentication providers process to deliver and protect the service.</li>
-        <li><strong>Support information:</strong> messages and contact details you choose to send when requesting help.</li>
+        <li><strong>Support and playtest information:</strong> messages and contact details you choose to send, plus the current page, screen size, build identifier, and browser description included with beta feedback to help reproduce problems.</li>
       </ul>
 
       <h2>How we use information</h2>

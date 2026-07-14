@@ -6,6 +6,7 @@ import DailyRewardModal from '@/components/DailyRewardModal';
 import SiteFooter from '@/components/SiteFooter';
 import NativeBridge from '@/components/NativeBridge';
 import OnboardingModal from '@/components/OnboardingModal';
+import PlaytestWidget from '@/components/PlaytestWidget';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://infinite-squads.vercel.app'),
@@ -62,7 +63,8 @@ export default function RootLayout({
           <NativeBridge />
           <NavHeader />
           <DailyRewardModal />
-          <OnboardingModal />
+        <OnboardingModal />
+        <PlaytestWidget />
           <main id="main-content" className="pt-16" tabIndex={-1}>
             {children}
           </main>
