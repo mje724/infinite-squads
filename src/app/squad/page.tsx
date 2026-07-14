@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGameCollection } from '@/hooks/useGameCollection';
 import { pairVerdict, cardPerformance, teamChemistry } from '@/data/chemistry';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
-import { TRAIT_PRESETS } from '@/data/presets';
-import { Users, Plus, X, User, ArrowLeft, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
+import { Users, Plus, X, User, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -294,7 +293,7 @@ const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onCl
 const ConnectionLines: React.FC<{
   connections: Connection[];
   positions: { x: number; y: number }[];
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   onConnectionClick: (index: number) => void;
 }> = ({ connections, positions, containerRef, onConnectionClick }) => {
   const [dims, setDims] = useState({ width: 0, height: 0 });

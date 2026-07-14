@@ -9,7 +9,7 @@ import { PRESET_CARDS } from '@/data/presetCards';
 import { ICON_CARDS, setsNeedingCard } from '@/data/collections';
 import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { trackObjective } from '@/data/objectives';
-import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Download, Copy, Check, Loader2, Package, Coins, Layers } from 'lucide-react';
+import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Loader2, Package, Coins, Layers } from 'lucide-react';
 import Link from 'next/link';
 import CardVisuals from '@/components/CardVisuals';
 import html2canvas from 'html2canvas';

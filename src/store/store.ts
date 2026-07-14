@@ -13,10 +13,9 @@ import {
   Stat, 
   Rarity, 
   Theme, 
-  ImageFilter,
-  GlobalModifier 
+  ImageFilter
 } from '@/types/schema';
-import { getRandomStats, getRandomQuote, STAT_PRESETS } from '@/data/presets';
+import { getRandomStats, getRandomQuote } from '@/data/presets';
 import { nanoid } from 'nanoid';
 
 // ─────────────────────────────────────────────

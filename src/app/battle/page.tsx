@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Swords, Trophy, Zap, Users, ChevronRight, Home, RotateCcw, Crown, Skull, Star, Package, Check, User, Coins } from 'lucide-react';
 import Link from 'next/link';
 import { useGameCollection } from '@/hooks/useGameCollection';
@@ -386,67 +386,6 @@ function calculateTeamTotal(boxScores: PlayerBoxScore[], categories: ScoreCatego
 // ============================================
 // CHEMISTRY CALCULATION
 // ============================================
-
-function calculateChemistry(cards: (PresetCard | Card)[], bonuses: ChemistryBonus[]): { total: number; active: string[] } {
-  const rarities = cards.map(c => c.rarity);
-  const ovrs = cards.map(c => 'overallRating' in c ? c.overallRating : 50);
-  let total = 0;
-  const active: string[] = [];
-  
-  bonuses.forEach(bonus => {
-    let applies = false;
-    
-    if (bonus.condition.includes('Gold or better') || bonus.condition.includes('Legendary/Holo')) {
-      const count = rarities.filter(r => ['gold', 'legendary', 'holo', 'glitch'].includes(r)).length;
-      applies = count >= 3;
-    } else if (bonus.condition.includes('Legendary')) {
-      applies = rarities.filter(r => r === 'legendary').length >= 2;
-    } else if (bonus.condition.includes('All Bronze/Silver')) {
-      applies = rarities.every(r => r === 'bronze' || r === 'silver');
-    } else if (bonus.condition.includes('Bronze')) {
-      const needed = bonus.condition.includes('4+') ? 4 : 3;
-      applies = rarities.filter(r => r === 'bronze').length >= needed;
-    } else if (bonus.condition.includes('Gold')) {
-      applies = rarities.filter(r => r === 'gold').length >= 3;
-    } else if (bonus.condition.includes('same rarity')) {
-      const counts = rarities.reduce((acc, r) => ({ ...acc, [r]: (acc[r] || 0) + 1 }), {} as Record<string, number>);
-      const needed = bonus.condition.includes('5+') ? 5 : 3;
-      applies = Math.max(...Object.values(counts)) >= needed;
-    } else if (bonus.condition.includes('different rarities')) {
-      applies = new Set(rarities).size >= 5;
-    } else if (bonus.condition.includes('Glitch')) {
-      applies = rarities.includes('glitch');
-    } else if (bonus.condition.includes('90+')) {
-      applies = ovrs.some(o => o >= 90);
-    } else if (bonus.condition.includes('95+')) {
-      applies = Math.max(...ovrs) >= 95;
-    } else if (bonus.condition.includes('under 70')) {
-      applies = ovrs.every(o => o < 70);
-    } else if (bonus.condition.includes('65+') || bonus.condition.includes('All 65+')) {
-      applies = ovrs.every(o => o >= 65);
-    } else if (bonus.condition.includes('under 50')) {
-      applies = ovrs.filter(o => o < 50).length >= 2;
-    } else if (bonus.condition.includes('under 40')) {
-      applies = ovrs.some(o => o < 40);
-    } else if (bonus.condition.includes('under 30')) {
-      applies = ovrs.some(o => o < 30);
-    } else if (bonus.condition.includes('under 25')) {
-      applies = ovrs.some(o => o < 25);
-    } else if (bonus.condition.includes('Highest OVR first')) {
-      applies = ovrs[0] === Math.max(...ovrs);
-    } else if (bonus.condition.includes('Highest is Holo')) {
-      const maxIdx = ovrs.indexOf(Math.max(...ovrs));
-      applies = rarities[maxIdx] === 'holo';
-    }
-    
-    if (applies) {
-      total += bonus.bonus;
-      active.push(`${bonus.name} (${bonus.bonus > 0 ? '+' : ''}${bonus.bonus})`);
-    }
-  });
-  
-  return { total, active };
-}
 
 // ============================================
 // HELPER FUNCTIONS

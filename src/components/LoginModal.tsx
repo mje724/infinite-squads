@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Chrome, Loader2 } from 'lucide-react';
 import { useAuth } from './AuthProvider';
@@ -18,6 +18,27 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const emailRef = useRef<HTMLInputElement>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    emailRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onCloseRef.current();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isOpen]);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,20 +87,31 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="auth-modal-title"
+            aria-describedby="auth-modal-description"
+            aria-busy={loading}
             className="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">
+              <h2 id="auth-modal-title" className="text-2xl font-bold text-white">
                 {mode === 'login' ? 'Welcome Back' : 'Create Account'}
               </h2>
               <button
+                type="button"
                 onClick={onClose}
+                aria-label="Close sign-in dialog"
                 className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-slate-400" />
+                <X aria-hidden="true" className="w-5 h-5 text-slate-400" />
               </button>
             </div>
+
+            <p id="auth-modal-description" className="sr-only">
+              {mode === 'login' ? 'Sign in to sync your collection and progress.' : 'Create an account to save your collection and receive the signup bonus.'}
+            </p>
 
             {/* Bonus Banner */}
             {mode === 'signup' && (
@@ -96,6 +128,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
             {/* Google Sign In */}
             <button
+              type="button"
               onClick={handleGoogleAuth}
               disabled={loading}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded-xl transition-colors disabled:opacity-50"
@@ -104,7 +137,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
                 <>
-                  <Chrome className="w-5 h-5" />
+                  <Chrome aria-hidden="true" className="w-5 h-5" />
                   Continue with Google
                 </>
               )}
@@ -123,11 +156,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             <form onSubmit={handleEmailAuth} className="space-y-4">
               {mode === 'signup' && (
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Display Name</label>
+                  <label htmlFor="signup-display-name" className="block text-slate-400 text-sm mb-1">Display Name</label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                     <input
+                      id="signup-display-name"
                       type="text"
+                      autoComplete="nickname"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder="Your username"
@@ -138,11 +173,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               )}
 
               <div>
-                <label className="block text-slate-400 text-sm mb-1">Email</label>
+                <label htmlFor="auth-email" className="block text-slate-400 text-sm mb-1">Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input
+                    ref={emailRef}
+                    id="auth-email"
                     type="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
@@ -153,11 +191,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               </div>
 
               <div>
-                <label className="block text-slate-400 text-sm mb-1">Password</label>
+                <label htmlFor="auth-password" className="block text-slate-400 text-sm mb-1">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input
+                    id="auth-password"
                     type="password"
+                    autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
@@ -169,7 +209,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               </div>
 
               {error && (
-                <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                <div role="alert" aria-live="polite" className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg p-3">
                   {error}
                 </div>
               )}
@@ -180,7 +220,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 aria-hidden="true" className="w-5 h-5 animate-spin" />
                 ) : mode === 'login' ? (
                   'Sign In'
                 ) : (
@@ -195,6 +235,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <>
                   Don&apos;t have an account?{' '}
                   <button
+                    type="button"
                     onClick={() => setMode('signup')}
                     className="text-purple-400 hover:text-purple-300 font-semibold"
                   >
@@ -205,6 +246,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <>
                   Already have an account?{' '}
                   <button
+                    type="button"
                     onClick={() => setMode('login')}
                     className="text-purple-400 hover:text-purple-300 font-semibold"
                   >

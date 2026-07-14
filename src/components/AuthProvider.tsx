@@ -98,6 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearTimeout(watchdog);
       subscription.unsubscribe();
     };
+    // The Supabase client is a module singleton; this subscription is
+    // intentionally installed once and cleaned up on provider unmount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signInWithGoogle = async () => {

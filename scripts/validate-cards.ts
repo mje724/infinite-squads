@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 // ============================================
 // INFINITE SQUADS — CARD INTEGRITY GATE
 // Fails the build if the card universe is not airtight:
@@ -7,7 +6,7 @@
 // Run: npx tsx scripts/validate-cards.ts
 // ============================================
 import { PRESET_CARDS } from '../src/data/presetCards';
-import { CARD_REGISTRY, getGameData } from '../src/data/cardRegistry';
+import { CARD_REGISTRY } from '../src/data/cardRegistry';
 import { AVATAR_TRAITS } from '../src/lib/avatar';
 import { ICON_CARDS, COLLECTION_SETS } from '../src/data/collections';
 import { NAMED_DUOS } from '../src/data/chemistry';
