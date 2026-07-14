@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Infinite Squads</string>
+    <string name="title_activity_main">Infinite Squads</string>
+    <string name="package_name">com.infinitesquads.game</string>
+    <string name="custom_url_scheme">com.infinitesquads.game</string>
+</resources>
