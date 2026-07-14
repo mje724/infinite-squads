@@ -112,6 +112,7 @@ export default function PacksPage() {
   const [heatFlash, setHeatFlash] = useState(false);
 
   const pityKey = `is-pity-${user?.id ?? 'guest'}`;
+  const pendingPackKey = `is-pending-pack-${user?.id ?? 'guest'}`;
 
   useEffect(() => {
     setGuestPackUsed(localStorage.getItem(GUEST_FREE_PACK_KEY) === '1');
@@ -120,6 +121,20 @@ export default function PacksPage() {
   useEffect(() => {
     setPityCount(parseInt(localStorage.getItem(pityKey) ?? '0', 10) || 0);
   }, [pityKey]);
+
+  // A paid/free pack must survive navigation until one card is claimed.
+  // Otherwise leaving this page after the reveal burns the pack for nothing.
+  useEffect(() => {
+    try {
+      const pending = JSON.parse(localStorage.getItem(pendingPackKey) ?? 'null') as PulledCard[] | null;
+      if (Array.isArray(pending) && pending.length === 3) {
+        setPackCards(pending);
+        setIsRevealed(true);
+      }
+    } catch {
+      localStorage.removeItem(pendingPackKey);
+    }
+  }, [pendingPackKey]);
 
   const openPack = async (tier: PackTier) => {
     if (opening || packCards.length > 0) return;
@@ -142,8 +157,6 @@ export default function PacksPage() {
         setOpening(false);
         return;
       }
-      localStorage.setItem(GUEST_FREE_PACK_KEY, '1');
-      setGuestPackUsed(true);
     }
 
     trackObjective('pack_opened');
@@ -151,6 +164,7 @@ export default function PacksPage() {
     const hasHeat = cards.some(c => c.rarity === 'legendary' || c.rarity === 'holo');
     const nextPity = hasHeat ? 0 : pityCount + 1;
     localStorage.setItem(pityKey, String(nextPity));
+    localStorage.setItem(pendingPackKey, JSON.stringify(cards));
     setPityCount(nextPity);
 
     setPackCards(cards);
@@ -199,7 +213,14 @@ export default function PacksPage() {
       updatedAt: now,
     };
 
-    await addCard(card);
+    const added = await addCard(card);
+    if (!added) return;
+
+    localStorage.removeItem(pendingPackKey);
+    if (!isLoggedIn) {
+      localStorage.setItem(GUEST_FREE_PACK_KEY, '1');
+      setGuestPackUsed(true);
+    }
 
     setShowConfirmation(true);
     setTimeout(() => {

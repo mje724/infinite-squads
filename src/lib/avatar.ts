@@ -1,3 +1,4 @@
+import { ROSTER_AVATARS } from '@/data/megaRoster';
 // ============================================
 // MEME DOODLE AVATAR SYSTEM
 // Hand-drawn-style cartoon caricatures — thick outlines,
@@ -213,7 +214,6 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'Diogenes': { bg: '#8a7458', skin: '#c98f5e', hair: 'bald', hairColor: '#555', facial: 'longbeard', eyes: 'smug', mouth: 'smirk', prop: '🛢️' },
   'Rasputin': { bg: '#2b1f2e', skin: '#d8b48a', hair: 'wild', hairColor: '#3d2a1a', facial: 'longbeard', eyes: 'intense', mouth: 'neutral', prop: '🧔' },
   'Hunter S. Thompson': { bg: '#c94f4f', skin: '#e0b183', hair: 'bald', hairColor: '#000', facial: 'stubble', eyes: 'shades', mouth: 'smirk', prop: '🚬' },
-  'Yusuf Dilek': { bg: '#3a3a3a', skin: '#dcb894', hair: 'slick', hairColor: '#222', facial: 'stubble', eyes: 'shades', mouth: 'neutral', prop: '🎯' },
   'Genghis Khan': { bg: '#5a3a2a', skin: '#c9955f', hair: 'furhat', hairColor: '#3b2a1a', facial: 'horseshoe', eyes: 'intense', mouth: 'neutral', prop: '⚔️' },
   'Cleopatra': { bg: '#c9a227', skin: '#c9895a', hair: 'bowl', hairColor: '#0a0a0a', facial: 'none', eyes: 'smug', mouth: 'smirk', prop: '🐍' },
   'Frederick Douglass': { bg: '#264653', skin: '#8a5a35', hair: 'wild', hairColor: '#d8d8d8', facial: 'full', eyes: 'intense', mouth: 'neutral', prop: '📚' },
@@ -239,7 +239,6 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'Odd Al': { bg: '#f4d35e', skin: '#e0b28a', hair: 'afro', hairColor: '#3a2a1a', facial: 'mustache', eyes: 'wide', mouth: 'grin', prop: '🪗' },
   'Guy Fierro': { bg: '#e8590c', skin: '#d9a06a', hair: 'spiky', hairColor: '#d9c98a', facial: 'goatee', eyes: 'shades', mouth: 'grin', prop: '🔥' },
   'Bad Luck Brian': { bg: '#8a5a3a', skin: '#e6bd93', hair: 'bowl', hairColor: '#8a5a2a', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '🍀' },
-  'Grimace': { bg: '#4a1a5a', skin: '#8a2be2', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'dot', mouth: 'smile', prop: '🥤' },
   'Elan Muskrat': { bg: '#1a1a2e', skin: '#d9a878', hair: 'buzzcut', hairColor: '#3a2a1a', facial: 'stubble', eyes: 'smug', mouth: 'smirk', prop: '🐦' },
   'Mark Zuckerbot': { bg: '#3b5998', skin: '#e0b28a', hair: 'bowl', hairColor: '#4a3a2a', facial: 'none', eyes: 'wide', mouth: 'neutral', prop: '🤖' },
   'Geoff Bezel': { bg: '#1a2a3a', skin: '#d9a878', hair: 'bald', hairColor: '#000', facial: 'stubble', eyes: 'smug', mouth: 'grin', prop: '💰' },
@@ -247,29 +246,24 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'Joey Rogaine': { bg: '#3a4a2a', skin: '#d9a878', hair: 'buzzcut', hairColor: '#3a2a1a', facial: 'stubble', eyes: 'wide', mouth: 'open', prop: '🎙️' },
   'DJ Khaleb': { bg: '#c9a227', skin: '#7a4a2a', hair: 'bandana', hairColor: '#c9302c', facial: 'full', eyes: 'shades', mouth: 'grin', prop: '🔑' },
   'Tommy Weisau': { bg: '#2a2a3a', skin: '#c9905f', hair: 'wavy', hairColor: '#0a0a0a', facial: 'stubble', eyes: 'shades', mouth: 'smirk', prop: '🎬' },
-  'Gary Buseye': { bg: '#8a3a2a', skin: '#d9a06a', hair: 'wild', hairColor: '#8a8a6a', facial: 'stubble', eyes: 'wide', mouth: 'grin', prop: '🏍️' },
   'Charlee Sheenz': { bg: '#2a2a2a', skin: '#d9a878', hair: 'slick', hairColor: '#3a2a1a', facial: 'stubble', eyes: 'smug', mouth: 'smirk', prop: '🐯' },
   'Flavor Flame': { bg: '#e8b923', skin: '#5a3a20', hair: 'bandana', hairColor: '#1a1a1a', facial: 'goatee', eyes: 'wide', mouth: 'grin', prop: '⏰' },
   'Bulk Hogman': { bg: '#e8d923', skin: '#e0a06a', hair: 'bandana', hairColor: '#c9302c', facial: 'horseshoe', eyes: 'angry', mouth: 'grin', prop: '💪' },
   'Ozzy Ozzborne': { bg: '#4a2a5a', skin: '#d9a878', hair: 'wavy', hairColor: '#1a1a1a', facial: 'none', eyes: 'wide', mouth: 'open', prop: '🦇' },
   'Arnold Schwarzenlifter': { bg: '#2a4a8a', skin: '#d9a06a', hair: 'slick', hairColor: '#0a0a0a', facial: 'none', eyes: 'smug', mouth: 'grin', prop: '💪' },
   'Toast Malone': { bg: '#5a2a2a', skin: '#e0b28a', hair: 'braids' as HairStyle, hairColor: '#3a2a1a', facial: 'stubble', eyes: 'sleepy', mouth: 'neutral', prop: '🍺' },
-  'Isle Boys': { bg: '#0a8a8a', skin: '#7a4a2a', hair: 'wavy', hairColor: '#0a0a0a', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '🌴' },
   'Scumbag Steve': { bg: '#5a5a2a', skin: '#e0b28a', hair: 'bandana', hairColor: '#c9302c', facial: 'stubble', eyes: 'smug', mouth: 'smirk', prop: '🧢' },
   'Lizzy Holmz': { bg: '#1a1a1a', skin: '#e6c39a', hair: 'bowl', hairColor: '#d9c98a', facial: 'none', eyes: 'intense', mouth: 'neutral', prop: '🐢' },
   'George Santoro': { bg: '#8a2a8a', skin: '#e0b28a', hair: 'slick', hairColor: '#1a1a1a', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '🎭' },
   'Sam Bankster-Fried': { bg: '#4a4a8a', skin: '#e6c39a', hair: 'wild', hairColor: '#8a6a3a', facial: 'none', eyes: 'wide', mouth: 'neutral', prop: '🎮' },
   'Billy FyreFarland': { bg: '#2a8a8a', skin: '#e0b28a', hair: 'slick', hairColor: '#3a2a1a', facial: 'none', eyes: 'smug', mouth: 'grin', prop: '🏝️' },
-  'Kidney King': { bg: '#8a2a2a', skin: '#c9895a', hair: 'wild', hairColor: '#3a2a1a', facial: 'full', eyes: 'intense', mouth: 'grin', prop: '🥩' },
   'Antonio Braun': { bg: '#2a2a5a', skin: '#7a4a2a', hair: 'buzzcut', hairColor: '#000', facial: 'stubble', eyes: 'intense', mouth: 'open', prop: '📱' },
-  'Rachael Dolezall': { bg: '#8a5a2a', skin: '#c9895a', hair: 'braids' as HairStyle, hairColor: '#3a2a1a', facial: 'none', eyes: 'smug', mouth: 'smirk', prop: '🧬' },
   '7ix8ine': { bg: '#1a1a1a', skin: '#e0b28a', hair: 'mohawk', hairColor: '#ff2ec4', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '🌈' },
   'Atom Levine': { bg: '#2a2a2a', skin: '#d9a06a', hair: 'slick', hairColor: '#1a1a1a', facial: 'stubble', eyes: 'smug', mouth: 'smirk', prop: '📱' },
   'Coco Siwa': { bg: '#ff8fc4', skin: '#e6c39a', hair: 'bow', hairColor: '#0a0a0a', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '🎀' },
   'Wil Smyth': { bg: '#2a4a8a', skin: '#5a3a20', hair: 'buzzcut', hairColor: '#000', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '👋' },
   'Logang Paulson': { bg: '#3a8a3a', skin: '#e6bd93', hair: 'spiky', hairColor: '#d9c98a', facial: 'none', eyes: 'wide', mouth: 'open', prop: '🌲' },
   'Pepper Bae': { bg: '#8a1a1a', skin: '#c9895a', hair: 'bun', hairColor: '#0a0a0a', facial: 'stubble', eyes: 'shades', mouth: 'smirk', prop: '🧂' },
-  'Hilarya Baldwing': { bg: '#8adbc9', skin: '#e6c39a', hair: 'bun', hairColor: '#2a1a0a', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '🧘' },
   'Ben Shapirno': { bg: '#2a2a5a', skin: '#e0b28a', hair: 'buzzcut', hairColor: '#0a0a0a', facial: 'none', eyes: 'intense', mouth: 'neutral', prop: '⏩' },
   'Travesty Scott': { bg: '#2a1a1a', skin: '#5a3a20', hair: 'dreads', hairColor: '#0a0a0a', facial: 'stubble', eyes: 'sleepy', mouth: 'smirk', prop: '🔥' },
   'Raegun': { bg: '#2a8a4a', skin: '#e6bd93', hair: 'bandana', hairColor: '#c9a227', facial: 'none', eyes: 'wide', mouth: 'open', prop: '🦘' },
@@ -359,16 +353,11 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'William Shakespeare': { bg: '#3a2a4a', skin: '#e6c39a', hair: 'bald', hairColor: '#5a3a1e', facial: 'goatee', eyes: 'smug', mouth: 'smirk', prop: '🖋️' },
   'Vincent van Gogh': { bg: '#e8a33a', skin: '#e0b28a', hair: 'spiky', hairColor: '#c9622a', facial: 'full', eyes: 'intense', mouth: 'neutral', prop: '🌻' },
   'Mansa Musa': { bg: '#c9a227', skin: '#6a4a2a', hair: 'headscarf', hairColor: '#c9a227', facial: 'goatee', eyes: 'smug', mouth: 'smile', prop: '🪙' },
-  'Emperor Norton': { bg: '#3a4a6a', skin: '#e6c39a', hair: 'bicorne', hairColor: '#1a1a1a', facial: 'full', eyes: 'wide', mouth: 'grin', prop: '👑' },
-  'Timothy Dexter': { bg: '#6a5a2a', skin: '#e6c39a', hair: 'wig', hairColor: '#e8e8e8', facial: 'none', eyes: 'wide', mouth: 'grin', prop: '⛏️' },
-  'Senator Incitatus': { bg: '#8a6a2a', skin: '#8a5a2a', hair: 'laurel', hairColor: '#2e7d32', facial: 'none', eyes: 'sleepy', mouth: 'neutral', prop: '🐴' },
   'Pythagoras': { bg: '#2a4a5a', skin: '#e0b28a', hair: 'bald', hairColor: '#8a8a8a', facial: 'longbeard', eyes: 'intense', mouth: 'neutral', prop: '📐' },
   'Archimedes': { bg: '#2a5a6a', skin: '#e0b28a', hair: 'wild', hairColor: '#c9c9c9', facial: 'full', eyes: 'wide', mouth: 'open', prop: '🛁' },
   'Ada Lovelace': { bg: '#4a2a5a', skin: '#f0d8c0', hair: 'bun', hairColor: '#2a1a0a', facial: 'none', eyes: 'intense', mouth: 'smile', prop: '💻' },
   'Blackbeard': { bg: '#1a2a3a', skin: '#d9a06a', hair: 'bandana', hairColor: '#1a1a1a', facial: 'longbeard', eyes: 'angry', mouth: 'grin', prop: '🏴‍☠️' },
   'Spartacus': { bg: '#6a3a2a', skin: '#d9a06a', hair: 'buzzcut', hairColor: '#2a1a0a', facial: 'stubble', eyes: 'intense', mouth: 'neutral', prop: '⛓️' },
-  'Hatshepsut': { bg: '#c9a227', skin: '#c9895a', hair: 'headscarf', hairColor: '#1a4a8a', facial: 'goatee', eyes: 'smug', mouth: 'smirk', prop: '𓂀' },
-  'Dancing Plague Patient Zero': { bg: '#5a2a4a', skin: '#e0b28a', hair: 'wild', hairColor: '#5a3a1e', facial: 'none', eyes: 'wide', mouth: 'open', prop: '💃' },
 
   // ── Expansion B: sports ──
   'Air Goatness': { bg: '#c9302c', skin: '#6a4a2a', hair: 'bald', hairColor: '#000', facial: 'mustache', eyes: 'intense', mouth: 'smirk', prop: '🐐' },
@@ -405,9 +394,6 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'Area 51 Intern': { bg: '#2a3a2a', skin: '#e0b28a', hair: 'buzzcut', hairColor: '#3a2a1a', facial: 'none', eyes: 'wide', mouth: 'neutral', prop: '👽' },
 
   // ── Expansion B: heroic animals ──
-  'Wojtek the Bear': { bg: '#5a4a2a', skin: '#8a5a2a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '🎖️' },
-  'Cher Ami': { bg: '#4a5a6a', skin: '#a8a8b8', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'normal', mouth: 'neutral', prop: '✉️' },
-  'Unsinkable Sam': { bg: '#1a3a5a', skin: '#2a2a2a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'sleepy', mouth: 'neutral', prop: '⚓' },
   'Laika': { bg: '#1a1a3e', skin: '#a8825a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '🚀' },
   'Emu War Veteran': { bg: '#c9a86a', skin: '#6a5a3a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'wide', mouth: 'open', prop: '🏅' },
   'Balto': { bg: '#3a5a7a', skin: '#4a4a4a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '🛷' },
@@ -434,7 +420,6 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'Open Mic Comedian': { bg: '#2a1a2a', skin: '#e0b28a', hair: 'wavy', hairColor: '#3a2a1a', facial: 'stubble', eyes: 'sleepy', mouth: 'grin', prop: '🎤' },
   'Subway Pigeon': { bg: '#4a4a5a', skin: '#8a8aa8', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'dot', mouth: 'neutral', prop: '🍕' },
   'Dumpster Raccoon': { bg: '#2a3a2a', skin: '#6a6a6a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'shades', mouth: 'smirk', prop: '🗑️' },
-  'Tycho Brahe': { bg: '#2a2a5a', skin: '#e6c39a', hair: 'slick', hairColor: '#c9622a', facial: 'mustache', eyes: 'normal', mouth: 'smile', prop: '🌟' },
   'Hercules': { bg: '#c9a227', skin: '#d9a06a', hair: 'wavy', hairColor: '#2a1a0a', facial: 'stubble', eyes: 'intense', mouth: 'smirk', prop: '🦁' },
   'Medusa': { bg: '#2a5a3a', skin: '#9ac97a', hair: 'dreads', hairColor: '#2e7d32', facial: 'none', eyes: 'shades', mouth: 'smirk', prop: '🐍' },
   'Sisyphus': { bg: '#5a4a3a', skin: '#d9a06a', hair: 'bald', hairColor: '#555', facial: 'stubble', eyes: 'sleepy', mouth: 'smile', prop: '🪨' },
@@ -442,6 +427,8 @@ export const AVATAR_TRAITS: Record<string, AvatarTraits> = {
   'The Minotaur': { bg: '#4a2a1a', skin: '#6a4a2a', hair: 'blob', hairColor: '#000', facial: 'none', eyes: 'angry', mouth: 'frown', prop: '🌀' },
   'Zeus': { bg: '#d4af37', skin: '#e6c39a', hair: 'laurel', hairColor: '#e8e8e8', facial: 'longbeard', eyes: 'intense', mouth: 'neutral', prop: '⚡' },
 };
+
+Object.assign(AVATAR_TRAITS, ROSTER_AVATARS);
 
 const FALLBACK_TRAITS: AvatarTraits = { bg: '#334155', skin: '#e0b28a', hair: 'bald', hairColor: '#333', facial: 'none', eyes: 'normal', mouth: 'smile', prop: '❓' };
 

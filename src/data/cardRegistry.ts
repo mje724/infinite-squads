@@ -1,3 +1,4 @@
+import { ROSTER_REGISTRY } from '@/data/megaRoster';
 // ============================================
 // INFINITE SQUADS - CARD REGISTRY
 // The gameplay identity layer. Every card has:
@@ -56,7 +57,6 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'Harambe': d('internet', ['animal', 'wholesome'], 92, 40, 70, 20, 60, 96),
   'Killdozer': d('modern', ['chaos', 'villain'], 95, 55, 10, 88, 92, 55),
   'Boeing Door Plug': d('modern', ['entity', 'chaos'], 40, 5, 10, 97, 15, 70),
-  'Yusuf Dilek': d('modern', ['hustler'], 45, 60, 55, 50, 55, 35),
 
   // ── Original roster: legends with edge ──
   'Nikola Tesla': d('industrial', ['genius', 'inventor'], 30, 99, 40, 55, 60, 75),
@@ -108,7 +108,6 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'Odd Al': d('modern', ['musician', 'entertainer', 'wholesome'], 30, 85, 80, 65, 70, 78),
   'Guy Fierro': d('modern', ['entertainer', 'wholesome'], 50, 55, 88, 45, 75, 80),
   'Bad Luck Brian': d('internet', ['internet', 'survivor'], 25, 40, 55, 60, 92, 70),
-  'Grimace': d('modern', ['entity', 'wholesome', 'chaos'], 70, 10, 85, 80, 75, 85),
   'Elan Muskrat': d('internet', ['hustler', 'internet', 'chaos'], 30, 85, 35, 88, 60, 96),
   'Mark Zuckerbot': d('internet', ['hustler', 'internet'], 40, 90, 15, 30, 70, 88),
   'Geoff Bezel': d('internet', ['hustler', 'ruler'], 55, 92, 30, 25, 75, 90),
@@ -116,29 +115,24 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'Joey Rogaine': d('internet', ['entertainer', 'internet'], 75, 50, 70, 65, 80, 85),
   'DJ Khaleb': d('modern', ['musician', 'hustler'], 45, 40, 80, 55, 60, 82),
   'Tommy Weisau': d('modern', ['artist', 'chaos'], 40, 30, 55, 92, 80, 72),
-  'Gary Buseye': d('modern', ['entertainer', 'chaos'], 55, 25, 50, 95, 78, 60),
   'Charlee Sheenz': d('modern', ['entertainer', 'chaos'], 45, 40, 70, 90, 65, 75),
   'Flavor Flame': d('modern', ['musician', 'entertainer', 'chaos'], 40, 45, 82, 80, 70, 78),
   'Bulk Hogman': d('modern', ['athlete', 'entertainer'], 94, 35, 80, 60, 90, 88),
   'Ozzy Ozzborne': d('modern', ['musician', 'chaos', 'survivor'], 50, 30, 70, 92, 94, 86),
   'Arnold Schwarzenlifter': d('modern', ['athlete', 'entertainer', 'ruler'], 96, 65, 80, 35, 88, 92),
   'Toast Malone': d('internet', ['musician', 'wholesome'], 35, 55, 85, 50, 70, 84),
-  'Isle Boys': d('internet', ['musician', 'internet'], 45, 50, 75, 70, 60, 72),
   'Scumbag Steve': d('internet', ['internet', 'villain', 'hustler'], 40, 35, 45, 75, 65, 62),
   'Lizzy Holmz': d('internet', ['hustler', 'villain'], 20, 78, 82, 45, 70, 75),
   'George Santoro': d('modern', ['hustler', 'villain', 'chaos'], 25, 55, 75, 88, 60, 68),
   'Sam Bankster-Fried': d('internet', ['hustler', 'villain', 'gamer'], 15, 80, 50, 70, 40, 72),
   'Billy FyreFarland': d('internet', ['hustler', 'villain'], 30, 60, 80, 82, 55, 70),
-  'Kidney King': d('modern', ['hustler', 'villain', 'chaos'], 50, 45, 65, 85, 70, 55),
   'Antonio Braun': d('modern', ['athlete', 'chaos'], 88, 30, 50, 94, 75, 78),
-  'Rachael Dolezall': d('modern', ['chaos', 'hustler'], 30, 50, 55, 80, 60, 58),
   '7ix8ine': d('internet', ['musician', 'villain', 'chaos'], 35, 30, 50, 90, 45, 76),
   'Atom Levine': d('modern', ['musician'], 40, 45, 78, 40, 50, 74),
   'Coco Siwa': d('internet', ['entertainer', 'internet'], 35, 50, 78, 70, 65, 76),
   'Wil Smyth': d('modern', ['entertainer'], 70, 60, 85, 60, 65, 86),
   'Logang Paulson': d('internet', ['internet', 'hustler', 'athlete'], 75, 45, 60, 78, 78, 84),
   'Pepper Bae': d('internet', ['entertainer', 'internet', 'hustler'], 45, 40, 72, 50, 55, 74),
-  'Hilarya Baldwing': d('modern', ['chaos', 'hustler'], 25, 45, 65, 72, 50, 55),
   'Ben Shapirno': d('internet', ['internet', 'philosopher'], 25, 78, 40, 55, 65, 76),
   'Travesty Scott': d('modern', ['musician', 'entertainer'], 45, 50, 75, 70, 60, 85),
   'Raegun': d('modern', ['athlete', 'chaos', 'entertainer'], 45, 40, 55, 95, 60, 70),
@@ -224,16 +218,11 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'William Shakespeare': d('renaissance', ['artist', 'genius'], 30, 97, 80, 50, 70, 97),
   'Vincent van Gogh': d('industrial', ['artist'], 35, 85, 40, 70, 78, 92),
   'Mansa Musa': d('classical', ['ruler', 'hustler'], 60, 85, 88, 35, 75, 96),
-  'Emperor Norton': d('industrial', ['ruler', 'chaos', 'wholesome'], 25, 55, 88, 75, 70, 72),
-  'Timothy Dexter': d('industrial', ['hustler', 'chaos'], 30, 20, 60, 92, 80, 62),
-  'Senator Incitatus': d('ancient', ['animal', 'ruler'], 75, 10, 70, 60, 70, 78),
   'Pythagoras': d('ancient', ['genius', 'philosopher', 'chaos'], 30, 94, 50, 70, 60, 86),
   'Archimedes': d('ancient', ['genius', 'inventor'], 35, 96, 40, 60, 65, 88),
   'Ada Lovelace': d('industrial', ['genius', 'inventor'], 25, 96, 65, 30, 70, 86),
   'Blackbeard': d('industrial', ['warlord', 'villain', 'hustler'], 88, 70, 55, 78, 85, 86),
   'Spartacus': d('ancient', ['warlord', 'survivor'], 92, 72, 70, 50, 94, 88),
-  'Hatshepsut': d('ancient', ['ruler'], 45, 85, 75, 25, 80, 78),
-  'Dancing Plague Patient Zero': d('renaissance', ['chaos', 'survivor'], 40, 10, 45, 96, 88, 55),
 
   // ── Expansion B: sports parodies ──
   'Air Goatness': d('modern', ['athlete'], 95, 85, 70, 55, 96, 99),
@@ -270,9 +259,6 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'Area 51 Intern': d('modern', ['survivor', 'internet'], 30, 70, 50, 40, 88, 55),
 
   // ── Expansion B: heroic animals ──
-  'Wojtek the Bear': d('modern', ['animal', 'warlord', 'wholesome'], 95, 35, 88, 50, 92, 88),
-  'Cher Ami': d('modern', ['animal', 'survivor', 'wholesome'], 30, 55, 75, 25, 98, 82),
-  'Unsinkable Sam': d('modern', ['animal', 'survivor'], 35, 50, 80, 55, 99, 80),
   'Laika': d('modern', ['animal', 'wholesome'], 40, 45, 92, 20, 95, 94),
   'Emu War Veteran': d('modern', ['animal', 'warlord', 'chaos'], 80, 25, 45, 90, 94, 86),
   'Balto': d('modern', ['animal', 'wholesome', 'athlete'], 78, 55, 85, 25, 95, 88),
@@ -285,7 +271,6 @@ export const CARD_REGISTRY: Record<string, CardGameData> = {
   'Open Mic Comedian': d('modern', ['entertainer', 'survivor'], 30, 60, 65, 55, 90, 30),
   'Subway Pigeon': d('modern', ['animal', 'survivor', 'internet'], 35, 60, 55, 65, 94, 55),
   'Dumpster Raccoon': d('modern', ['animal', 'hustler', 'chaos'], 50, 70, 60, 85, 88, 60),
-  'Tycho Brahe': d('renaissance', ['genius', 'chaos'], 45, 95, 75, 80, 55, 82),
   'Hercules': d('ancient', ['warlord', 'athlete'], 99, 45, 78, 65, 95, 97),
   'Medusa': d('ancient', ['cryptid', 'villain'], 80, 65, 40, 70, 85, 88),
   'Sisyphus': d('ancient', ['survivor', 'philosopher'], 88, 60, 50, 15, 99, 80),
@@ -312,10 +297,8 @@ const LEGACY_ALIASES: Record<string, string> = {
   'Adam LeVine': 'Atom Levine',
   'Logan Pauls': 'Logang Paulson',
   'Travis Scot': 'Travesty Scott',
-  'Hilaria Baldwyn': 'Hilarya Baldwing',
   'Elizabeth Homes': 'Lizzy Holmz',
   'Billy MacFarland': 'Billy FyreFarland',
-  'Rachel Doleza': 'Rachael Dolezall',
   'Wayne Gretzkee': 'Wayne Greatzky',
   'Slim Shadey': 'Slim Shadow',
   'Willie Nelsong': 'Willie Nelsun',
@@ -332,3 +315,6 @@ export function getGameData(name: string, ovr: number): CardGameData {
   const flat = Math.max(10, Math.min(95, Math.round(ovr * 0.85)));
   return { era: 'timeless', tags: [], core: { might: flat, brains: flat, charm: flat, chaos: flat, grit: flat, clout: flat } };
 }
+
+// Merge the single-source expansion roster (airtight: generated, never hand-edited).
+Object.assign(CARD_REGISTRY, ROSTER_REGISTRY);

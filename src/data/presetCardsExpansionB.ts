@@ -140,37 +140,7 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Budget Transcendence', value: 99, emoji: '📊' },
       { label: 'Timbuktu Investment', value: 90, emoji: '🏛️' },
     ], rarity: 'legendary', image: getImageUrl('Mansa Musa') },
-  {
-    name: 'Emperor Norton', nickname: 'Self-Declared, Locally Beloved',
-    stats: [
-      { label: 'Self-Coronation Confidence', value: 97, emoji: '👑' },
-      { label: 'Actual Authority', value: 3, emoji: '📜' },
-      { label: 'Currency Acceptance (Local)', value: 85, emoji: '💵' },
-      { label: 'City Adoration', value: 92, emoji: '❤️' },
-      { label: 'Decree Quality', value: 88, emoji: '🖋️' },
-      { label: 'Bridge Prophecy Accuracy', value: 90, emoji: '🌉' },
-    ], rarity: 'silver', image: getImageUrl('Emperor Norton') },
-  {
-    name: 'Timothy Dexter', nickname: 'Failed Upward Forever',
-    stats: [
-      { label: 'Coal To Newcastle Profit', value: 95, emoji: '⛏️' },
-      { label: 'Business Logic', value: 4, emoji: '🧮' },
-      { label: 'Luck Density', value: 98, emoji: '🍀' },
-      { label: 'Faking Own Funeral', value: 90, emoji: '⚰️' },
-      { label: 'Punctuation Usage', value: 2, emoji: '✒️' },
-      { label: 'Haters Proven Wrong', value: 93, emoji: '😤' },
-    ], rarity: 'silver', image: getImageUrl('Timothy Dexter') },
-  {
-    name: 'Senator Incitatus', nickname: "Caligula's Horse, Confirmed",
-    stats: [
-      { label: 'Senate Attendance', value: 88, emoji: '🏛️' },
-      { label: 'Policy Positions', value: 5, emoji: '📋' },
-      { label: 'Marble Stable Luxury', value: 96, emoji: '🏰' },
-      { label: 'Oat Budget', value: 94, emoji: '🌾' },
-      { label: 'Bribery Immunity (Is Horse)', value: 96, emoji: '💰' },
-      { label: 'Being A Horse', value: 99, emoji: '🐴' },
-    ], rarity: 'gold', image: getImageUrl('Senator Incitatus') },
-  {
+        {
     name: 'Pythagoras', nickname: 'Triangle Cult Leader',
     stats: [
       { label: 'Triangle Mastery', value: 99, emoji: '📐' },
@@ -220,26 +190,6 @@ export const EXPANSION_B: PresetCard[] = [
       { label: 'Alps Crossing Commitment', value: 40, emoji: '🏔️' },
       { label: 'Legacy In Films', value: 92, emoji: '🎬' },
     ], rarity: 'gold', image: getImageUrl('Spartacus') },
-  {
-    name: 'Hatshepsut', nickname: 'Wore The Beard Anyway',
-    stats: [
-      { label: 'Pharaoh Drip (Ceremonial)', value: 93, emoji: '👑' },
-      { label: 'Glass Ceiling (Sandstone)', value: 90, emoji: '🔨' },
-      { label: 'Trade Route Expansion', value: 88, emoji: '⛵' },
-      { label: 'Monument Budget', value: 91, emoji: '🗿' },
-      { label: 'Successor Gratitude', value: 5, emoji: '🙏' },
-      { label: 'Being Chiseled Out Of History', value: 12, emoji: '🪨' },
-    ], rarity: 'silver', image: getImageUrl('Hatshepsut') },
-  {
-    name: 'Dancing Plague Patient Zero', nickname: "Couldn't Stop, Wouldn't Stop",
-    stats: [
-      { label: 'Cardio Endurance', value: 95, emoji: '💃' },
-      { label: 'Explanation Available', value: 3, emoji: '❓' },
-      { label: 'Crowd Recruitment', value: 90, emoji: '👯' },
-      { label: 'Stopping Ability', value: 2, emoji: '🛑' },
-      { label: 'Playlist Variety (1518)', value: 15, emoji: '🎶' },
-      { label: 'Historical Confusion Caused', value: 93, emoji: '📚' },
-    ], rarity: 'bronze', image: getImageUrl('Dancing Plague Patient Zero') },
 
   // ── Sports parodies ──
   {
@@ -528,37 +478,7 @@ export const EXPANSION_B: PresetCard[] = [
     ], rarity: 'silver', image: getImageUrl('Area 51 Intern') },
 
   // ── Heroic animals ──
-  {
-    name: 'Wojtek the Bear', nickname: 'Ammo Bear, Corporal',
-    stats: [
-      { label: 'Artillery Logistics', value: 94, emoji: '📦' },
-      { label: 'Beer Ration Enthusiasm', value: 92, emoji: '🍺' },
-      { label: 'Morale Generation', value: 96, emoji: '❤️' },
-      { label: 'Wrestling (Friendly)', value: 90, emoji: '🤼' },
-      { label: 'Military Paperwork Correctness', value: 88, emoji: '📋' },
-      { label: 'Being A Literal Bear', value: 99, emoji: '🐻' },
-    ], rarity: 'legendary', image: getImageUrl('Wojtek the Bear') },
-  {
-    name: 'Cher Ami', nickname: 'Message Delivered Anyway',
-    stats: [
-      { label: 'Delivery Commitment', value: 99, emoji: '✉️' },
-      { label: 'Battle Damage Tolerance', value: 95, emoji: '🩹' },
-      { label: 'Lives Saved Per Gram', value: 97, emoji: '⚖️' },
-      { label: 'Flight Path Optimism', value: 90, emoji: '🕊️' },
-      { label: 'Medal Collection', value: 90, emoji: '🏅' },
-      { label: 'Excuse Making', value: 2, emoji: '🤷' },
-    ], rarity: 'gold', image: getImageUrl('Cher Ami') },
-  {
-    name: 'Unsinkable Sam', nickname: 'Three Ships, Zero Regrets',
-    stats: [
-      { label: 'Shipwreck Survival', value: 99, emoji: '🚢' },
-      { label: 'Navy Allegiance Flexibility', value: 90, emoji: '🏳️' },
-      { label: 'Floating Board Acquisition', value: 95, emoji: '🪵' },
-      { label: 'Bad Omen Reputation', value: 88, emoji: '🐈‍⬛' },
-      { label: 'Ninth Life Conservation', value: 92, emoji: '9️⃣' },
-      { label: 'Sea Career Enthusiasm', value: 15, emoji: '⚓' },
-    ], rarity: 'gold', image: getImageUrl('Unsinkable Sam') },
-  {
+        {
     name: 'Laika', nickname: 'Good Girl, Star Sailor',
     stats: [
       { label: 'Bravery Per Kilogram', value: 99, emoji: '🚀' },

@@ -3,7 +3,7 @@ import { Package, Swords, Users, Sparkles, Flame, Gem } from 'lucide-react';
 import { getImageUrl } from '@/lib/avatar';
 import DailyObjectives from '@/components/DailyObjectives';
 
-const SHOWCASE_NAMES = ['Albert Einstein', 'Napoleon Bonaparte', 'Grimace', 'Elvis Presley', 'Snoop Doggo', 'Cleopatra'];
+const SHOWCASE_NAMES = ['Albert Einstein', 'Napoleon Bonaparte', 'The Phoenix', 'Elvis Presley', 'Snoop Doggo', 'Cleopatra'];
 
 export default function Home() {
   return (

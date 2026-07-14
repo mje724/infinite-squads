@@ -8,6 +8,7 @@ import { getImageUrl } from '@/lib/avatar';
 import { EXPANSION_A } from '@/data/presetCardsExpansionA';
 import { EXPANSION_B } from '@/data/presetCardsExpansionB';
 import { EXPANSION_C } from '@/data/presetCardsExpansionC';
+import { ROSTER_PRESET_BASE } from '@/data/megaRoster';
 
 export interface PresetCard {
   name: string;
@@ -117,18 +118,6 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Fourth Quarter Chaos', value: 70, emoji: '🌀' },
     ],
     rarity: 'bronze', image: getImageUrl('Hunter S. Thompson') },
-  {
-    name: 'Yusuf Dilek',
-    nickname: 'Turkish Minimalist',
-    stats: [
-      { label: 'Aura', value: 100, emoji: '🕶️' },
-      { label: 'Gear Budget', value: 18, emoji: '📉' },
-      { label: 'Hand in Pocket', value: 100, emoji: '👖' },
-      { label: 'Vision', value: 100, emoji: '🎯' },
-      { label: 'F*cks Given', value: 18, emoji: '🤷' },
-      { label: 'Clutch Gene', value: 99, emoji: '🎯' },
-    ],
-    rarity: 'silver', image: getImageUrl('Yusuf Dilek') },
 
   // ============================================
   // Actually Impressive
@@ -441,18 +430,6 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Underdog Grit', value: 55, emoji: '🍀' },
     ],
     rarity: 'silver', image: getImageUrl('Bad Luck Brian') },
-  {
-    name: 'Grimace',
-    nickname: 'Purple Enigma',
-    stats: [
-      { label: 'Taste Buds Killed', value: 100, emoji: '🟣' },
-      { label: 'Mets Championship', value: 100, emoji: '⚾' },
-      { label: 'Species Ambiguity', value: 100, emoji: '❓' },
-      { label: 'Calorie Density', value: 100, emoji: '🍔' },
-      { label: 'Shake Sales', value: 100, emoji: '📈' },
-      { label: 'Post-Up Mass', value: 90, emoji: '🟣' },
-    ],
-    rarity: 'legendary', image: getImageUrl('Grimace') },
 
   // ============================================
   // The Everyday Legends (Roasted)
@@ -541,19 +518,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Cult Following Factor', value: 60, emoji: '🎬' },
     ],
     rarity: 'bronze', image: getImageUrl('Tommy Weisau') },
-  {
-    name: 'Gary Buseye',
-    nickname: 'No Helmet',
-    stats: [
-      { label: 'Intensity', value: 100, emoji: '😳' },
-      { label: 'Teeth Size', value: 95, emoji: '🦷' },
-      { label: 'Normal Behavior', value: 5, emoji: '🤔' },
-      { label: 'Motorcycle Helmet Usage', value: 0, emoji: '🏍️' },
-      { label: 'Interview Predictability', value: 5, emoji: '🎤' },
-      { label: 'Wildcard Intensity', value: 75, emoji: '😳' },
-    ],
-    rarity: 'bronze', image: getImageUrl('Gary Buseye') },
-  {
+    {
     name: 'Charlee Sheenz',
     nickname: 'Winning',
     stats: [
@@ -625,19 +590,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Vibe Check', value: 78, emoji: '🎵' },
     ],
     rarity: 'gold', image: getImageUrl('Toast Malone') },
-  {
-    name: 'Isle Boys',
-    nickname: 'Im An Island Boy',
-    stats: [
-      { label: 'Hair Structure', value: 100, emoji: '🌴' },
-      { label: 'Synchronization', value: 12, emoji: '👯' },
-      { label: 'Freestyle Ability', value: 17, emoji: '🎤' },
-      { label: 'Pool Video Quality', value: 100, emoji: '🏊' },
-      { label: 'One Hit Wonder', value: 100, emoji: '📉' },
-      { label: 'One-Hit Wonder Burst', value: 45, emoji: '📈' },
-    ],
-    rarity: 'bronze', image: getImageUrl('Isle Boys') },
-  {
+    {
     name: 'Scumbag Steve',
     nickname: 'The Original',
     stats: [
@@ -701,19 +654,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Hype Generation', value: 88, emoji: '📢' },
     ],
     rarity: 'bronze', image: getImageUrl('Billy FyreFarland') },
-  {
-    name: 'Kidney King',
-    nickname: 'Natty or Not',
-    stats: [
-      { label: 'Natural Status', value: 12, emoji: '💉' },
-      { label: 'Steroid Budget (K/mo)', value: 23, emoji: '💊' },
-      { label: 'Testicle Eating', value: 100, emoji: '🥚' },
-      { label: 'Ab Authenticity', value: 32, emoji: '🧱' },
-      { label: 'Ancestral Tenets', value: 14, emoji: '📜' },
-      { label: 'Gym Strength', value: 85, emoji: '💪' },
-    ],
-    rarity: 'bronze', image: getImageUrl('Kidney King') },
-  {
+    {
     name: 'Antonio Braun',
     nickname: 'Mr Big Chest',
     stats: [
@@ -725,19 +666,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Highlight Reel Energy', value: 70, emoji: '📱' },
     ],
     rarity: 'silver', image: getImageUrl('Antonio Braun') },
-  {
-    name: 'Rachael Dolezall',
-    nickname: 'Transracial Pioneer',
-    stats: [
-      { label: 'DNA Accuracy', value: 18, emoji: '🧬' },
-      { label: 'Bronzer Usage', value: 100, emoji: '🧴' },
-      { label: 'Braiding Skill', value: 100, emoji: '💇' },
-      { label: 'Cultural Appropriation', value: 100, emoji: '💃' },
-      { label: 'Delusion', value: 100, emoji: '🧠' },
-      { label: 'Commitment to the Bit', value: 90, emoji: '🎭' },
-    ],
-    rarity: 'gold', image: getImageUrl('Rachael Dolezall') },
-  {
+    {
     name: '7ix8ine',
     nickname: 'Rainbow Snitch',
     stats: [
@@ -809,19 +738,7 @@ export const PRESET_CARDS: PresetCard[] = [
       { label: 'Showmanship', value: 90, emoji: '🧂' },
     ],
     rarity: 'silver', image: getImageUrl('Pepper Bae') },
-  {
-    name: 'Hilarya Baldwing',
-    nickname: 'How You Say Cucumber',
-    stats: [
-      { label: 'Spanish Accent', value: 12, emoji: '🇪🇸' },
-      { label: 'Yoga Poses', value: 100, emoji: '🧘' },
-      { label: 'Cucumber Knowledge', value: 12, emoji: '🥒' },
-      { label: 'Boston Heritage', value: 100, emoji: '🇺🇸' },
-      { label: 'Child Count', value: 19, emoji: '👶' },
-      { label: 'Improv Confidence', value: 70, emoji: '🧘' },
-    ],
-    rarity: 'bronze', image: getImageUrl('Hilarya Baldwing') },
-  {
+    {
     name: 'Ben Shapirno',
     nickname: 'Facts Dont Care',
     stats: [
@@ -1102,3 +1019,4 @@ export function getCardsByRarity(rarity: PresetCard['rarity']): PresetCard[] {
 // Pushed onto the same pool so packs, battles, and opponent
 // generation all pick them up automatically.
 PRESET_CARDS.push(...EXPANSION_A, ...EXPANSION_B, ...EXPANSION_C);
+PRESET_CARDS.push(...ROSTER_PRESET_BASE.map(c => ({ ...c, image: getImageUrl(c.name) })));

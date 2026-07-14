@@ -123,7 +123,7 @@ const TAG_SYNERGY: TagRule[] = [
 
 interface NamedDuo { pair: [string, string]; name: string; bonus: number }
 
-const NAMED_DUOS: NamedDuo[] = [
+export const NAMED_DUOS: NamedDuo[] = [
   // History said so
   { pair: ['Diogenes', 'Alexander the Great'], name: 'Stand Out Of My Sunlight', bonus: 8 },
   { pair: ['Sun Tzu', 'Napoleon Bonaparte'], name: 'Required Reading', bonus: 7 },
@@ -132,15 +132,12 @@ const NAMED_DUOS: NamedDuo[] = [
   { pair: ['Ada Lovelace', 'Nikola Tesla'], name: 'Ahead Of Schedule', bonus: 7 },
   { pair: ['Isaac Newton', 'Albert Einstein'], name: 'Standing On Shoulders', bonus: 6 },
   { pair: ['Isaac Newton', 'Galileo Galilei'], name: 'Peer Review', bonus: 5 },
-  { pair: ['Caligula', 'Senator Incitatus'], name: 'Executive Appointment', bonus: 9 },
   { pair: ['Julius Caesar', 'Cleopatra'], name: 'Alexandria Nights', bonus: 7 },
-  { pair: ['Napoleon Bonaparte', 'Emperor Norton'], name: 'Emperor-Off', bonus: -4 },
   { pair: ['William Shakespeare', 'Ludwig van Beethoven'], name: 'The Canon', bonus: 6 },
   { pair: ['Vincent van Gogh', 'Andy Warhol'], name: 'Market Timing Debate', bonus: -3 },
   { pair: ['Joan of Arc', 'Harriet Tubman'], name: 'Divine Missions', bonus: 8 },
   { pair: ['Vlad the Impaler', 'Ivan the Terrible'], name: 'Terrible Twos', bonus: 6 },
   { pair: ['Mansa Musa', 'Geoff Bezel'], name: 'Wealth Summit', bonus: 6 },
-  { pair: ['Mansa Musa', 'Timothy Dexter'], name: 'Opposite Portfolios', bonus: -3 },
   { pair: ['Spartacus', 'Muhammad Ali'], name: 'The Resistance', bonus: 7 },
   { pair: ['Pythagoras', 'Archimedes'], name: 'Geometry Gang', bonus: 6 },
   // Modern mythology
@@ -169,23 +166,43 @@ const NAMED_DUOS: NamedDuo[] = [
   { pair: ['The Loch Ness Monster', 'The Kraken'], name: 'Deep Sea Union', bonus: 7 },
   { pair: ['Harambe', 'Bigfoot'], name: 'Cryptid-Adjacent Icons', bonus: 5 },
   // Animal kingdom
-  { pair: ['Wojtek the Bear', 'Emu War Veteran'], name: 'Veterans Affairs', bonus: 6 },
   { pair: ['Laika', 'Balto'], name: 'Very Good Dogs', bonus: 8 },
-  { pair: ['Unsinkable Sam', 'Cher Ami'], name: 'Against All Odds', bonus: 6 },
-  { pair: ['Senator Incitatus', 'Emu War Veteran'], name: 'Animals In Government', bonus: 5 },
   // Expansion C character duos
   { pair: ['Leeroy Jenkinz', 'Sun Tzu'], name: 'The Plan Is Discarded', bonus: -7 },
   { pair: ['Leeroy Jenkinz', 'Rage Quitter'], name: 'Speedrun To Disaster', bonus: 5 },
   { pair: ['Speedrun Kid', 'Final Boss'], name: 'Skipped The Monologue', bonus: -6 },
   { pair: ['Sisyphus', 'The Completionist'], name: 'One More Attempt', bonus: 7 },
   { pair: ['Icarus', 'Milk Crate Challenger'], name: 'Altitude Problems', bonus: 6 },
-  { pair: ['Tycho Brahe', 'Galileo Galilei'], name: 'Star Party', bonus: 6 },
   { pair: ['Hercules', 'Bulk Hogman'], name: 'The Gun Show', bonus: 5 },
   { pair: ['Medusa', 'The Gigachud'], name: 'Unbothered Eye Contact', bonus: 4 },
   { pair: ['The Minotaur', 'The Dungeon Master'], name: 'Boss Room Booking', bonus: 6 },
   { pair: ['Dumpster Raccoon', 'Loot Goblin'], name: 'Finders Keepers', bonus: 6 },
-  { pair: ['Subway Pigeon', 'Cher Ami'], name: 'Distinguished Lineage', bonus: 7 },
   { pair: ['Techno Norseman', 'Festival DJ'], name: 'Crowd Ignition', bonus: 6 },
+  // ── Expansion roster: pantheon, legends & archetypes ──
+  { pair: ['Poseidon', 'Hades'], name: 'Brothers Who Drew Straws', bonus: 6 },
+  { pair: ['Zeus Prime', 'Poseidon'], name: 'Sky And Sea', bonus: 5 },
+  { pair: ['Zeus Prime', 'Hera'], name: 'Marriage Counseling Needed', bonus: -6 },
+  { pair: ['Athena', 'Ares'], name: 'War Smart vs War Dumb', bonus: -4 },
+  { pair: ['Apollo', 'Artemis'], name: 'Twin Flames', bonus: 7 },
+  { pair: ['Thor', 'Loki'], name: 'Adopted Brothers', bonus: -5 },
+  { pair: ['Odin', 'Thor'], name: 'Take Your Hammer To Work Day', bonus: 6 },
+  { pair: ['Loki', 'Hermes'], name: 'Trickster Union', bonus: 7 },
+  { pair: ['Hades', 'The Grim Reaper'], name: 'Death Industry Merger', bonus: 8 },
+  { pair: ['Hades', 'Cerberus'], name: 'A Boy And His Dog', bonus: 6 },
+  { pair: ['Achilles', 'Odysseus'], name: 'Trojan Coworkers', bonus: 5 },
+  { pair: ['Leonidas', 'Achilles'], name: 'Bronze Age Beefcakes', bonus: 6 },
+  { pair: ['Dracula', 'Krampus'], name: 'Old Country Energy', bonus: 6 },
+  { pair: ['Santa Claus', 'Krampus'], name: 'Naughty And Nice', bonus: 7 },
+  { pair: ['Thomas Edison', 'Nikola Tesla'], name: 'The Current War', bonus: -8 },
+  { pair: ['Al Capone', 'Billy the Kid'], name: 'Wanted Poster Club', bonus: 5 },
+  { pair: ['Aristotle', 'Plato'], name: 'Academy Faculty', bonus: 6 },
+  { pair: ['Plato', 'Socrates'], name: 'The Ghostwriter', bonus: 6 },
+  { pair: ['Marie Antoinette', 'Napoleon Bonaparte'], name: 'French Problems', bonus: -3 },
+  { pair: ['Michelangelo', 'Leonardo da Vinci'], name: 'Renaissance Rivals', bonus: -4 },
+  { pair: ['The Conspiracy Uncle', 'The Sovereign Citizen'], name: 'Do Your Own Research', bonus: 7 },
+  { pair: ['The DMV Clerk', 'The TSA Agent'], name: 'Bureaucratic Alliance', bonus: 6 },
+  { pair: ['The Doomsday Prepper', 'Florida Man'], name: 'Certified Survivors', bonus: 5 },
+  { pair: ['The Grim Reaper', 'Sisyphus'], name: 'Eternal Contracts', bonus: 4 },
 ];
 
 const duoKey = (a: string, b: string) => [a, b].sort().join('|||');

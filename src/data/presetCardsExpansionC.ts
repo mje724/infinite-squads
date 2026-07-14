@@ -86,16 +86,6 @@ export const EXPANSION_C: PresetCard[] = [
     ], rarity: 'silver', image: getImageUrl('Dumpster Raccoon') },
 
   // ── History's weirdest ──
-  {
-    name: 'Tycho Brahe', nickname: 'Metal Nose, Pet Moose',
-    stats: [
-      { label: 'Star Cataloging', value: 96, emoji: '🌟' },
-      { label: 'Metal Nose Shine', value: 93, emoji: '👃' },
-      { label: 'Pet Moose Ownership', value: 90, emoji: '🫎' },
-      { label: 'Party Hosting', value: 92, emoji: '🥂' },
-      { label: 'Bladder Diplomacy', value: 3, emoji: '🚻' },
-      { label: 'Assistant Quality (Kepler)', value: 97, emoji: '🔭' },
-    ], rarity: 'gold', image: getImageUrl('Tycho Brahe') },
 
   // ── Olympus Rejects (mythology cluster) ──
   {

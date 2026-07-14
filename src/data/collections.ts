@@ -235,6 +235,35 @@ export interface CollectionSet {
 }
 
 export const COLLECTION_SETS: CollectionSet[] = [
+  {
+    id: 'the-pantheon',
+    name: 'Assemble The Pantheon',
+    blurb: 'Five gods, one group chat that never agrees. Sacrifice the Olympians and the heavens might drop you a legend.',
+    emoji: '⚡',
+    requirements: [
+      { kind: 'specific', cardName: 'Poseidon' },
+      { kind: 'specific', cardName: 'Athena' },
+      { kind: 'specific', cardName: 'Apollo' },
+      { kind: 'specific', cardName: 'Hades' },
+      { kind: 'specific', cardName: 'Ares' },
+    ],
+    reward: { kind: 'random', rarity: 'legendary', label: 'Random LEGENDARY card' },
+    bonusCoins: 300,
+    repeatable: false,
+  },
+  {
+    id: 'everyday-villains',
+    name: 'The Everyday Villains',
+    blurb: 'Not evil masterminds. Worse: the small daily indignities. Burn five to purge them from your week (results not guaranteed).',
+    emoji: '📵',
+    requirements: [
+      { kind: 'tag', tag: 'entity', count: 5 },
+    ],
+    reward: { kind: 'random', rarity: 'gold', label: 'Random GOLD card' },
+    bonusCoins: 150,
+    repeatable: true,
+  },
+
   // ── Furnaces (repeatable dupe sinks) ──
   {
     id: 'bronze-furnace',
@@ -328,7 +357,7 @@ export const COLLECTION_SETS: CollectionSet[] = [
       { kind: 'specific', cardName: 'Harambe' },
       { kind: 'specific', cardName: 'Bad Luck Brian' },
       { kind: 'specific', cardName: 'Scumbag Steve' },
-      { kind: 'specific', cardName: 'Grimace' },
+      { kind: 'specific', cardName: 'Rickrolla' },
     ],
     reward: { kind: 'icon', cardName: 'Doge' },
     bonusCoins: 250,
@@ -401,15 +430,15 @@ COLLECTION_SETS.push(
   },
   {
     id: 'war-pets-battalion',
-    name: 'War Pets Battalion',
-    blurb: 'A bear who carried artillery. A pigeon who finished the mission shot. A cat who out-survived three navies. Salute them all and meet their commanding officer.',
+    name: 'Certified Good Animals',
+    blurb: 'A dog who orbited Earth. A dog who ran the serum in. A nation that lost a war to birds. Round up the goodest legends and meet the greatest of all time.',
     emoji: '🎖️',
     requirements: [
-      { kind: 'specific', cardName: 'Wojtek the Bear' },
-      { kind: 'specific', cardName: 'Cher Ami' },
-      { kind: 'specific', cardName: 'Unsinkable Sam' },
       { kind: 'specific', cardName: 'Laika' },
       { kind: 'specific', cardName: 'Balto' },
+      { kind: 'specific', cardName: 'Emu War Veteran' },
+      { kind: 'specific', cardName: 'Subway Pigeon' },
+      { kind: 'specific', cardName: 'Dumpster Raccoon' },
     ],
     reward: { kind: 'icon', cardName: 'The GOAT' },
     bonusCoins: 250,
