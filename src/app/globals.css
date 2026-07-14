@@ -15,11 +15,50 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   font-family: var(--font-body);
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
   min-height: 100vh;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }
+
+.legal-page {
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.legal-page h1 {
+  margin: 0.5rem 0 1.5rem;
+  color: white;
+  font-size: clamp(2.25rem, 8vw, 3.75rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.legal-page h2 {
+  margin: 2rem 0 0.65rem;
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.legal-page p { margin: 0.85rem 0; }
+.legal-page ul { margin: 1rem 0; padding-left: 1.4rem; list-style: disc; }
+.legal-page li { margin: 0.5rem 0; }
+.legal-page a { color: #a78bfa; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {

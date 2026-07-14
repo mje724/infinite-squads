@@ -10,9 +10,11 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<{ error: Error | null }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -113,6 +115,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
 
+  const signInWithApple = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) throw error;
+  };
+
   const signInWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -141,6 +153,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
   };
 
+  const deleteAccount = async () => {
+    const { error } = await supabase.functions.invoke('delete-account', {
+      method: 'POST',
+    });
+
+    if (error) return { error: new Error(error.message) };
+
+    await supabase.auth.signOut({ scope: 'local' });
+    setUser(null);
+    setProfile(null);
+    setSession(null);
+    return { error: null };
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -149,9 +175,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         loading,
         signInWithGoogle,
+        signInWithApple,
         signInWithEmail,
         signUpWithEmail,
         signOut,
+        deleteAccount,
         refreshProfile,
       }}
     >

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Package, Swords, Users, Sparkles, Flame, Gem } from 'lucide-react';
 import { getImageUrl } from '@/lib/avatar';
 import DailyObjectives from '@/components/DailyObjectives';
+import JourneyPanel from '@/components/JourneyPanel';
 
 const SHOWCASE_NAMES = ['Albert Einstein', 'Napoleon Bonaparte', 'The Phoenix', 'Elvis Presley', 'Snoop Doggo', 'Cleopatra'];
 
@@ -58,6 +59,10 @@ export default function Home() {
             Store →
           </Link>
         </div>
+      </div>
+
+      <div className="relative px-4">
+        <JourneyPanel />
       </div>
 
       <DailyObjectives />

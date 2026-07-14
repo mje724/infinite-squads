@@ -9,12 +9,12 @@ import { PRESET_CARDS } from '@/data/presetCards';
 import { ICON_CARDS, setsNeedingCard } from '@/data/collections';
 import { getGameData, TAG_LABELS } from '@/data/cardRegistry';
 import { trackObjective } from '@/data/objectives';
-import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Loader2, Package, Coins, Layers } from 'lucide-react';
+import { Trash2, Users, Sparkles, Flame, Zap, User, X, Share2, Loader2, Package, Coins, Layers, Star } from 'lucide-react';
 import Link from 'next/link';
 import CardVisuals from '@/components/CardVisuals';
 import html2canvas from 'html2canvas';
 
-const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => void; onQuicksell: (() => void) | null }> = ({ card, onClose, onDelete, onQuicksell }) => {
+const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => void; onQuicksell: (() => void) | null; onToggleFavorite: () => void }> = ({ card, onClose, onDelete, onQuicksell, onToggleFavorite }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isSharing, setIsSharing] = useState(false);
   const rarityStyle = RARITY_STYLES[card.rarity || 'gold'];
@@ -97,14 +97,18 @@ const FullCardView: React.FC<{ card: Card; onClose: () => void; onDelete: () => 
           );
         })()}
         <div className="flex gap-3 mt-4">
+          <button onClick={onToggleFavorite} aria-label={card.isFavorite ? 'Remove from favorites' : 'Protect as favorite'} title={card.isFavorite ? 'Protected — tap to unprotect' : 'Protect this card'} className={`px-4 py-3 rounded-xl border transition-colors ${card.isFavorite ? 'bg-amber-400/20 border-amber-400/60 text-amber-300' : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-amber-300'}`}>
+            <Star className={`w-5 h-5 ${card.isFavorite ? 'fill-current' : ''}`} />
+          </button>
           <button onClick={async () => { if (!cardRef.current) return; setIsSharing(true); try { const canvas = await html2canvas(cardRef.current, { backgroundColor: "#0f172a", scale: 2, useCORS: true, allowTaint: true, logging: false, width: 320, height: 460, scrollX: 0, scrollY: 0 }); const dataUrl = canvas.toDataURL("image/png"); const blob = await (await fetch(dataUrl)).blob(); const file = new File([blob], `${card.name}-card.png`, { type: "image/png" }); if (navigator.share && navigator.canShare?.({ files: [file] })) { await navigator.share({ files: [file], title: `${card.name} Card`, text: "Check out my card!" }); } else { const link = document.createElement("a"); link.download = `${card.name}-card.png`; link.href = dataUrl; link.click(); } } catch (e) { console.error(e); } setIsSharing(false); }} disabled={isSharing} className="px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">{isSharing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Share2 className="w-5 h-5" />}</button>
-          {onQuicksell && (
+          {onQuicksell && !card.isFavorite && (
             <button onClick={onQuicksell} className="flex-1 px-4 py-3 bg-yellow-500/15 hover:bg-yellow-500/25 border border-yellow-500/30 rounded-xl text-yellow-400 font-semibold transition-colors flex items-center justify-center gap-2">
               <Coins className="w-5 h-5" /> Quicksell · {QUICKSELL_VALUES[card.rarity] ?? 10}
             </button>
           )}
-          <button onClick={onDelete} className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 transition-colors"><Trash2 className="w-5 h-5" /></button>
+          {!card.isFavorite && <button onClick={onDelete} aria-label="Delete card" className="px-4 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl text-red-400 transition-colors"><Trash2 className="w-5 h-5" /></button>}
         </div>
+        {card.isFavorite && <p className="mt-2 text-center text-xs font-semibold text-amber-300">Protected from quicksell and accidental deletion</p>}
       </motion.div>
     </motion.div>
   );
@@ -116,13 +120,14 @@ function MiniCard({ card, onClick, copies = 1 }: { card: Card; onClick: () => vo
     switch (filter) { case 'bw': return 'grayscale(100%)'; case 'deepfried': return 'contrast(150%) saturate(200%) brightness(110%)'; case 'security': return 'grayscale(80%) contrast(120%) brightness(90%)'; case 'vhs': return 'sepia(30%) contrast(110%) saturate(130%)'; case 'glitch': return 'hue-rotate(90deg) contrast(120%)'; default: return 'none'; }
   };
   return (
-    <motion.div layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} whileHover={{ scale: 1.02 }} className="relative cursor-pointer" onClick={onClick}>
+    <motion.div layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} whileHover={{ scale: 1.02 }} className="relative cursor-pointer rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400" onClick={onClick} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } }} role="button" tabIndex={0} aria-label={`Open ${card.name}, ${card.overallRating} overall, ${card.rarity}${card.isFavorite ? ', favorite' : ''}`}>
       <div className="absolute inset-0 rounded-xl blur-lg opacity-40" style={{ background: rarityStyle.gradient, transform: 'scale(1.05)', zIndex: -1 }} />
       <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden" style={{ background: rarityStyle.gradient, boxShadow: rarityStyle.glow }}>
         <div className="absolute inset-[2px] rounded-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
           <div className="absolute top-2 left-2 z-10"><span className="text-2xl font-black" style={{ color: rarityStyle.border, textShadow: '0 0 10px ' + rarityStyle.border }}>{card.overallRating}</span></div>
           <div className="absolute top-2 right-2 z-10">
-            {card.rarity === 'legendary' && <Flame className="w-4 h-4 text-orange-500" />}
+            {card.isFavorite && <Star className="w-4 h-4 fill-amber-300 text-amber-300" />}
+            {!card.isFavorite && card.rarity === 'legendary' && <Flame className="w-4 h-4 text-orange-500" />}
             {card.rarity === 'holo' && <Sparkles className="w-4 h-4 text-pink-500" />}
             {card.rarity === 'glitch' && <Zap className="w-4 h-4 text-cyan-400" />}
             {card.rarity === 'icon' && <span className="text-sm">⭐</span>}
@@ -155,7 +160,7 @@ function MiniCard({ card, onClick, copies = 1 }: { card: Card; onClick: () => vo
 }
 
 export default function MyCardsPage() {
-  const { cards, removeCard, clearCollection, quicksellCard, isLoggedIn, loading } = useGameCollection();
+  const { cards, removeCard, clearCollection, quicksellCard, toggleFavorite, isLoggedIn, loading } = useGameCollection();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [soldMsg, setSoldMsg] = useState<string | null>(null);
@@ -166,6 +171,7 @@ export default function MyCardsPage() {
   };
 
   const handleQuicksell = async (card: Card) => {
+    if (card.isFavorite) return;
     const coins = await quicksellCard(card.id);
     setSelectedCard(null);
     if (coins !== null) {
@@ -173,6 +179,11 @@ export default function MyCardsPage() {
       setSoldMsg(`${card.name} quicksold for ${coins} coins`);
       setTimeout(() => setSoldMsg(null), 2500);
     }
+  };
+
+  const handleToggleFavorite = async (card: Card) => {
+    const changed = await toggleFavorite(card.id);
+    if (changed) setSelectedCard({ ...card, isFavorite: !card.isFavorite });
   };
 
   // Album progress: unique characters owned vs everything collectible
@@ -261,7 +272,8 @@ export default function MyCardsPage() {
             card={selectedCard}
             onClose={() => setSelectedCard(null)}
             onDelete={() => handleDelete(selectedCard.id)}
-            onQuicksell={isLoggedIn ? () => handleQuicksell(selectedCard) : null}
+            onQuicksell={isLoggedIn && !selectedCard.isFavorite ? () => handleQuicksell(selectedCard) : null}
+            onToggleFavorite={() => handleToggleFavorite(selectedCard)}
           />
         )}
       </AnimatePresence>

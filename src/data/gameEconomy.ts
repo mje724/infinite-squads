@@ -4,10 +4,9 @@
 // quicksell values, and daily streak rewards.
 //
 // Design rules that keep the loop honest:
-//  - Quicksell EV is always ~half of pack cost, so
-//    packs never feel like a losing lottery ticket
-//    (you always bank something) but selling never
-//    beats collecting.
+//  - Pick-one-of-three quicksell recovery never falls below 35%.
+//    Rusty is intentionally generous as the catch-up tier; premium packs
+//    still pay for better pull quality instead of punitive dead inventory.
 //  - Better packs cost more per card but shift odds,
 //    they never guarantee — the near-miss is the hook.
 // ============================================
@@ -49,7 +48,7 @@ export const PACK_TIERS: PackTier[] = [
     id: 'cracked',
     name: 'Cracked Pack',
     tagline: 'Zero bronze. Zero excuses. Maximum consequences.',
-    cost: 600,
+    cost: 450,
     emoji: '💎',
     accent: '#7c3aed',
     weights: { bronze: 0, silver: 20, gold: 42, legendary: 27, holo: 11 },

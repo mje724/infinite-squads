@@ -3,6 +3,10 @@ import './globals.css';
 import { AuthProvider } from '@/components/AuthProvider';
 import NavHeader from '@/components/NavHeader';
 import DailyRewardModal from '@/components/DailyRewardModal';
+import SiteFooter from '@/components/SiteFooter';
+import NativeBridge from '@/components/NativeBridge';
+import OnboardingModal from '@/components/OnboardingModal';
+import PlaytestWidget from '@/components/PlaytestWidget';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://infinite-squads.vercel.app'),
@@ -12,6 +16,16 @@ export const metadata: Metadata = {
   },
   description: 'Open card packs, collect 500 legends and internet icons, build chemistry-powered squads, and battle through absurd scenarios.',
   applicationName: 'Infinite Squads',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Infinite Squads',
+  },
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.png',
+  },
   openGraph: {
     title: 'Infinite Squads — Pull Legends. Build Chaos.',
     description: 'Collect 500 legends and internet icons, build your squad, and battle through absurd scenarios.',
@@ -28,6 +42,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: 'dark',
   themeColor: '#020617',
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -36,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className="bg-slate-950 text-white min-h-screen">
         <a
           href="#main-content"
@@ -45,11 +60,15 @@ export default function RootLayout({
           Skip to main content
         </a>
         <AuthProvider>
+          <NativeBridge />
           <NavHeader />
           <DailyRewardModal />
+        <OnboardingModal />
+        <PlaytestWidget />
           <main id="main-content" className="pt-16" tabIndex={-1}>
             {children}
           </main>
+          <SiteFooter />
         </AuthProvider>
       </body>
     </html>

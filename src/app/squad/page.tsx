@@ -4,9 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGameCollection } from '@/hooks/useGameCollection';
 import { pairVerdict, cardPerformance, teamChemistry } from '@/data/chemistry';
 import { RARITY_STYLES, ImageFilter, Card } from '@/types/schema';
-import { Users, Plus, X, User, Trophy, Trash2, Link2, Unlink, Sparkles, Package } from 'lucide-react';
+import { Users, Plus, X, User, Trophy, Trash2, Link2, Unlink, Sparkles, Package, Swords, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/AuthProvider';
+import { progressIdentity, recordProgress } from '@/data/progression';
+
+const BATTLE_SCENARIO_IDS: Record<string, string> = {
+  starting5: 'basketball', soccer11: 'soccer', football7: 'football', 'road-trip': 'roadtrip',
+  'dinner-bill': 'dinner', 'movie-night': 'movie', 'group-project': 'groupproject', wedding: 'wedding', zombie: 'zombie',
+};
 
 // Scenario Definitions
 const SCENARIOS = [
@@ -187,6 +194,10 @@ const MiniCardSlot: React.FC<{
       <motion.div 
         whileHover={{ scale: 1.05 }} 
         onClick={onClick}
+        onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } }}
+        role="button"
+        tabIndex={0}
+        aria-label={label ? `Choose card for ${label}` : 'Choose a card'}
         className={`w-20 h-28 md:w-24 md:h-32 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all ${
           isConnecting ? 'border-cyan-500 bg-cyan-500/20' : 'border-slate-600 hover:border-cyan-500 hover:bg-cyan-500/10'
         }`}
@@ -207,6 +218,10 @@ const MiniCardSlot: React.FC<{
       whileHover={{ scale: 1.05 }} 
       className={`relative w-20 h-28 md:w-24 md:h-32 cursor-pointer group ${isSelected ? 'ring-2 ring-cyan-400 ring-offset-2 ring-offset-slate-900' : ''}`} 
       onClick={onClick}
+      onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } }}
+      role="button"
+      tabIndex={0}
+      aria-label={`${card.name}${label ? `, ${label}` : ''}. Change card`}
     >
       <div className="absolute inset-0 rounded-xl blur-md opacity-50" style={{ background: rarityStyle.gradient }} />
       <div className="relative w-full h-full rounded-xl overflow-hidden" style={{ background: rarityStyle.gradient }}>
@@ -252,7 +267,7 @@ const CardPicker: React.FC<{ cards: Card[]; onSelect: (card: Card) => void; onCl
                 const fit = scenarioId ? cardPerformance(card, scenarioId) : null;
                 const fitColor = fit === null ? '#94a3b8' : fit >= 85 ? '#22c55e' : fit >= 65 ? '#eab308' : fit >= 45 ? '#f97316' : '#ef4444';
                 return (
-                  <motion.div key={card.id} whileHover={{ scale: 1.05 }} onClick={() => onSelect(card)} className="cursor-pointer">
+                  <motion.div key={card.id} whileHover={{ scale: 1.05 }} onClick={() => onSelect(card)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onSelect(card); } }} role="button" tabIndex={0} aria-label={`Select ${card.name}${fit !== null ? `, fit ${fit}` : ''}`} className="cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
                     <div className="relative w-full aspect-[4/5] rounded-lg overflow-hidden" style={{ background: rarityStyle.gradient }}>
                       <div className="absolute inset-[2px] rounded-md bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
                         <div className="absolute top-1 left-1"><span className="text-sm font-black" style={{ color: rarityStyle.border }}>{card.overallRating}</span></div>
@@ -350,6 +365,7 @@ const ConnectionLines: React.FC<{
 
 export default function SquadPage() {
   const { cards } = useGameCollection();
+  const { user } = useAuth();
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -436,6 +452,24 @@ export default function SquadPage() {
     setConnections(newConnections);
   };
 
+  const handleAutoFill = () => {
+    const best = [...cards]
+      .sort((a, b) => cardPerformance(b, selectedScenario.id) - cardPerformance(a, selectedScenario.id))
+      .slice(0, selectedScenario.slots);
+    const nextLineup: (Card | null)[] = Array(8).fill(null);
+    best.forEach((card, index) => { nextLineup[index] = card; });
+
+    const nextConnections: Connection[] = [];
+    for (let i = 0; i < best.length; i++) {
+      for (let j = i + 1; j < best.length; j++) {
+        const verdict = pairVerdict(best[i], best[j]);
+        if (verdict) nextConnections.push({ from: i, to: j, type: verdict.type });
+      }
+    }
+    setLineup(nextLineup);
+    setConnections(nextConnections);
+  };
+
   const handleCreateNew = () => {
     setShowPicker(false);
     router.push('/packs');
@@ -455,6 +489,24 @@ export default function SquadPage() {
   };
 
   const filledSlots = lineup.slice(0, selectedScenario.slots).filter(Boolean).length;
+
+  useEffect(() => {
+    if (filledSlots !== selectedScenario.slots) return;
+    const key = `is-squad-milestone-${progressIdentity(user?.id)}-${selectedScenario.id}`;
+    if (localStorage.getItem(key) === '1') return;
+    localStorage.setItem(key, '1');
+    recordProgress(progressIdentity(user?.id), 'squad_completed');
+  }, [filledSlots, selectedScenario.id, selectedScenario.slots, user?.id]);
+
+  const takeSquadToBattle = () => {
+    const selected = lineup.slice(0, selectedScenario.slots).filter((card): card is Card => card !== null);
+    if (selected.length !== selectedScenario.slots) return;
+    localStorage.setItem('is-battle-draft', JSON.stringify({
+      scenarioId: BATTLE_SCENARIO_IDS[selectedScenario.id] ?? selectedScenario.id,
+      cardIds: selected.map(card => card.id),
+    }));
+    router.push('/battle');
+  };
 
   return (
     <div className="min-h-screen" style={{ background: selectedScenario.background }}>
@@ -544,7 +596,15 @@ export default function SquadPage() {
         })()}
 
         {/* Connection Controls */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4">
+          <button
+            onClick={handleAutoFill}
+            disabled={cards.length === 0}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white text-sm font-bold transition-opacity disabled:opacity-40"
+          >
+            <Zap className="w-4 h-4" />
+            Best Lineup
+          </button>
           <button
             onClick={() => { setIsConnectMode(!isConnectMode); setConnectingFrom(null); }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -638,6 +698,11 @@ export default function SquadPage() {
             {filledSlots === selectedScenario.slots ? 'Squad Complete!' : `Need ${selectedScenario.slots - filledSlots} more`}
           </div>
         </div>
+        {filledSlots === selectedScenario.slots && (
+          <motion.button onClick={takeSquadToBattle} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-500 to-orange-500 px-6 py-4 text-lg font-black text-white shadow-xl shadow-red-950/30">
+            <Swords className="h-5 w-5" /> Take this exact squad to battle
+          </motion.button>
+        )}
       </div>
 
       <AnimatePresence>

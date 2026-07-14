@@ -31,6 +31,8 @@ Create `.env.local` with:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPPORT_EMAIL=public-support-address
+NEXT_PUBLIC_APPLE_AUTH_ENABLED=false
 ```
 
 ## Quality checks
@@ -57,6 +59,27 @@ npm run build
 - Tailwind CSS and Framer Motion
 - Zustand for guest/local state
 - Supabase for authentication, profiles, collections, rewards, and battle data
+- Capacitor 8 for bundled iOS and Android apps
+
+## Native apps
+
+The native projects live in `ios/` and `android/`. Core UI is exported into a self-contained bundle; production does not use a remote `server.url` wrapper.
+
+```bash
+npm run native:sync
+npm run native:ios
+npm run native:android
+```
+
+iOS release builds require Xcode 26 and an active Apple Developer signing team. Android builds require a supported JDK and Android Studio/SDK. Configure Apple/Supabase OAuth and universal links before enabling `NEXT_PUBLIC_APPLE_AUTH_ENABLED` in a release build.
+
+Deploy the authenticated account-deletion function before release:
+
+```bash
+supabase functions deploy delete-account
+```
+
+Submission planning, metadata, privacy-label mapping, review notes, and the release checklist are in `docs/app-store/`.
 
 ## Data and migrations
 

@@ -12,6 +12,8 @@ import { PRESET_CARDS as ALL_PRESET_CARDS, PresetCard as BasePresetCard, calcula
 import { ICON_CARDS } from '@/data/collections';
 import { cardPerformance, chemistrySummary } from '@/data/chemistry';
 import { trackObjective } from '@/data/objectives';
+import { progressIdentity, recordProgress } from '@/data/progression';
+import { playGameSound } from '@/lib/gameAudio';
 
 // ============================================
 // PRESET CARDS DATABASE — sourced from the single shared roster in
@@ -423,6 +425,24 @@ interface BattleResult {
   opponentFinal: number;
   winner: 'player' | 'opponent' | 'tie';
   mvp: { card: PresetCard | Card; highlight: string };
+  tacticEdge: -1 | 0 | 1;
+  playerTactic: TacticId;
+  opponentTactic: TacticId;
+}
+
+type TacticId = 'balanced' | 'power' | 'control' | 'chaos';
+
+const TACTICS: Record<TacticId, { name: string; emoji: string; description: string; beats: TacticId | null }> = {
+  balanced: { name: 'Balanced', emoji: '⚖️', description: 'No hard counter. Chemistry gets a small consistency boost.', beats: null },
+  power: { name: 'Power', emoji: '💥', description: 'Overwhelm careful Control plans.', beats: 'control' },
+  control: { name: 'Control', emoji: '🧠', description: 'Contain unpredictable Chaos plans.', beats: 'chaos' },
+  chaos: { name: 'Chaos', emoji: '🃏', description: 'Break through obvious Power plans.', beats: 'power' },
+};
+
+function tacticEdge(player: TacticId, opponent: TacticId): -1 | 0 | 1 {
+  if (TACTICS[player].beats === opponent) return 1;
+  if (TACTICS[opponent].beats === player) return -1;
+  return 0;
 }
 
 // Rebuild a defense squad from stored card names (packs + icons only —
@@ -447,7 +467,7 @@ function rebuildSquad(cardNames: string[]): PresetCard[] {
 interface LeaderboardRow { display_name: string; pvp_rating: number; battles_won: number }
 
 export default function BattlePage() {
-  const { cards } = useGameCollection();
+  const { cards, loading: cardsLoading } = useGameCollection();
   const { user, profile, refreshProfile } = useAuth();
   const isLoggedIn = !!user;
   const supabase = getSupabase();
@@ -467,6 +487,9 @@ export default function BattlePage() {
   const [defenseError, setDefenseError] = useState<string | null>(null);
   const [cooldownMsg, setCooldownMsg] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
+  const [playerTactic, setPlayerTactic] = useState<TacticId>('balanced');
+  const [opponentTactic, setOpponentTactic] = useState<TacticId>('balanced');
+  const [draftLoaded, setDraftLoaded] = useState(false);
 
   useEffect(() => {
     if (mode !== 'ranked') return;
@@ -475,12 +498,37 @@ export default function BattlePage() {
     });
   }, [mode, supabase]);
 
+  useEffect(() => {
+    if (cardsLoading || draftLoaded) return;
+    setDraftLoaded(true);
+    try {
+      const draft = JSON.parse(localStorage.getItem('is-battle-draft') ?? 'null') as { scenarioId?: string; cardIds?: string[] } | null;
+      if (!draft?.scenarioId || !Array.isArray(draft.cardIds)) return;
+      const scenario = SCENARIOS.find(item => item.id === draft.scenarioId);
+      const draftedCards = draft.cardIds.map(id => packCards.find(card => card.id === id)).filter((card): card is Card => Boolean(card));
+      if (!scenario || draftedCards.length !== scenario.slots) return;
+      setMode('cpu');
+      setSelectedScenario(scenario);
+      setSelectedCards(draftedCards);
+      setBattlePhase('lineup');
+      localStorage.removeItem('is-battle-draft');
+    } catch {
+      localStorage.removeItem('is-battle-draft');
+    }
+  }, [cardsLoading, draftLoaded, packCards]);
+
   const settleBattle = async (winner: 'player' | 'opponent' | 'tie') => {
     // objectives count for everyone playing while logged in
     trackObjective('battle_played');
+    const identity = progressIdentity(user?.id);
+    recordProgress(identity, 'battle_played');
     if (winner === 'player') {
       trackObjective('battle_won');
-      if (mode === 'cpu' && difficulty === 'hard') trackObjective('hard_win');
+      recordProgress(identity, 'battle_won');
+      if (mode === 'cpu' && difficulty === 'hard') {
+        trackObjective('hard_win');
+        recordProgress(identity, 'hard_win');
+      }
     }
     if (!isLoggedIn || !user) return;
 
@@ -540,6 +588,9 @@ export default function BattlePage() {
 
     const playerAvgOVR = selectedCards.reduce((s, c) => s + c.overallRating, 0) / selectedCards.length;
     const excludeNames = selectedCards.map(c => c.name);
+    const tacticPool: TacticId[] = ['power', 'control', 'chaos', 'balanced'];
+    setOpponentTactic(tacticPool[Math.floor(Math.random() * tacticPool.length)]);
+    setPlayerTactic('balanced');
 
     // Ranked: fight a real player's saved defense squad for this scenario
     if (mode === 'ranked' && user) {
@@ -571,6 +622,7 @@ export default function BattlePage() {
 
   const startBattle = () => {
     if (!selectedScenario) return;
+    playGameSound('tap');
     setBattlePhase('battle');
     
     setTimeout(() => {
@@ -588,8 +640,11 @@ export default function BattlePage() {
       // Chemistry as a percentage multiplier (cap ±20%) so a +10 bond is
       // worth the same in every scenario, whatever the raw score scale.
       const chemMult = (t: number) => 1 + Math.max(-40, Math.min(40, t)) / 200;
-      const playerFinal = Math.round(playerTotal * chemMult(playerChemistry.total));
-      const opponentFinal = Math.round(opponentTotal * chemMult(opponentChemistry.total));
+      const edge = tacticEdge(playerTactic, opponentTactic);
+      const playerTacticMultiplier = edge === 1 ? 1.1 : edge === -1 ? 0.95 : playerTactic === 'balanced' ? 1.02 : 1;
+      const opponentTacticMultiplier = edge === -1 ? 1.1 : edge === 1 ? 0.95 : opponentTactic === 'balanced' ? 1.02 : 1;
+      const playerFinal = Math.round(playerTotal * chemMult(playerChemistry.total) * playerTacticMultiplier);
+      const opponentFinal = Math.round(opponentTotal * chemMult(opponentChemistry.total) * opponentTacticMultiplier);
       
       // Find MVP
       const allBoxScores = [...playerBoxScores, ...opponentBoxScores];
@@ -614,8 +669,12 @@ export default function BattlePage() {
         opponentFinal,
         winner,
         mvp: { card: mvpData.ps.card, highlight: `${topStat.value} ${topStat.category}` },
+        tacticEdge: edge,
+        playerTactic,
+        opponentTactic,
       });
       setBattlePhase('result');
+      playGameSound(winner === 'player' ? 'victory' : winner === 'opponent' ? 'defeat' : 'success');
       settleBattle(winner);
     }, 2500);
   };
@@ -641,6 +700,8 @@ export default function BattlePage() {
     setDefenseSaved(false);
     setDefenseError(null);
     setCooldownMsg(null);
+    setPlayerTactic('balanced');
+    setOpponentTactic('balanced');
   };
 
   // Mini card component
@@ -945,6 +1006,36 @@ export default function BattlePage() {
               </div>
             </div>
 
+            <div className="rounded-2xl border border-purple-500/25 bg-slate-900/70 p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-purple-400">Tactical read</p>
+                  <h3 className="mt-1 text-xl font-black text-white">Opponent signals {TACTICS[opponentTactic].emoji} {TACTICS[opponentTactic].name}</h3>
+                  <p className="mt-1 text-sm text-slate-400">Power beats Control · Control beats Chaos · Chaos beats Power. Balanced cannot be hard-countered.</p>
+                </div>
+                <div className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-center">
+                  <span className="text-2xl">{TACTICS[opponentTactic].emoji}</span>
+                  <p className="text-xs font-black uppercase text-red-300">Scouted plan</p>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-2 sm:grid-cols-4">
+                {(Object.entries(TACTICS) as [TacticId, typeof TACTICS[TacticId]][]).map(([id, tactic]) => {
+                  const edge = tacticEdge(id, opponentTactic);
+                  return (
+                    <button key={id} onClick={() => setPlayerTactic(id)} className={`rounded-xl border p-3 text-left transition-all ${playerTactic === id ? edge === 1 ? 'border-green-400 bg-green-500/15 ring-2 ring-green-400/20' : 'border-purple-400 bg-purple-500/15 ring-2 ring-purple-400/20' : 'border-slate-700 bg-slate-800/60 hover:border-slate-500'}`}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl">{tactic.emoji}</span>
+                        {edge === 1 && <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-black uppercase text-green-300">Counter +10%</span>}
+                        {edge === -1 && <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-black uppercase text-red-300">Countered</span>}
+                      </div>
+                      <p className="mt-2 text-sm font-black text-white">{tactic.name}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-400">{tactic.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="flex justify-center gap-4">
               <button onClick={() => setBattlePhase('lineup')} className="px-6 py-3 bg-slate-700 rounded-xl text-white font-semibold">
                 ← Change Lineup
@@ -1011,6 +1102,16 @@ export default function BattlePage() {
                 <p className="mt-2 text-white/80 text-sm">Sign in and wins like this pay 25–100 coins.</p>
               )}
             </motion.div>
+
+            <div className={`rounded-2xl border p-4 text-center ${battleResult.tacticEdge === 1 ? 'border-green-500/35 bg-green-500/10' : battleResult.tacticEdge === -1 ? 'border-red-500/35 bg-red-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Tactical outcome</p>
+              <p className="mt-1 text-lg font-black text-white">
+                {TACTICS[battleResult.playerTactic].emoji} {TACTICS[battleResult.playerTactic].name} vs {TACTICS[battleResult.opponentTactic].emoji} {TACTICS[battleResult.opponentTactic].name}
+              </p>
+              <p className={`mt-1 text-sm font-bold ${battleResult.tacticEdge === 1 ? 'text-green-300' : battleResult.tacticEdge === -1 ? 'text-red-300' : 'text-slate-400'}`}>
+                {battleResult.tacticEdge === 1 ? 'Perfect read — your counter earned a 10% advantage.' : battleResult.tacticEdge === -1 ? 'They read you — your plan took a 5% penalty.' : 'No hard counter. The matchup came down to fit, chemistry, and execution.'}
+              </p>
+            </div>
 
             {/* Box Scores */}
             <div className="grid md:grid-cols-2 gap-6">

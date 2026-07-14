@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Coins, LogIn, LogOut, ChevronDown } from 'lucide-react';
+import { Coins, LogIn, LogOut, ChevronDown, Settings } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from './AuthProvider';
 import LoginModal from './LoginModal';
@@ -115,6 +116,15 @@ export default function CoinDisplay() {
                 </div>
               </div>
               <div className="p-2 border-t border-slate-700">
+                <Link
+                  role="menuitem"
+                  href="/account"
+                  onClick={() => setShowDropdown(false)}
+                  className="mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-slate-200 transition-colors hover:bg-slate-700"
+                >
+                  <Settings aria-hidden="true" className="h-4 w-4" />
+                  Account Settings
+                </Link>
                 <button
                   role="menuitem"
                   onClick={() => {
